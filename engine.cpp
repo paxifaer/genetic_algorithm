@@ -19,7 +19,7 @@ int huowu[21], chongwu[21], shuanghuosi[21], danhuosi[21], miansi[21], huosan[21
 int i1 = 1500, i2 = 400, i3 = 300, i4 = 150, i5 = 75, i6 = 30, i7 = 6, i8 = 4;
 
 
-void record(int checkerboard[][20], int checkerboard1[][20], int checkerboard_piece_num[][1700],
+void result_copy(int checkerboard[][20], int checkerboard1[][20], int checkerboard_piece_num[][1700],
             int checkerboard_piece_num1[][1700]);
 
 void Search(int table[][20], int player, int &x, int &y, int checkerboard[][20]);
@@ -33,7 +33,7 @@ struct chromosome {
     int shiyingdu = 0;
 
 };
-chromosome ra[21];
+chromosome population[21];
 chromosome champion[6];//冠军序列
 
 void Init(int checkerboard[][20], int checkerboard_piece_num[][1700])                //初始化函数，将记录棋子的数组初始化
@@ -68,7 +68,8 @@ void Record(int checkerboard[][20], int checkerboard_piece_num[3][1700], const i
 
 
     int enemy = 1;
-    int quadrant1 = (y_position - 1) * 19 + x_position, quadrant2 = 19 * (y_position - 1) + x_position + 400, quadrant3 =
+    int quadrant1 = (y_position - 1) * 19 + x_position, quadrant2 =
+            19 * (y_position - 1) + x_position + 400, quadrant3 =
             19 * (y_position - 1) + x_position + 800, quadrant4 =
             19 * (y_position - 1) + x_position + 1200;
     (enemy == player) ? (enemy = 2) : (enemy = 1);
@@ -173,8 +174,7 @@ int WhoIsWinner(int checkerboard_piece_num[][1700], const int player)           
     int i;
     int temp;
     int enemy = 1;
-    (enemy == player) ? (enemy = 2) : (enemy = 1);
-
+    enemy == player ? enemy = 2 : enemy = 1;
     temp = 0;
     for (i = 1; i <= 1600; i++) {
         if (checkerboard_piece_num[player][i] >= 0) {
@@ -184,10 +184,7 @@ int WhoIsWinner(int checkerboard_piece_num[][1700], const int player)           
             }
         }
     }
-
-
 }
-
 
 
 
@@ -206,9 +203,6 @@ void Grade(const int checkerboard[][20], const int checkerboard_piece_num[][1700
 单活四加200，每个眠四加100，大苏打实打实大苏打撒旦每个活三加50，每个眠三加10
 每个活二加4， 每个眠二加1*/
 // huowu 12  chongwu 9 shuanghuosi 9  danhuosi 8 miansi 7  huosan 6 miansan 4  huoer 3
-
-
-
 
     for (x = 1; x <= 19; x++) {
 
@@ -681,7 +675,7 @@ void Search(int table[][20], int player, int &x, int &y, int checkerboard[][20])
 
 }
 
-void AI(int checkerboard[][20], int checkerboard_piece_num[][1700], int player, int &winner,
+Point AI(int checkerboard[][20], int checkerboard_piece_num[][1700], int player, int &winner,
         chromosome r1)          //AI函数 先调用评分函数，对双方棋盘评分， 再调用搜索函数，找出最优位置
 {
     int x1_max, y1_max;
@@ -709,20 +703,18 @@ for(int i=1;i<=19;i++)
     Search(table_cmp, player, x1_max, y1_max, checkerboard);
     Search(table_ply, player2, x2_max, y2_max, checkerboard);
 
-
-    if (table_cmp[x1_max][y1_max] >= table_ply[x2_max][y2_max]) {
-        point.x = x1_max;
-        point.y = y1_max;
-        // Record(checkerboard,checkerboard_piece_num,player,x1_max,y1_max);//
-    } else {
-        point.x = x2_max;
-        point.y = y2_max;
-        //	  Record(checkerboard,checkerboard_piece_num,player,x2_max,y2_max);
-    }
-
 //	printf("\n player==%d  的最大table值为 %d %d\n",player,table_ply[x2_max][y2_max],table_cmp[x1_max][y1_max]) ;
     winner = WhoIsWinner(checkerboard_piece_num, player);
 
+    if (table_cmp[x1_max][y1_max] >= table_ply[x2_max][y2_max]) {
+        {
+            return {x1_max,y1_max};
+        }
+        // Record(checkerboard,checkerboard_piece_num,player,x1_max,y1_max);//
+    } else {
+        return {x2_max,y2_max};
+        //	  Record(checkerboard,checkerboard_piece_num,player,x2_max,y2_max);
+    }
 
 }
 
@@ -994,8 +986,6 @@ void jiaocha(chromosome champion[], int avg) {
     for (int i = 1; i <= 5; i++)//冠军染色体开始变异
     {
         bianyi(&champion[i], avg, fmax);
-
-
         Cz(champion, avg, i, fmax);//基因重组
         //	printf("%d ",nu++);
 
@@ -1003,52 +993,43 @@ void jiaocha(chromosome champion[], int avg) {
 
     for (int i = 1; i <= 20; i++)//生成新一代染色体
     {
-        memcpy(&ra[i], &cz[i], sizeof(ra[i]));
+        memcpy(&population[i], &cz[i], sizeof(population[i]));
     }
 
 }
 
 
-int bisai(chromosome ra1, chromosome ra2, int checkerboard[][20], int checkerboard_piece_num[][1700]) {
-    int num = 50;
+int PopulationPlayAGame(chromosome population1, chromosome population2, int checkerboard[][20], int checkerboard_piece_num[][1700]) {
+    int  convergence_limit = 50;
     int flag = 0;
     int checkerboard1[20][20], checkerboard_piece_num1[3][1700], checkerboard_piece_num2[3][1700];
-    record(checkerboard, checkerboard1, checkerboard_piece_num, checkerboard_piece_num1);
-    record(checkerboard, checkerboard1, checkerboard_piece_num, checkerboard_piece_num2);
+    result_copy(checkerboard, checkerboard1, checkerboard_piece_num, checkerboard_piece_num1);
+    result_copy(checkerboard, checkerboard1, checkerboard_piece_num, checkerboard_piece_num2);
     int winner1 = 0, winner2 = 0;
 
-    while (num--) {
+    while (convergence_limit--) {
         int winner1 = 0, winner2 = 0;
-
-
-        AI(checkerboard1, checkerboard_piece_num1, 1, winner1, ra1);
+        Point pos1,pos2;
+        pos1 = AI(checkerboard1, checkerboard_piece_num1, 1, winner1, population1);
         //	printf("\n%d ",winner1);
-        Record(checkerboard1, checkerboard_piece_num1, 1, point.x, point.y);
+        Record(checkerboard1, checkerboard_piece_num1, 1, pos1.x, pos1.y);
         if (winner1) {
-            flag = 1;
-            break;
+            return 1;//population1赢
         }
-
-        AI(checkerboard1, checkerboard_piece_num2, 2, winner2, ra2);
-        Record(checkerboard1, checkerboard_piece_num2, 2, point.x, point.y);
+        pos2 = AI(checkerboard1, checkerboard_piece_num2, 2, winner2, population2);
+        Record(checkerboard1, checkerboard_piece_num2, 2, pos2.x, pos2.y);
         if (winner2) {
-            flag = 2;
-            break;
+           return 2;//population2赢
         }
     }
-    if (flag == 1)
-        return 1;//ra1赢
-    else if (flag == 2)
-        return 2;//ra2赢
-    else if (flag == 0)
         return 0;//平局
 }
 
-void guanjun(chromosome ra[20]) {
+void guanjun(chromosome population[20]) {
     chromosome a[21];
     chromosome b, c;
     for (int i = 1; i < 20; i++) {
-        memcpy(&a[i], &ra[i], sizeof(a[i]));
+        memcpy(&a[i], &population[i], sizeof(a[i]));
     }
     for (int i = 1; i <= 20; i++) {
 
@@ -1065,132 +1046,112 @@ void guanjun(chromosome ra[20]) {
         memcpy(&champion[j], &a[j], sizeof(champion[j]));
 }
 
-void jingsai(int checkerboard1[][20], int checkerboard_piece_num1[][1700], int player) {
-    int nu = 0;
-    int jieguo1 = 0, jieguo2 = 0;
-    for (int i = 1; i <= 4; i++)//20组染色体分成五组，每组四个，这四个染色体进行比较。
+void Championships(int checkerboard1[][20], int checkerboard_piece_num1[][1700], int player) {
+    int black_winner = 0, white_winner = 0;
+    for (int population_sequence = 1; population_sequence <= 4; population_sequence++)//20组染色体分成五组，每组四个，这四个染色体进行比较。
     {
-        for (int j = i; j <= 20; j += 4) {
+        for (int j = population_sequence; j <= 20; j += 4) {
             for (int k = j + 1; k <= j + 3; k++) {
 
-                jieguo1 = bisai(ra[j], ra[k], checkerboard1, checkerboard_piece_num1);
-                jieguo2 = bisai(ra[k], ra[j], checkerboard1, checkerboard_piece_num1);
-                if (jieguo1 == 0) {
-                    ra[j].shiyingdu += 25;
-                    ra[k].shiyingdu += 25;
-                } else if (jieguo1 == 1) {
-                    ra[j].shiyingdu += 50;
-                    ra[k].shiyingdu += 0;
-                } else if (jieguo1 == 2) {
-                    ra[k].shiyingdu += 50;
-                    ra[j].shiyingdu += 0;
+                black_winner = PopulationPlayAGame(population[j], population[k], checkerboard1, checkerboard_piece_num1);
+                white_winner = PopulationPlayAGame(population[k], population[j], checkerboard1, checkerboard_piece_num1);
+                if (black_winner == 0) {
+                    population[j].shiyingdu += 25;
+                    population[k].shiyingdu += 25;
+                } else if (black_winner == 1) {
+                    population[j].shiyingdu += 50;
+                    population[k].shiyingdu += 0;
+                } else if (black_winner == 2) {
+                    population[k].shiyingdu += 50;
+                    population[j].shiyingdu += 0;
                 }
 
-                if (jieguo2 == 0) {
-                    ra[j].shiyingdu += 25;
-                    ra[k].shiyingdu += 25;
-                } else if (jieguo2 == 1) {
-                    ra[j].shiyingdu += 50;
-                    ra[k].shiyingdu += 0;
-                } else if (jieguo2 == 2) {
-                    ra[k].shiyingdu += 50;
-                    ra[j].shiyingdu += 0;
+                if (white_winner == 0) {
+                    population[j].shiyingdu += 25;
+                    population[k].shiyingdu += 25;
+                } else if (white_winner == 1) {
+                    population[j].shiyingdu += 50;
+                    population[k].shiyingdu += 0;
+                } else if (white_winner == 2) {
+                    population[k].shiyingdu += 50;
+                    population[j].shiyingdu += 0;
                 }
 
             }
         }
-
     }
 
     int avg = 0, num = 0;
     for (int i = 1; i <= 20; i++)
-        num += ra[i].shiyingdu;
+        num += population[i].shiyingdu;
     avg = num / 20;
-    guanjun(ra);//得出冠军的五个序列；
-
+    guanjun(population);//得出冠军的五个序列；
     jiaocha(champion, avg); //
-
 
 }
 
-void record(int checkerboard[][20], int checkerboard1[][20], int checkerboard_piece_num[][1700],
+void result_copy(int checkerboard[][20], int checkerboard1[][20], int checkerboard_piece_num[][1700],
             int checkerboard_piece_num1[][1700]) {
     memcpy(checkerboard1, checkerboard, sizeof(int) * 20 * 20);
     memcpy(checkerboard_piece_num1, checkerboard_piece_num, sizeof(int) * 3 * 1700);
 }
 
-void yichuan(int checkerboard[][20], int checkerboard_piece_num[][1700], int daishu, int winner, int player) {
+void train(int checkerboard[][20], int checkerboard_piece_num[][1700], int train_time, int winner, int player) {
     int checkerboard_piece_num1[3][1700];
     int checkerboard1[20][20];
-    record(checkerboard, checkerboard1, checkerboard_piece_num, checkerboard_piece_num1);//拷贝棋盘记录
-//	printf("std");
-//int num=0;
-    while (daishu--)//进化多少代
+    result_copy(checkerboard, checkerboard1, checkerboard_piece_num, checkerboard_piece_num1);//拷贝棋盘记录
+    while (train_time--)//进化多少代
     {
-        jingsai(checkerboard1, checkerboard_piece_num1, player);
-
+        Championships(checkerboard1, checkerboard_piece_num1, player);
     }
-
-
 }
 
 void renji() {
     int winner = 0;
     char message[256];
-    int num = 0;
     int player = 0;          //棋手 1表示甲 2表示乙
     //int step_num = 0; //步数记录
     int checkerboard[20][20] = {{0}};        //棋盘记录
     int checkerboard_piece_num[3][1700] = {{0}};
     int enemy = 0;
 
-    int i = 15;
     int daishu = 50;
     chromosome r;
-    int x1, y1, x2, y2;
-    char xs1, xs2, ys1, ys2;
+    int x_position1, y_position1, x_position2, y_position2;
+    char x_position_string_1, x_position_string_2, y_position_string_1, y_position_string_2;
     while (1) {
         fflush(stdout);
-
         //记录游戏中的胜者  0表示无胜者 1表示甲胜 2表示乙胜 3表示平局
-
-
-
         scanf("%s", message);
         if (strcmp(message, "move") == 0) {
             scanf("%s", message);
             fflush(stdin);
-            x1 = message[0] - 'A' + 1;
-            y1 = message[1] - 'A' + 1;
-            x2 = message[2] - 'A' + 1;
-            y2 = message[3] - 'A' + 1;
+            x_position1 = message[0] - 'A' + 1;
+            y_position1 = message[1] - 'A' + 1;
+            x_position2 = message[2] - 'A' + 1;
+            y_position2 = message[3] - 'A' + 1;
 
+            Record(checkerboard, checkerboard_piece_num, enemy, x_position1, y_position1);
+            Record(checkerboard, checkerboard_piece_num, enemy, x_position2, y_position2);
+            train(checkerboard, checkerboard_piece_num, daishu, winner, enemy);
+            
 
-//	printf("%d %d %d %d \n",x1,y1,x2,y2);
-
-            Record(checkerboard, checkerboard_piece_num, enemy, x1, y1);
-            Record(checkerboard, checkerboard_piece_num, enemy, x2, y2);
-            yichuan(checkerboard, checkerboard_piece_num, daishu, winner, enemy);
-
-
-
-
-            //	memcpy(&r,&ra[1],sizeof(r));
+            //	memcpy(&r,&population[1],sizeof(r));
 
             memcpy(&r, &champion[2], sizeof(r));
-
-            AI(checkerboard, checkerboard_piece_num, player, winner, r);//待定
+            Point pos1,pos2;
+            pos1 = AI(checkerboard, checkerboard_piece_num, player, winner, r);//待定
             Record(checkerboard, checkerboard_piece_num, player, point.x, point.y);
-            xs1 = point.x + 'A' - 1;
-            ys1 = point.y + 'A' - 1;
-            AI(checkerboard, checkerboard_piece_num, player, winner, r);//待定
+            x_position_string_1 = pos1.x + 'A' - 1;
+            y_position_string_1 = pos1.y + 'A' - 1;
+            pos2 = AI(checkerboard, checkerboard_piece_num, player, winner, r);//待定
             Record(checkerboard, checkerboard_piece_num, player, point.x, point.y);
-            xs2 = point.x + 'A' - 1;
-            ys2 = point.y + 'A' - 1; //printf(" %d",num++);
+            x_position_string_2 = pos2.x + 'A' - 1;
+            y_position_string_2 = pos2.y + 'A' - 1; //printf(" %d",num++);
             //	printf("\n冠军数组 染色体值为：%d %d %d %d %d %d  \n",champion[2].huowu,champion[2].chongwu,champion[2].shuanghuosi,champion[2].huosan,champion[2].huoer,champion[2].shiyingdu);
 
             printf("\n");
-            printf("move %c%c%c%c\n", xs1, ys1, xs2, ys2);
+            printf("move %c%c%c%c\n", x_position_string_1, y_position_string_1, x_position_string_2, y_position_string_2);
 
 
         } else if (strcmp(message, "new") == 0) {
@@ -1256,21 +1217,21 @@ int main()   //主函数
         huosan[i] = i6;
         miansan[i] = i7;
         huoer[i] = i8;
-        ra[i].chongwu = chongwu[i];
-        ra[i].huowu = huowu[i];
-        ra[i].shuanghuosi = shuanghuosi[i];
-        ra[i].danhuosi = danhuosi[i];
-        ra[i].miansi = miansi[i];
-        ra[i].huoer = huoer[i];
-        ra[i].huosan = huosan[i];
-        ra[i].miansan = miansan[i];
+        population[i].chongwu = chongwu[i];
+        population[i].huowu = huowu[i];
+        population[i].shuanghuosi = shuanghuosi[i];
+        population[i].danhuosi = danhuosi[i];
+        population[i].miansi = miansi[i];
+        population[i].huoer = huoer[i];
+        population[i].huosan = huosan[i];
+        population[i].miansan = miansan[i];
     }
 
-    memcpy(&champion[1], &ra[1], sizeof(ra[1]));
-    memcpy(&champion[2], &ra[2], sizeof(ra[2]));
-    memcpy(&champion[3], &ra[3], sizeof(ra[3]));
-    memcpy(&champion[4], &ra[4], sizeof(ra[4]));
-    memcpy(&champion[5], &ra[5], sizeof(ra[5]));
+    memcpy(&champion[1], &population[1], sizeof(population[1]));
+    memcpy(&champion[2], &population[2], sizeof(population[2]));
+    memcpy(&champion[3], &population[3], sizeof(population[3]));
+    memcpy(&champion[4], &population[4], sizeof(population[4]));
+    memcpy(&champion[5], &population[5], sizeof(population[5]));
     renji();
 
 }
