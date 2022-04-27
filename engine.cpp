@@ -19,7 +19,8 @@ int huowu[21], chongwu[21], shuanghuosi[21], danhuosi[21], miansi[21], huosan[21
 int i1 = 1500, i2 = 400, i3 = 300, i4 = 150, i5 = 75, i6 = 30, i7 = 6, i8 = 4;
 
 
-void record(int checkerboard[][20], int checkerboard1[][20], int checkerboard_piece_num[][1700], int checkerboard_piece_num1[][1700]);
+void record(int checkerboard[][20], int checkerboard1[][20], int checkerboard_piece_num[][1700],
+            int checkerboard_piece_num1[][1700]);
 
 void Search(int table[][20], int player, int &x, int &y, int checkerboard[][20]);
 
@@ -60,113 +61,114 @@ void Init(int checkerboard[][20], int checkerboard_piece_num[][1700])           
 /***********************************************************************************************/   //六子棋核心部分（先后手，胜负判定，棋盘记录）
 
 
-void Record(int checkerboard[][20], int checkerboard_piece_num[3][1700], const int player, int x, int y)              //记录棋子、棋手的情况
+void Record(int checkerboard[][20], int checkerboard_piece_num[3][1700], const int player, int x_position,
+            int y_position)              //记录棋子、棋手的情况
 {
-    checkerboard[x][y] = player;
-
+    checkerboard[x_position][y_position] = player;
 
 
     int enemy = 1;
-    int quadrant1 = (y - 1) * 19 + x, quadrant2 = 19 * (y - 1) + x + 400, quadrant3 = 19 * (y - 1) + x + 800, quadrant4 =
-            19 * (y - 1) + x + 1200;
+    int quadrant1 = (y_position - 1) * 19 + x_position, quadrant2 = 19 * (y_position - 1) + x_position + 400, quadrant3 =
+            19 * (y_position - 1) + x_position + 800, quadrant4 =
+            19 * (y_position - 1) + x_position + 1200;
     (enemy == player) ? (enemy = 2) : (enemy = 1);
 
-    checkerboard_piece_num[player][(y - 1) * 19 + x] = 1;
-    checkerboard_piece_num[player][19 * (y - 1) + x + 400] = 1;
-    checkerboard_piece_num[player][19 * (y - 1) + x + 800] = 1;
-    checkerboard_piece_num[player][19 * (y - 1) + x + 1200] = 1;
+    checkerboard_piece_num[player][(y_position - 1) * 19 + x_position] = 1;
+    checkerboard_piece_num[player][19 * (y_position - 1) + x_position + 400] = 1;
+    checkerboard_piece_num[player][19 * (y_position - 1) + x_position + 800] = 1;
+    checkerboard_piece_num[player][19 * (y_position - 1) + x_position + 1200] = 1;
     checkerboard_piece_num[enemy][quadrant1] = -1;
     checkerboard_piece_num[enemy][quadrant2] = -1;
     checkerboard_piece_num[enemy][quadrant3] = -1;
     checkerboard_piece_num[enemy][quadrant4] = -1;
 
-    int l = 0, r = 0;//横连
+    int left_piece_num = 0, right_piece_num = 0;//横连
     if (quadrant1 - 1 > 0)
-        l = checkerboard_piece_num[player][quadrant1 - 1];
+        left_piece_num = checkerboard_piece_num[player][quadrant1 - 1];
     if (quadrant1 + 1 <= 361)
-        r = checkerboard_piece_num[player][quadrant1 + 1];
+        right_piece_num = checkerboard_piece_num[player][quadrant1 + 1];
 
 
-    if (l >= 0)
-        checkerboard_piece_num[player][quadrant1] += l;
-    if (r >= 0)
-        checkerboard_piece_num[player][quadrant1] += r;
+    if (left_piece_num >= 0)
+        checkerboard_piece_num[player][quadrant1] += left_piece_num;
+    if (right_piece_num >= 0)
+        checkerboard_piece_num[player][quadrant1] += right_piece_num;
 
 
-    if (l > 0)
-        for (int sd = 1; sd <= l; sd++) {
+    if (left_piece_num > 0)
+        for (int sd = 1; sd <= left_piece_num; sd++) {
             checkerboard_piece_num[player][quadrant1 - sd] = checkerboard_piece_num[player][quadrant1];
 //printf("\ncheckerboard_piece_num[player][quadrant-sd]=%d",checkerboard_piece_num[player][quadrant1-sd]);
         }
-    if (r > 0)
-        for (int sd = 1; sd <= r; sd++) {
+    if (right_piece_num > 0)
+        for (int sd = 1; sd <= right_piece_num; sd++) {
             checkerboard_piece_num[player][quadrant1 + sd] = checkerboard_piece_num[player][quadrant1];
 //printf("\n%d",checkerboard_piece_num[player][quadrant1]);
         }
 //printf("\n l1=%d r1=%d",l,r);
 
 
-    l = 0, r = 0;//纵连
-    if (y - 1 > 0)
-        l = checkerboard_piece_num[player][quadrant2 - 19];
-    if (y + 1 <= 19)
-        r = checkerboard_piece_num[player][quadrant2 + 19];
+    left_piece_num = 0, right_piece_num = 0;//纵连
+    if (y_position - 1 > 0)
+        left_piece_num = checkerboard_piece_num[player][quadrant2 - 19];
+    if (y_position + 1 <= 19)
+        right_piece_num = checkerboard_piece_num[player][quadrant2 + 19];
 
-    if (l >= 0)
-        checkerboard_piece_num[player][quadrant2] += l;
-    if (r >= 0)
-        checkerboard_piece_num[player][quadrant2] += r;
+    if (left_piece_num >= 0)
+        checkerboard_piece_num[player][quadrant2] += left_piece_num;
+    if (right_piece_num >= 0)
+        checkerboard_piece_num[player][quadrant2] += right_piece_num;
 
-    if (l > 0)
-        for (int sd = 1; sd <= l; sd++)
+    if (left_piece_num > 0)
+        for (int sd = 1; sd <= left_piece_num; sd++)
             checkerboard_piece_num[player][quadrant2 - sd * 19] = checkerboard_piece_num[player][quadrant2];
-    if (r > 0)
-        for (int sd = 1; sd <= r; sd++)
+    if (right_piece_num > 0)
+        for (int sd = 1; sd <= right_piece_num; sd++)
             checkerboard_piece_num[player][quadrant2 + sd * 19] = checkerboard_piece_num[player][quadrant2];
 //printf("\n l2=%d r2=%d",l,r);
 
 
-    l = 0, r = 0;//左斜连
+    left_piece_num = 0, right_piece_num = 0;//左斜连
     if (quadrant3 - 19 - 1 > 800)
-        l = checkerboard_piece_num[player][quadrant3 - 19 - 1];
+        left_piece_num = checkerboard_piece_num[player][quadrant3 - 19 - 1];
     if (quadrant3 + 19 + 1 <= 1161)
-        r = checkerboard_piece_num[player][quadrant3 + 19 + 1];
+        right_piece_num = checkerboard_piece_num[player][quadrant3 + 19 + 1];
 
-    if (l >= 0)
-        checkerboard_piece_num[player][quadrant3] += l;
-    if (r >= 0)
-        checkerboard_piece_num[player][quadrant3] += r;
+    if (left_piece_num >= 0)
+        checkerboard_piece_num[player][quadrant3] += left_piece_num;
+    if (right_piece_num >= 0)
+        checkerboard_piece_num[player][quadrant3] += right_piece_num;
 
-    if (l > 0)
-        for (int sd = 1; sd <= l; sd++)
+    if (left_piece_num > 0)
+        for (int sd = 1; sd <= left_piece_num; sd++)
             checkerboard_piece_num[player][quadrant3 - sd * 19 - sd] = checkerboard_piece_num[player][quadrant3];
-    if (r > 0)
-        for (int sd = 1; sd <= r; sd++)
+    if (right_piece_num > 0)
+        for (int sd = 1; sd <= right_piece_num; sd++)
             checkerboard_piece_num[player][quadrant3 + sd * 20] = checkerboard_piece_num[player][quadrant3];
 //printf("\n l3=%d r3=%d",l,r);
 
-    l = 0, r = 0;//右斜连
+    left_piece_num = 0, right_piece_num = 0;//右斜连
     if (quadrant4 - 19 + 1 > 1200)
-        l = checkerboard_piece_num[player][quadrant4 - 19 + 1];
+        left_piece_num = checkerboard_piece_num[player][quadrant4 - 19 + 1];
     if (quadrant4 + 19 - 1 <= 1560)
-        r = checkerboard_piece_num[player][quadrant4 + 19 - 1];
-    if (l >= 0)
-        checkerboard_piece_num[player][quadrant4] += l;
-    if (r >= 0)
-        checkerboard_piece_num[player][quadrant4] += r;
+        right_piece_num = checkerboard_piece_num[player][quadrant4 + 19 - 1];
+    if (left_piece_num >= 0)
+        checkerboard_piece_num[player][quadrant4] += left_piece_num;
+    if (right_piece_num >= 0)
+        checkerboard_piece_num[player][quadrant4] += right_piece_num;
 
-    if (l > 0)
-        for (int sd = 1; sd <= l; sd++)
+    if (left_piece_num > 0)
+        for (int sd = 1; sd <= left_piece_num; sd++)
             checkerboard_piece_num[player][quadrant4 - sd * 19 + sd] = checkerboard_piece_num[player][quadrant4];
-    if (r > 0)
-        for (int sd = 1; sd <= r; sd++)
+    if (right_piece_num > 0)
+        for (int sd = 1; sd <= right_piece_num; sd++)
             checkerboard_piece_num[player][quadrant4 + sd * 18] = checkerboard_piece_num[player][quadrant4];
 
 //printf("\n l4=%d r4=%d\n",l,r);
 
 }
 
-int Judge(int checkerboard_piece_num[][1700], const int player)                   //胜负判断
+int WhoIsWinner(int checkerboard_piece_num[][1700], const int player)                   //胜负判断
 {
     int i;
     int temp;
@@ -216,7 +218,8 @@ void Grade(const int checkerboard[][20], const int checkerboard_piece_num[][1700
             //printf("\n%d%d%d%d",y,y,y,y);
 
             if (checkerboard[x][y] == 0) {//printf("\n%d%d%d%d",y,y,y,y);
-                quadrant1 = (y - 1) * 19 + x, quadrant2 = 19 * (y - 1) + x + 400, quadrant3 = 19 * (y - 1) + x + 800, quadrant4 =
+                quadrant1 = (y - 1) * 19 + x, quadrant2 = 19 * (y - 1) + x + 400, quadrant3 =
+                        19 * (y - 1) + x + 800, quadrant4 =
                         19 * (y - 1) + x + 1200;
 
                 l = 0, r = 0;//横连
@@ -337,13 +340,15 @@ void Grade(const int checkerboard[][20], const int checkerboard_piece_num[][1700
                     if ((6 - zong) > 0) {
 
                         if (l >= 0)
-                            if ((checkerboard_piece_num[player][quadrant2 - l * 19 - k * 19] < 0 || (y - l - k) == 0))//左边界
+                            if ((checkerboard_piece_num[player][quadrant2 - l * 19 - k * 19] < 0 ||
+                                 (y - l - k) == 0))//左边界
                             {
                                 sub++;
 
                             }
                         if (r >= 0)
-                            if (checkerboard_piece_num[player][quadrant2 + k * 19 + r * 19] < 0 || (y + r + k) == 19)//右边界
+                            if (checkerboard_piece_num[player][quadrant2 + k * 19 + r * 19] < 0 ||
+                                (y + r + k) == 19)//右边界
                             {
                                 sub++;
 
@@ -435,13 +440,15 @@ void Grade(const int checkerboard[][20], const int checkerboard_piece_num[][1700
                 for (int k = 1; k <= 6 - zuo; k++) {
 
                     if (l >= 0)
-                        if (checkerboard_piece_num[player][quadrant3 - l * 20 - k * 20] < 0 || ((y - l - k) == 0 && (x - l - k) == 0))//左边界
+                        if (checkerboard_piece_num[player][quadrant3 - l * 20 - k * 20] < 0 ||
+                            ((y - l - k) == 0 && (x - l - k) == 0))//左边界
                         {
                             sub++;
 
                         }
                     if (r >= 0)
-                        if (checkerboard_piece_num[player][quadrant3 + k * 20 + r * 20] < 0 || ((y + r + k) == 0 && (x + r + k) == 0))//右边界
+                        if (checkerboard_piece_num[player][quadrant3 + k * 20 + r * 20] < 0 ||
+                            ((y + r + k) == 0 && (x + r + k) == 0))//右边界
                         {
                             sub++;
 
@@ -553,13 +560,15 @@ break;
                 for (int k = 1; k <= 6 - you; k++) {
 
                     if (l >= 0)
-                        if (checkerboard_piece_num[player][quadrant4 - l * 18 - k * 18] < 0 || ((y - l - k) == 0 && (x + l + k) == 0))//左边界
+                        if (checkerboard_piece_num[player][quadrant4 - l * 18 - k * 18] < 0 ||
+                            ((y - l - k) == 0 && (x + l + k) == 0))//左边界
                         {
                             sub++;
 
                         }
                     if (r >= 0)
-                        if (checkerboard_piece_num[player][quadrant4 + k * 18 + r * 18] < 0 || ((y + r + k) == 0 && (x - r - k) == 0))//右边界
+                        if (checkerboard_piece_num[player][quadrant4 + k * 18 + r * 18] < 0 ||
+                            ((y + r + k) == 0 && (x - r - k) == 0))//右边界
                         {
                             sub++;
 
@@ -712,7 +721,7 @@ for(int i=1;i<=19;i++)
     }
 
 //	printf("\n player==%d  的最大table值为 %d %d\n",player,table_ply[x2_max][y2_max],table_cmp[x1_max][y1_max]) ;
-    winner = Judge(checkerboard_piece_num, player);
+    winner = WhoIsWinner(checkerboard_piece_num, player);
 
 
 }
@@ -1104,7 +1113,8 @@ void jingsai(int checkerboard1[][20], int checkerboard_piece_num1[][1700], int p
 
 }
 
-void record(int checkerboard[][20], int checkerboard1[][20], int checkerboard_piece_num[][1700], int checkerboard_piece_num1[][1700]) {
+void record(int checkerboard[][20], int checkerboard1[][20], int checkerboard_piece_num[][1700],
+            int checkerboard_piece_num1[][1700]) {
     memcpy(checkerboard1, checkerboard, sizeof(int) * 20 * 20);
     memcpy(checkerboard_piece_num1, checkerboard_piece_num, sizeof(int) * 3 * 1700);
 }
