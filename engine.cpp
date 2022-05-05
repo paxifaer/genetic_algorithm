@@ -743,7 +743,7 @@ void Variate(chromosome *individual, int fitness_standard, int fitness_max) {
         masker << 1;
     }
     masker >> 1;
-    individual->huowu = individual->huowu ^ masker + 400;//实现基因突变，运用数学的方法,  掩码（）：1011111  ，掩码计算方式，对应位掩码值为0，则该位的值取反(0代表变异，1代表不变异)      （111）10 = (1110001)2      (1110001)2     varite->  (1010001)2 = (79)10
+    individual->huowu = individual->huowu ^ masker;//实现基因突变，借用了子网掩码的方式,  掩码（）：1011111  ，掩码计算方式，对应位掩码值为0，则该位的值取反(0代表变异，1代表不变异)      （111）10 = (1110001)2      (1110001)2     varite->  (1010001)2 = (79)10
 
     masker = 0;
     for (int i = 0; i < 9; i++) {
@@ -753,7 +753,7 @@ void Variate(chromosome *individual, int fitness_standard, int fitness_max) {
     }
     masker >> 1;
 
-    individual->chongwu = individual->chongwu ^ masker + 200;//实现基因突变，运用数学的方法
+    individual->chongwu = individual->chongwu ^ masker;
     masker = 0;
     for (int i = 0; i < 9; i++) {
         probability = VariateMasker(individual, fitness_standard, fitness_max);
@@ -761,7 +761,7 @@ void Variate(chromosome *individual, int fitness_standard, int fitness_max) {
         masker << 1;
     }
     masker >> 1;
-    individual->shuanghuosi = individual->shuanghuosi ^ masker + 150;//实现基因突变，运用数学的方法
+    individual->shuanghuosi = individual->shuanghuosi ^ masker;
     masker = 0;
     for (int i = 0; i < 8; i++) {
         probability = VariateMasker(individual, fitness_standard, fitness_max);
@@ -769,7 +769,7 @@ void Variate(chromosome *individual, int fitness_standard, int fitness_max) {
         masker << 1;
     }
     masker >> 1;
-    individual->danhuosi = individual->danhuosi ^ masker + 80;//实现基因突变，运用数学的方法
+    individual->danhuosi = individual->danhuosi ^ masker;
     masker = 0;
     for (int i = 0; i < 7; i++) {
         probability = VariateMasker(individual, fitness_standard, fitness_max);
@@ -777,7 +777,7 @@ void Variate(chromosome *individual, int fitness_standard, int fitness_max) {
         masker << 1;
     }
     masker>> 1;
-    individual->miansi = individual->miansi ^ masker + 60;//实现基因突变，运用数学的方法
+    individual->miansi = individual->miansi ^ masker;
     masker = 0;
     for (int i = 0; i < 6; i++) {
         probability = VariateMasker(individual, fitness_standard, fitness_max);
@@ -785,7 +785,7 @@ void Variate(chromosome *individual, int fitness_standard, int fitness_max) {
         masker << 1;
     }
     masker >> 1;
-    individual->huosan = individual->huosan ^ masker + 100;//实现基因突变，运用数学的方法
+    individual->huosan = individual->huosan ^ masker;
     masker = 0;
     for (int i = 0; i < 4; i++) {
         probability = VariateMasker(individual, fitness_standard, fitness_max);
@@ -793,7 +793,7 @@ void Variate(chromosome *individual, int fitness_standard, int fitness_max) {
         masker << 1;
     }
     masker >> 1;
-    individual->miansan = individual->miansan ^ masker + 40;//实现基因突变，运用数学的方法
+    individual->miansan = individual->miansan ^ masker;
     masker = 0;
     for (int i = 0; i < 3; i++) {
         probability = VariateMasker(individual, fitness_standard, fitness_max);
@@ -801,8 +801,7 @@ void Variate(chromosome *individual, int fitness_standard, int fitness_max) {
         masker << 1;
     }
     masker >> 1;
-    individual->huoer = individual->huoer ^ masker;//实现基因突变，运用数学的方法
-
+    individual->huoer = individual->huoer ^ masker;
 }
 
 void Variation(chromosome *g, int fitness_standard, int fitness_max)//基因变异
@@ -810,29 +809,29 @@ void Variation(chromosome *g, int fitness_standard, int fitness_max)//基因变�
     Variate(g, fitness_standard, fitness_max);
 }
 
-int pc(int fitness_standard, int fitness_max, int f)//每条染色体的基因是否发生交叉互换
+int CrossingOverJudge(int fitness_standard, int fitness_max, int f)//每条染色体的基因是否发生交叉互换
 {
-    float p = 0.7;
+    float probability = 0.7;
     if (f < fitness_standard)
-        p = 0.9;
+        probability = 0.9;
     else if (fitness_max != fitness_standard)
-        p = 0.9 - (float) (0.9 - 0.6) * (f - fitness_standard) / (fitness_max - fitness_standard);
-    float sd;
+        probability = 0.9 - (float) (0.9 - 0.6) * (f - fitness_standard) / (fitness_max - fitness_standard);
+    float judge;
     int x = rand() % 11;
-    sd = p * x;
-    if (sd >= 1)
+    judge = probability * x;
+    if (judge >= 1)
         return 1;
     else return 0;
 }
 
 chromosome cz[21];
 
-void exchange(chromosome x, chromosome y, int &num, int fitness_standard, int fitness_max) {
+void CrossingOver(chromosome x, chromosome y, int &num, int fitness_standard, int fitness_max) {
     int n = num;
     int nu = 0;
-    int st = pc(fitness_standard, fitness_max, x.shiyingdu);
+    int judge = CrossingOverJudge(fitness_standard, fitness_max, x.shiyingdu);
 
-    if (st == 1) {
+    if (judge == 1) {
         cz[n].huowu = y.huowu;
         cz[n++].huowu = x.huowu;
         n++;
@@ -844,9 +843,9 @@ void exchange(chromosome x, chromosome y, int &num, int fitness_standard, int fi
 
     }
     n -= 2;
-    st = pc(fitness_standard, fitness_max, x.shiyingdu);
+    judge = CrossingOverJudge(fitness_standard, fitness_max, x.shiyingdu);
 
-    if (st == 1) {
+    if (judge == 1) {
         cz[n].chongwu = y.chongwu;
         cz[n++].chongwu = x.chongwu;
         n++;
@@ -857,12 +856,11 @@ void exchange(chromosome x, chromosome y, int &num, int fitness_standard, int fi
         n++;
 
     }
-
     n -= 2;
 
-    st = pc(fitness_standard, fitness_max, x.shiyingdu);
+    judge = CrossingOverJudge(fitness_standard, fitness_max, x.shiyingdu);
 
-    if (st == 1) {
+    if (judge == 1) {
         cz[n].shuanghuosi = y.shuanghuosi;
         cz[n++].shuanghuosi = x.shuanghuosi;
         n++;
@@ -876,8 +874,8 @@ void exchange(chromosome x, chromosome y, int &num, int fitness_standard, int fi
     }
     n -= 2;
 
-    st = pc(fitness_standard, fitness_max, x.shiyingdu);
-    if (st == 1) {
+    judge = CrossingOverJudge(fitness_standard, fitness_max, x.shiyingdu);
+    if (judge == 1) {
         cz[n].danhuosi = y.danhuosi;
         cz[n++].danhuosi = x.danhuosi;
         n++;
@@ -887,8 +885,8 @@ void exchange(chromosome x, chromosome y, int &num, int fitness_standard, int fi
         n++;
     }
     n -= 2;
-    st = pc(fitness_standard, fitness_max, x.shiyingdu);
-    if (st == 1) {
+    judge = CrossingOverJudge(fitness_standard, fitness_max, x.shiyingdu);
+    if (judge == 1) {
         cz[n].miansi = y.miansi;
         cz[n++].miansi = x.miansi;
         n++;
@@ -898,8 +896,8 @@ void exchange(chromosome x, chromosome y, int &num, int fitness_standard, int fi
         n++;
     }
     n -= 2;
-    st = pc(fitness_standard, fitness_max, x.shiyingdu);
-    if (st == 1) {
+    judge = CrossingOverJudge(fitness_standard, fitness_max, x.shiyingdu);
+    if (judge == 1) {
         cz[n].huosan = y.huosan;
         cz[n++].huosan = x.huosan;
         n++;
@@ -909,8 +907,8 @@ void exchange(chromosome x, chromosome y, int &num, int fitness_standard, int fi
         n++;
     }
     n -= 2;
-    st = pc(fitness_standard, fitness_max, x.shiyingdu);
-    if (st == 1) {
+    judge = CrossingOverJudge(fitness_standard, fitness_max, x.shiyingdu);
+    if (judge == 1) {
         cz[n].miansan = y.miansan;
         cz[n++].miansan = x.miansan;
         n++;
@@ -921,8 +919,8 @@ void exchange(chromosome x, chromosome y, int &num, int fitness_standard, int fi
     }
 
     n -= 2;
-    st = pc(fitness_standard, fitness_max, x.shiyingdu);
-    if (st == 1) {
+    judge = CrossingOverJudge(fitness_standard, fitness_max, x.shiyingdu);
+    if (judge == 1) {
         cz[n].huoer = y.huoer;
         cz[n++].huoer = x.huoer;
         n++;
@@ -942,7 +940,7 @@ void Cz(chromosome champion[], int fitness_standard, int i, int fitness_max)//�
     int nu = 0;
     for (int i = 1; i <= 5; i++) {
         for (int j = i + 1; j <= 5; j++) {
-            exchange(champion[i], champion[j], num, fitness_standard, fitness_max);//每两个不同的染色体开始交叉
+            CrossingOver(champion[i], champion[j], num, fitness_standard, fitness_max);//每两个不同的染色体开始交叉
         }
     }
 }
