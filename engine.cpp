@@ -200,7 +200,7 @@ void Grade(const int checkerboard[][20], const int checkerboard_piece_num[][1700
     int heng, zong, zuo, you;
     (enemy == ply) ? (enemy = 2) : (enemy = 1);
 /*六连=888888(极值)，活五=2500，冲五=600，双活四=400
-单活四加200，每个眠四加100，大苏打实打实大苏打撒旦每个活三加50，每个眠三加10
+单活四加200，每个眠四加100，每个活三加50，每个眠三加10
 每个活二加4， 每个眠二加1*/
 // huowu 12  chongwu 9 shuanghuosi 9  danhuosi 8 miansi 7  huosan 6 miansan 4  huoer 3
 
@@ -311,9 +311,6 @@ void Grade(const int checkerboard[][20], const int checkerboard_piece_num[][1700
 //printf("\nheng  %d",heng);
 
                 //printf("\n\n\n 3 table[x][y]=%d ",table[x][y]) ;
-
-
-
 
 
                 l = 0, r = 0;//纵连
@@ -724,13 +721,13 @@ for(int i=1;i<=19;i++)
 
 chromosome chongzu[21];
 
-int VariateMasker(chromosome *champion, int avg, int fmax)//基因变异概率
+int VariateMasker(chromosome *champion, int fitness_standard, int fitness_max)//基因变异概率
 {
     float mutation_probability;
-    if (champion->shiyingdu < avg) {
+    if (champion->shiyingdu < fitness_standard) {
         mutation_probability = 0.1;
-    } else if (fmax != avg) {
-        mutation_probability = 0.1 - (0.1 - 0.01) * ((float) fmax - (float) champion->shiyingdu) / (fmax - avg);
+    } else if (fitness_max != fitness_standard) {
+        mutation_probability = 0.1 - (0.1 - 0.01) * ((float) fitness_max - (float) champion->shiyingdu) / (fitness_max - fitness_standard);
     }
     float variate_judge = (rand() % 100) * mutation_probability;
     if (variate_judge >= 1)
@@ -738,88 +735,88 @@ int VariateMasker(chromosome *champion, int avg, int fmax)//基因变异概率
     else return 0;
 
 }// huowu 12  chongwu 9 shuanghuosi 9  danhuosi 8 miansi 7  huosan 6 miansan 4  huoer 3
-void Variate(chromosome *g, int avg, int fmax) {
-    int p, x = 0;
+void Variate(chromosome *individual, int fitness_standard, int fitness_max) {
+    int probability, masker = 0;
     for (int i = 0; i < 12; i++) {
-        p = VariateMasker(g, avg, fmax);
-        x += p;
-        x << 1;
+        probability = VariateMasker(individual, fitness_standard, fitness_max);
+        masker += probability;
+        masker << 1;
     }
-    x >> 1;
-    g->huowu = g->huowu ^ x + 400;//实现基因突变，运用数学的方法,  掩码（）：1011111  ，掩码计算方式，对应位掩码值为0，则该位的值取反(0代表变异，1代表不变异)      （111）10 = (1110001)2      (1110001)2     varite->  (1010001)2 = (79)10
+    masker >> 1;
+    individual->huowu = individual->huowu ^ masker + 400;//实现基因突变，运用数学的方法,  掩码（）：1011111  ，掩码计算方式，对应位掩码值为0，则该位的值取反(0代表变异，1代表不变异)      （111）10 = (1110001)2      (1110001)2     varite->  (1010001)2 = (79)10
 
-    x = 0;
+    masker = 0;
     for (int i = 0; i < 9; i++) {
-        p = VariateMasker(g, avg, fmax);
-        x += p;
-        x << 1;
+        probability = VariateMasker(individual, fitness_standard, fitness_max);
+        masker += probability;
+        masker << 1;
     }
-    x >> 1;
+    masker >> 1;
 
-    g->chongwu = g->chongwu ^ x + 200;//实现基因突变，运用数学的方法
-    x = 0;
+    individual->chongwu = individual->chongwu ^ masker + 200;//实现基因突变，运用数学的方法
+    masker = 0;
     for (int i = 0; i < 9; i++) {
-        p = VariateMasker(g, avg, fmax);
-        x += p;
-        x << 1;
+        probability = VariateMasker(individual, fitness_standard, fitness_max);
+        masker += probability;
+        masker << 1;
     }
-    x >> 1;
-    g->shuanghuosi = g->shuanghuosi ^ x + 150;//实现基因突变，运用数学的方法
-    x = 0;
+    masker >> 1;
+    individual->shuanghuosi = individual->shuanghuosi ^ masker + 150;//实现基因突变，运用数学的方法
+    masker = 0;
     for (int i = 0; i < 8; i++) {
-        p = VariateMasker(g, avg, fmax);
-        x += p;
-        x << 1;
+        probability = VariateMasker(individual, fitness_standard, fitness_max);
+        masker += probability;
+        masker << 1;
     }
-    x >> 1;
-    g->danhuosi = g->danhuosi ^ x + 80;//实现基因突变，运用数学的方法
-    x = 0;
+    masker >> 1;
+    individual->danhuosi = individual->danhuosi ^ masker + 80;//实现基因突变，运用数学的方法
+    masker = 0;
     for (int i = 0; i < 7; i++) {
-        p = VariateMasker(g, avg, fmax);
-        x += p;
-        x << 1;
+        probability = VariateMasker(individual, fitness_standard, fitness_max);
+        masker += probability;
+        masker << 1;
     }
-    x >> 1;
-    g->miansi = g->miansi ^ x + 60;//实现基因突变，运用数学的方法
-    x = 0;
+    masker>> 1;
+    individual->miansi = individual->miansi ^ masker + 60;//实现基因突变，运用数学的方法
+    masker = 0;
     for (int i = 0; i < 6; i++) {
-        p = VariateMasker(g, avg, fmax);
-        x += p;
-        x << 1;
+        probability = VariateMasker(individual, fitness_standard, fitness_max);
+        masker += probability;
+        masker << 1;
     }
-    x >> 1;
-    g->huosan = g->huosan ^ x + 100;//实现基因突变，运用数学的方法
-    x = 0;
+    masker >> 1;
+    individual->huosan = individual->huosan ^ masker + 100;//实现基因突变，运用数学的方法
+    masker = 0;
     for (int i = 0; i < 4; i++) {
-        p = VariateMasker(g, avg, fmax);
-        x += p;
-        x << 1;
+        probability = VariateMasker(individual, fitness_standard, fitness_max);
+        masker += probability;
+        masker << 1;
     }
-    x >> 1;
-    g->miansan = g->miansan ^ x + 40;//实现基因突变，运用数学的方法
-    x = 0;
+    masker >> 1;
+    individual->miansan = individual->miansan ^ masker + 40;//实现基因突变，运用数学的方法
+    masker = 0;
     for (int i = 0; i < 3; i++) {
-        p = VariateMasker(g, avg, fmax);
-        x += p;
-        x << 1;
+        probability = VariateMasker(individual, fitness_standard, fitness_max);
+        masker += probability;
+        masker << 1;
     }
-    x >> 1;
-    g->huoer = g->huoer ^ x;//实现基因突变，运用数学的方法
+    masker >> 1;
+    individual->huoer = individual->huoer ^ masker;//实现基因突变，运用数学的方法
 
 }
 
-void Variation(chromosome *g, int avg, int fmax)//基因变异
+void Variation(chromosome *g, int fitness_standard, int fitness_max)//基因变异
 {
-    Variate(g, avg, fmax);
+    Variate(g, fitness_standard, fitness_max);
 }
 
-int pc(int avg, int fmax, int f)//每条染色体的基因是否发生交叉互换
+int pc(int fitness_standard, int fitness_max, int f)//每条染色体的基因是否发生交叉互换
 {
     float p = 0.7;
-    if (f < avg)
+    if (f < fitness_standard)
         p = 0.9;
-    else if (fmax != avg)
-        p = 0.9 - (float) (0.9 - 0.6) * (f - avg) / (fmax - avg);
+    else if (fitness_max != fitness_standard)
+        p = 0.9 - (float) (0.9 - 0.6) * (f - fitness_standard) / (fitness_max - fitness_standard);
     float sd;
     int x = rand() % 11;
     sd = p * x;
@@ -830,10 +827,10 @@ int pc(int avg, int fmax, int f)//每条染色体的基因是否发生交叉互�
 
 chromosome cz[21];
 
-void exchange(chromosome x, chromosome y, int &num, int avg, int fmax) {
+void exchange(chromosome x, chromosome y, int &num, int fitness_standard, int fitness_max) {
     int n = num;
     int nu = 0;
-    int st = pc(avg, fmax, x.shiyingdu);
+    int st = pc(fitness_standard, fitness_max, x.shiyingdu);
 
     if (st == 1) {
         cz[n].huowu = y.huowu;
@@ -847,7 +844,7 @@ void exchange(chromosome x, chromosome y, int &num, int avg, int fmax) {
 
     }
     n -= 2;
-    st = pc(avg, fmax, x.shiyingdu);
+    st = pc(fitness_standard, fitness_max, x.shiyingdu);
 
     if (st == 1) {
         cz[n].chongwu = y.chongwu;
@@ -863,7 +860,7 @@ void exchange(chromosome x, chromosome y, int &num, int avg, int fmax) {
 
     n -= 2;
 
-    st = pc(avg, fmax, x.shiyingdu);
+    st = pc(fitness_standard, fitness_max, x.shiyingdu);
 
     if (st == 1) {
         cz[n].shuanghuosi = y.shuanghuosi;
@@ -879,7 +876,7 @@ void exchange(chromosome x, chromosome y, int &num, int avg, int fmax) {
     }
     n -= 2;
 
-    st = pc(avg, fmax, x.shiyingdu);
+    st = pc(fitness_standard, fitness_max, x.shiyingdu);
     if (st == 1) {
         cz[n].danhuosi = y.danhuosi;
         cz[n++].danhuosi = x.danhuosi;
@@ -890,7 +887,7 @@ void exchange(chromosome x, chromosome y, int &num, int avg, int fmax) {
         n++;
     }
     n -= 2;
-    st = pc(avg, fmax, x.shiyingdu);
+    st = pc(fitness_standard, fitness_max, x.shiyingdu);
     if (st == 1) {
         cz[n].miansi = y.miansi;
         cz[n++].miansi = x.miansi;
@@ -901,7 +898,7 @@ void exchange(chromosome x, chromosome y, int &num, int avg, int fmax) {
         n++;
     }
     n -= 2;
-    st = pc(avg, fmax, x.shiyingdu);
+    st = pc(fitness_standard, fitness_max, x.shiyingdu);
     if (st == 1) {
         cz[n].huosan = y.huosan;
         cz[n++].huosan = x.huosan;
@@ -912,7 +909,7 @@ void exchange(chromosome x, chromosome y, int &num, int avg, int fmax) {
         n++;
     }
     n -= 2;
-    st = pc(avg, fmax, x.shiyingdu);
+    st = pc(fitness_standard, fitness_max, x.shiyingdu);
     if (st == 1) {
         cz[n].miansan = y.miansan;
         cz[n++].miansan = x.miansan;
@@ -924,7 +921,7 @@ void exchange(chromosome x, chromosome y, int &num, int avg, int fmax) {
     }
 
     n -= 2;
-    st = pc(avg, fmax, x.shiyingdu);
+    st = pc(fitness_standard, fitness_max, x.shiyingdu);
     if (st == 1) {
         cz[n].huoer = y.huoer;
         cz[n++].huoer = x.huoer;
@@ -939,13 +936,13 @@ void exchange(chromosome x, chromosome y, int &num, int avg, int fmax) {
 }
 
 
-void Cz(chromosome champion[], int avg, int i, int fmax)//开始基因重组
+void Cz(chromosome champion[], int fitness_standard, int i, int fitness_max)//开始基因重组
 {
     int num = 1;
     int nu = 0;
     for (int i = 1; i <= 5; i++) {
         for (int j = i + 1; j <= 5; j++) {
-            exchange(champion[i], champion[j], num, avg, fmax);//每两个不同的染色体开始交叉
+            exchange(champion[i], champion[j], num, fitness_standard, fitness_max);//每两个不同的染色体开始交叉
         }
     }
 }
@@ -961,13 +958,13 @@ int FindMaxValue(chromosome sb[]) {
 
 }
 
-void CrossingOver(chromosome champion[], int avg) {
+void CrossingOver(chromosome champion[], int fitness_standard) {
     int nu = 0;
     int max_value = FindMaxValue(champion);//找到适应度最大值
     for (int i = 1; i <= 5; i++)//冠军染色体开始变异
     {
-        Variation(&champion[i], avg, max_value);
-        Cz(champion, avg, i, max_value);//基因重组
+        Variation(&champion[i], fitness_standard, max_value);
+        Cz(champion, fitness_standard, i, max_value);//基因重组
         //	printf("%d ",nu++);
     }
 
