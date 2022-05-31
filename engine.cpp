@@ -30,7 +30,7 @@ struct chromosome {
     int shuanghuosi;
     int danhuosi, miansi, huosan, miansan, huoer;
 
-    int shiyingdu = 0;
+    int adaptability = 0;
 
 };
 chromosome population[21];
@@ -68,11 +68,11 @@ void Record(int checkerboard[][20], int checkerboard_piece_num[3][1700], const i
 
 
     int enemy = 1;
-    int quadrant1 = (y_position - 1) * 19 + x_position, quadrant2 =
-            19 * (y_position - 1) + x_position + 400, quadrant3 =
-            19 * (y_position - 1) + x_position + 800, quadrant4 =
-            19 * (y_position - 1) + x_position + 1200;
-    (enemy == player) ? (enemy = 2) : (enemy = 1);
+    int quadrant1 = (y_position - 1) * 19 + x_position,
+        quadrant2 = 19 * (y_position - 1) + x_position + 400,
+        quadrant3 = 19 * (y_position - 1) + x_position + 800,
+        quadrant4 = 19 * (y_position - 1) + x_position + 1200;
+        (enemy == player) ? (enemy = 2) : (enemy = 1);
 
     checkerboard_piece_num[player][(y_position - 1) * 19 + x_position] = 1;
     checkerboard_piece_num[player][19 * (y_position - 1) + x_position + 400] = 1;
@@ -199,10 +199,7 @@ void Grade(const int checkerboard[][20], const int checkerboard_piece_num[][1700
     int player = ply;
     int heng, zong, zuo, you;
     (enemy == ply) ? (enemy = 2) : (enemy = 1);
-/*六连=888888(极值)，活五=2500，冲五=600，双活四=400
-单活四加200，每个眠四加100，每个活三加50，每个眠三加10
-每个活二加4， 每个眠二加1*/
-// huowu 12  chongwu 9 shuanghuosi 9  danhuosi 8 miansi 7  huosan 6 miansan 4  huoer 3
+
 
     for (x = 1; x <= 19; x++) {
 
@@ -403,15 +400,6 @@ void Grade(const int checkerboard[][20], const int checkerboard_piece_num[][1700
                     }
 
                 if (zong >= 7) table[x][y] += 8888888;
-//if((x-1+'A')=='B'&&(y-1+'A')=='F')
-//printf("\n BF=zong  %d",zong);
-//if((x-1+'A')=='B'&&(y-1+'A')=='J'&&checkerboard[2][6]!=0)
-//printf("\n BJ=zong  %d  l=%d  r=%d table= %d \n",zong,l,r,table[x][y]);
-
-//if(l>=3||r>=3)
-//printf("\nl2=%d   r2=%d \n",l,r);
-                //printf("\n 4 table[x][y]=%d ",table[x][y]) ;
-
 
 
 
@@ -454,27 +442,7 @@ void Grade(const int checkerboard[][20], const int checkerboard_piece_num[][1700
                 }
 
 
-//printf("\nl=%d   r=%d \n",l,r);
-/*for(k=1;k<=6-zuo;k++)
-{int sub=0;
 
-	if((checkerboard_piece_num[enemy][quadrant3-l*19-k*19-l-k]>0||((x-1)>0&&(y-1)>0)&&checkerboard_piece_num[enemy][quadrant3+r*19+k*19+r+k]<=0)||(checkerboard_piece_num[enemy][quadrant3+r*20+k*20]>0||((x+1)<=19&&(y+1)<=19)&&checkerboard_piece_num[enemy][quadrant3-l*20-k*20]<=0))
-	{
-	if(sub<2)
-	temp=1;//眠棋
-	sub++;
-	}
-	else if(sub>=2)
-{	temp=9;
-
-break;
-
-}
-
-//死棋
-	else
-	temp=0; //活棋
-}*/
                 if (zuo <= 6) {
                     switch (zuo) {
                         case 1:
@@ -724,10 +692,10 @@ chromosome chongzu[21];
 int VariateMasker(chromosome *champion, int fitness_standard, int fitness_max)//基因变异概率
 {
     float mutation_probability;
-    if (champion->shiyingdu < fitness_standard) {
+    if (champion->adaptability < fitness_standard) {
         mutation_probability = 0.1;
     } else if (fitness_max != fitness_standard) {
-        mutation_probability = 0.1 - (0.1 - 0.01) * ((float) fitness_max - (float) champion->shiyingdu) / (fitness_max - fitness_standard);
+        mutation_probability = 0.1 - (0.1 - 0.01) * ((float) fitness_max - (float) champion->adaptability) / (fitness_max - fitness_standard);
     }
     float variate_judge = (rand() % 100) * mutation_probability;
     if (variate_judge >= 1)
@@ -826,10 +794,10 @@ int CrossingOverJudge(int fitness_standard, int fitness_max, int f)//每条染�
 
 chromosome cz[21];
 
-void CrossingOver(chromosome x, chromosome y, int &num, int fitness_standard, int fitness_max) {
+void CrossingOver(chromosome &x, chromosome &y, int &num, int fitness_standard, int fitness_max) {
     int n = num;
     int nu = 0;
-    int judge = CrossingOverJudge(fitness_standard, fitness_max, x.shiyingdu);
+    int judge = CrossingOverJudge(fitness_standard, fitness_max, x.adaptability);
 
     if (judge == 1) {
         cz[n].huowu = y.huowu;
@@ -843,7 +811,7 @@ void CrossingOver(chromosome x, chromosome y, int &num, int fitness_standard, in
 
     }
     n -= 2;
-    judge = CrossingOverJudge(fitness_standard, fitness_max, x.shiyingdu);
+    judge = CrossingOverJudge(fitness_standard, fitness_max, x.adaptability);
 
     if (judge == 1) {
         cz[n].chongwu = y.chongwu;
@@ -858,7 +826,7 @@ void CrossingOver(chromosome x, chromosome y, int &num, int fitness_standard, in
     }
     n -= 2;
 
-    judge = CrossingOverJudge(fitness_standard, fitness_max, x.shiyingdu);
+    judge = CrossingOverJudge(fitness_standard, fitness_max, x.adaptability);
 
     if (judge == 1) {
         cz[n].shuanghuosi = y.shuanghuosi;
@@ -874,7 +842,7 @@ void CrossingOver(chromosome x, chromosome y, int &num, int fitness_standard, in
     }
     n -= 2;
 
-    judge = CrossingOverJudge(fitness_standard, fitness_max, x.shiyingdu);
+    judge = CrossingOverJudge(fitness_standard, fitness_max, x.adaptability);
     if (judge == 1) {
         cz[n].danhuosi = y.danhuosi;
         cz[n++].danhuosi = x.danhuosi;
@@ -885,7 +853,7 @@ void CrossingOver(chromosome x, chromosome y, int &num, int fitness_standard, in
         n++;
     }
     n -= 2;
-    judge = CrossingOverJudge(fitness_standard, fitness_max, x.shiyingdu);
+    judge = CrossingOverJudge(fitness_standard, fitness_max, x.adaptability);
     if (judge == 1) {
         cz[n].miansi = y.miansi;
         cz[n++].miansi = x.miansi;
@@ -896,7 +864,7 @@ void CrossingOver(chromosome x, chromosome y, int &num, int fitness_standard, in
         n++;
     }
     n -= 2;
-    judge = CrossingOverJudge(fitness_standard, fitness_max, x.shiyingdu);
+    judge = CrossingOverJudge(fitness_standard, fitness_max, x.adaptability);
     if (judge == 1) {
         cz[n].huosan = y.huosan;
         cz[n++].huosan = x.huosan;
@@ -907,7 +875,7 @@ void CrossingOver(chromosome x, chromosome y, int &num, int fitness_standard, in
         n++;
     }
     n -= 2;
-    judge = CrossingOverJudge(fitness_standard, fitness_max, x.shiyingdu);
+    judge = CrossingOverJudge(fitness_standard, fitness_max, x.adaptability);
     if (judge == 1) {
         cz[n].miansan = y.miansan;
         cz[n++].miansan = x.miansan;
@@ -919,7 +887,7 @@ void CrossingOver(chromosome x, chromosome y, int &num, int fitness_standard, in
     }
 
     n -= 2;
-    judge = CrossingOverJudge(fitness_standard, fitness_max, x.shiyingdu);
+    judge = CrossingOverJudge(fitness_standard, fitness_max, x.adaptability);
     if (judge == 1) {
         cz[n].huoer = y.huoer;
         cz[n++].huoer = x.huoer;
@@ -934,7 +902,7 @@ void CrossingOver(chromosome x, chromosome y, int &num, int fitness_standard, in
 }
 
 
-void Cz(chromosome champion[], int fitness_standard, int i, int fitness_max)//开始基因重组
+void GeneticRecombination(chromosome champion[], int fitness_standard, int i, int fitness_max)//开始基因重组
 {
     int num = 1;
     int nu = 0;
@@ -948,8 +916,8 @@ void Cz(chromosome champion[], int fitness_standard, int i, int fitness_max)//�
 int FindMaxValue(chromosome sb[]) {
     int ma = 0;
     for (int i = 1; i <= 5; i++) {
-        if (ma <= sb[i].shiyingdu) {
-            ma = sb[i].shiyingdu;
+        if (ma <= sb[i].adaptability) {
+            ma = sb[i].adaptability;
         }
     }
     return ma;
@@ -962,7 +930,7 @@ void CrossingOver(chromosome champion[], int fitness_standard) {
     for (int i = 1; i <= 5; i++)//冠军染色体开始变异
     {
         Variation(&champion[i], fitness_standard, max_value);
-        Cz(champion, fitness_standard, i, max_value);//基因重组
+        GeneticRecombination(champion, fitness_standard, i, max_value);//基因重组
         //	printf("%d ",nu++);
     }
 
@@ -1008,7 +976,7 @@ void SelectionOfChampions(chromosome population[20]) {
     }
     for (int i = 1; i <= 20; i++) {
         for (int j = i + 1; j <= 20; j++) {
-            if (a[i].shiyingdu < a[j].shiyingdu) {
+            if (a[i].adaptability < a[j].adaptability) {
                 memcpy(&b, &a[i], sizeof(b));
                 memcpy(&c, &a[j], sizeof(c));
                 memcpy(&a[i], &c, sizeof(a[i]));
@@ -1035,24 +1003,24 @@ void Championships(int checkerboard1[][20], int checkerboard_piece_num1[][1700],
                                                    checkerboard1,
                                                    checkerboard_piece_num1);
                 if (black_winner == 0) {
-                    population[population_of_self].shiyingdu += 25;
-                    population[population_of_enemy].shiyingdu += 25;
+                    population[population_of_self].adaptability += 25;
+                    population[population_of_enemy].adaptability += 25;
                 } else if (black_winner == 1) {
-                    population[population_of_self].shiyingdu += 50;
-                    population[population_of_enemy].shiyingdu += 0;
+                    population[population_of_self].adaptability += 50;
+                    population[population_of_enemy].adaptability += 0;
                 } else if (black_winner == 2) {
-                    population[population_of_enemy].shiyingdu += 50;
-                    population[population_of_self].shiyingdu += 0;
+                    population[population_of_enemy].adaptability += 50;
+                    population[population_of_self].adaptability += 0;
                 }
                 if (white_winner == 0) {
-                    population[population_of_self].shiyingdu += 25;
-                    population[population_of_enemy].shiyingdu += 25;
+                    population[population_of_self].adaptability += 25;
+                    population[population_of_enemy].adaptability += 25;
                 } else if (white_winner == 1) {
-                    population[population_of_self].shiyingdu += 50;
-                    population[population_of_enemy].shiyingdu += 0;
+                    population[population_of_self].adaptability += 50;
+                    population[population_of_enemy].adaptability += 0;
                 } else if (white_winner == 2) {
-                    population[population_of_enemy].shiyingdu += 50;
-                    population[population_of_self].shiyingdu += 0;
+                    population[population_of_enemy].adaptability += 50;
+                    population[population_of_self].adaptability += 0;
                 }
 
             }
@@ -1061,7 +1029,7 @@ void Championships(int checkerboard1[][20], int checkerboard_piece_num1[][1700],
 
     int fitness_standard = 0, score_sum = 0;
     for (int i = 1; i <= 20; i++)
-        score_sum += population[i].shiyingdu;
+        score_sum += population[i].adaptability;
     fitness_standard = score_sum / 20;
     SelectionOfChampions(population);//得出冠军的五个序列；
     CrossingOver(champion, fitness_standard); //
@@ -1124,7 +1092,7 @@ void renji() {
             Record(checkerboard, checkerboard_piece_num, player, pos2.x, pos2.y);
             x_position_string_2 = pos2.x + 'A' - 1;
             y_position_string_2 = pos2.y + 'A' - 1; //printf(" %d",num++);
-            //	printf("\n冠军数组 染色体值为：%d %d %d %d %d %d  \n",champion[2].huowu,champion[2].chongwu,champion[2].shuanghuosi,champion[2].huosan,champion[2].huoer,champion[2].shiyingdu);
+            //	printf("\n冠军数组 染色体值为：%d %d %d %d %d %d  \n",champion[2].huowu,champion[2].chongwu,champion[2].shuanghuosi,champion[2].huosan,champion[2].huoer,champion[2].adaptability);
             printf("\n");
             printf("move %c%c%c%c\n", x_position_string_1, y_position_string_1, x_position_string_2,
                    y_position_string_2);
