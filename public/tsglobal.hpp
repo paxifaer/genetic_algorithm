@@ -1,3 +1,4 @@
+#include <type_traits>
 template<unsigned int SIZE>
 struct PublicAlign32pow2
 {

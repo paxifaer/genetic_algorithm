@@ -7,7 +7,7 @@
 
 #include <iostream>
 #include <vector>
-struct Point            //µã×ø±êµÄ½á¹¹Ìå
+struct Point            //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä½á¹¹ï¿½ï¿?
 {
     int x, y;
 };
@@ -21,32 +21,34 @@ struct chromosome {
     int adaptability = 0;
 
 };
-enum check{
-    huowu;
-    chongwu;
-    shuanghuosi;
-    danhuosi;miansi;huosan;miansan; huoer;
-    adaptability ;
+enum  Gene{
+    huowu = 0,
+    chongwu,
+    shuanghuosi,
+    danhuosi,miansi,huosan,miansan, huoer,
+    adaptability 
 };
 
 class SixPiece {
+   public: 
     std::vector<std::vector<int>> population;
-    std::vector<std::vector<int>> champion;//¹Ú¾üÐòÁÐ
+    std::vector<std::vector<int>> champion;//ï¿½Ú¾ï¿½ï¿½ï¿½ï¿½ï¿½
     std::vector<int> global_chromosome[21];
     void Init(int checkerboard[][20], int checkerboard_piece_num[][1700]);
 
     void Record(int checkerboard[][20], int checkerboard_piece_num[3][1700], const int player, int x_position,
                 int y_position) ;
-    int WhoIsWinner(int checkerboard_piece_num[][1700], const int player) ;                  //Ê¤¸ºÅÐ¶Ï
+    int WhoIsWinner(int checkerboard_piece_num[][1700], const int player) ;                  //Ê¤ï¿½ï¿½ï¿½Ð¶ï¿½
 
     void Grade(const int checkerboard[][20], const int checkerboard_piece_num[][1700], int table[][20], const int ply,
-               chromosome gene);       //ÆåÅÌÆÀ·ÖµÄ³ÌÐò£¬¸øÓèÆåÅÌÃ¿¸öµãÒ»¶¨µÄ·ÖÊý
+               chromosome gene);       //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÖµÄ³ï¿½ï¿½ò£¬¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã¿ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ä·ï¿½ï¿½ï¿½
 
-    void Search(int table[][20], int player, int &x, int &y, int checkerboard[][20]);       //ËÑË÷º¯Êý ÕÒ³öÆÀ·Ö±íÖÐ·ÖÖµ×î´óµÄÎ»ÖÃ
+    void Search(int table[][20], int player, int &x, int &y, int checkerboard[][20]);       //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ò³ï¿½ï¿½ï¿½ï¿½Ö±ï¿½ï¿½Ð·ï¿½Öµï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½
 
 
     Point AI(int checkerboard[][20], int checkerboard_piece_num[][1700], int player, int &winner,
              chromosome r1);
+    void SelectionOfChampions(std::vector<int> population[20]) ;
     void Championships(int checkerboard1[][20], int checkerboard_piece_num1[][1700], int player) ;
 
     void ResultCopy(int checkerboard[][20], int checkerboard1[][20], int checkerboard_piece_num[][1700],
@@ -54,9 +56,9 @@ class SixPiece {
 
     void Train(int checkerboard[][20], int checkerboard_piece_num[][1700], int train_time, int winner, int player) ;
 
-    int PopulationPlayAGame(chromosome population1, chromosome population2, int checkerboard[][20],
+    int PopulationPlayAGame(std::vector<int> population1, std::vector<int> population2, int checkerboard[][20],
                             int checkerboard_piece_num[][1700]) ;
-
+    void CrossingOverPrePare(std::vector<std::vector<int>> champion, int fitness_standard) ;
 
 };
 
