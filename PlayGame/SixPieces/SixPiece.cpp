@@ -1,31 +1,23 @@
 #include "SixPiece.h"
-void SixPiece::Init(int checkerboard[][20], int checkerboard_piece_num[][1700])                //³õÊ¼»¯º¯Êý£¬½«¼ÇÂ¼Æå×ÓµÄÊý×é³õÊ¼»¯
+void SixPiece::Init()                //ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½Óµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿?
 {
-    int i, j;
 
-    for (i = 1; i <= 19; i++) {//³õÊ¼»»ÆåÅÌ×´Ì¬
-        for (j = 1; j <= 19; j++) {
-            checkerboard[i][j] = 0;
-        }
+    for(int i=0;i<20;i++)
+    {
+        checkerboard.resize(20);
     }
-
-    for (i = 0; i < 3; i++) {
-        for (j = 1; j <= 361; j++) {
-            checkerboard_piece_num[i][j] = 0;
-        }
+     for(int i=0;i<3;i++)
+    {
+        checkerboard_piece_num.resize(1700);
     }
-
 
 }
 
+/***********************************************************************************************/   //¼ÇÂ¼
 
 
-
-/***********************************************************************************************/   //Áù×ÓÆåºËÐÄ²¿·Ö£¨ÏÈºóÊÖ£¬Ê¤¸ºÅÐ¶¨£¬ÆåÅÌ¼ÇÂ¼£©
-
-
-void SixPiece::Record(int checkerboard[][20], int checkerboard_piece_num[3][1700], const int player, int x_position,
-            int y_position)              //¼ÇÂ¼Æå×Ó¡¢ÆåÊÖµÄÇé¿ö
+void SixPiece::Record(std::vector<std::vector<int>> &checkerboard, std::vector<std::vector<int>> &checkerboard_piece_num, const int player, int x_position,
+            int y_position)              //ËÄ¸ö·½ÏòÆåÅÌ·ÖÊý
 {
     checkerboard[x_position][y_position] = player;
 
@@ -48,16 +40,11 @@ void SixPiece::Record(int checkerboard[][20], int checkerboard_piece_num[3][1700
 
     int left_piece_num = 0, right_piece_num = 0;//ºáÁ¬
     if (quadrant1 - 1 > 0)
-        left_piece_num = checkerboard_piece_num[player][quadrant1 - 1];
+        left_piece_num = checkerboard_piece_num[player][quadrant1 - 1]>0?checkerboard_piece_num[player][quadrant1 - 1] : 0 ;
     if (quadrant1 + 1 <= 361)
-        right_piece_num = checkerboard_piece_num[player][quadrant1 + 1];
+        right_piece_num = checkerboard_piece_num[player][quadrant1 + 1]>0?checkerboard_piece_num[player][quadrant1 + 1]:0;;
 
-
-    if (left_piece_num >= 0)
-        checkerboard_piece_num[player][quadrant1] += left_piece_num;
-    if (right_piece_num >= 0)
-        checkerboard_piece_num[player][quadrant1] += right_piece_num;
-
+    checkerboard_piece_num[player][quadrant1] += left_piece_num + right_piece_num;
 
     if (left_piece_num > 0)
         for (int sd = 1; sd <= left_piece_num; sd++) {
@@ -132,16 +119,13 @@ void SixPiece::Record(int checkerboard[][20], int checkerboard_piece_num[3][1700
 
 }
 
-int SixPiece::WhoIsWinner(int checkerboard_piece_num[][1700], const int player)                   //Ê¤¸ºÅÐ¶Ï
+int SixPiece::WhoIsWinner(const std::vector<std::vector<int>> &checkerboard_piece_num, const int &player)                   //Ê¤ï¿½ï¿½ï¿½Ð¶ï¿½
 {
     int i;
-    int temp;
     int enemy = 1;
     enemy == player ? enemy = 2 : enemy = 1;
-    temp = 0;
     for (i = 1; i <= 1600; i++) {
         if (checkerboard_piece_num[player][i] >= 0) {
-            temp++;
             if (checkerboard_piece_num[player][i] >= 6) {
                 return player;
             }
@@ -150,11 +134,51 @@ int SixPiece::WhoIsWinner(int checkerboard_piece_num[][1700], const int player) 
 }
 
 
+int CheckCheckerBoard(const std::vector<std::vector<int>> &checkerboard_piece_num,const int &step,const int &quadrant,const int &player,const int &emeny,const Point & point)
+{
 
+    int l = 0, r = 0;//ºáÁ¬
+    int heng = checkerboard_piece_num[player][quadrant];
+    int sub = 0,l_sub=0,r_sub=0;
+    for (int k = 1; k <= 6 ; k++) 
+    {//ÅÐ¶ÏÊÇ·ñÓÐµÐ¾üµ²×Å
+        if(point.x-k>0)
+        {
+            if(checkerboard_piece_num[player][quadrant-k*step]<0)
+            {
+                l_sub++;
+            } 
+        } else if(point.x-k == 0)
+        {
+            l_sub++;
+        }
+
+        if(point.x+k<19)
+        {
+            if(checkerboard_piece_num[player][quadrant+k*step]<0)
+            {
+                r_sub++;
+            } 
+        } else if(point.x+k == 19)
+        {
+            r_sub++;
+        }
+    }
+    if(l_sub>0)
+        sub++;
+    if(r_sub>0)
+        sub++;
+    if(sub==0)
+        return 0;
+    else if(sub==1)
+        return 1;
+    else return 9;
+
+}
 /*****************************************************************************************************/           //AIºËÐÄ
 
-void SixPiece::Grade(const int checkerboard[][20], const int checkerboard_piece_num[][1700], int table[][20], const int ply,
-           chromosome gene)         //ÆåÅÌÆÀ·ÖµÄ³ÌÐò£¬¸øÓèÆåÅÌÃ¿¸öµãÒ»¶¨µÄ·ÖÊý
+void SixPiece::Grade(const std::vector<std::vector<int>> &checkerboard, const std::vector<std::vector<int>> &checkerboard_piece_num, std::vector<std::vector<int>> &table, const int ply,
+           const chromosome &gene)         //ÆåÅÌÆÀ·ÖµÄ³ÌÐò£¬¸øÓèÆåÅÌÃ¿¸öµãÒ»¶¨µÄ·ÖÊý
 {
     int x, y, k, r = 0, l = 0, quadrant1, quadrant2, quadrant3, quadrant4;
     int temp = 0;
@@ -175,6 +199,7 @@ void SixPiece::Grade(const int checkerboard[][20], const int checkerboard_piece_
                         19 * (y - 1) + x + 800, quadrant4 =
                         19 * (y - 1) + x + 1200;
 
+                temp = CheckCheckerBoard(checkerboard_piece_num,1,quadrant1,player,enemy,{x,y});
                 l = 0, r = 0;//ºáÁ¬
                 if (x - 1 > 0)
                     l = checkerboard_piece_num[ply][quadrant1 - 1];
@@ -187,7 +212,7 @@ void SixPiece::Grade(const int checkerboard[][20], const int checkerboard_piece_
 
                 temp = 0;
                 int sub = 0;
-                for (int k = 1; k <= 6 - heng; k++) {
+                for (int k = 1; k <= 6 - heng; k++) {//ÅÐ¶ÏÊÇ·ñÓÐµÐ¾üµ²×Å
                     if (l >= 0)
                         if ((checkerboard_piece_num[player][quadrant1 - l - k] < 0 || (x - l - k) == 0))//×ó±ß½ç
                         {
@@ -258,7 +283,7 @@ void SixPiece::Grade(const int checkerboard[][20], const int checkerboard_piece_
 
                 if (heng >= 7) table[x][y] += 8888888;
 
-                l = 0, r = 0;//×ÝÁ¬
+                l = 0, r = 0;//ï¿½ï¿½ï¿½ï¿½
                 if (y - 1 > 0)
                     l = checkerboard_piece_num[player][quadrant2 - 19];
                 if (y + 1 < 20)
@@ -275,14 +300,14 @@ void SixPiece::Grade(const int checkerboard[][20], const int checkerboard_piece_
 
                         if (l >= 0)
                             if ((checkerboard_piece_num[player][quadrant2 - l * 19 - k * 19] < 0 ||
-                                 (y - l - k) == 0))//×ó±ß½ç
+                                 (y - l - k) == 0))//ï¿½ï¿½ß½ï¿?
                             {
                                 sub++;
 
                             }
                         if (r >= 0)
                             if (checkerboard_piece_num[player][quadrant2 + k * 19 + r * 19] < 0 ||
-                                (y + r + k) == 19)//ÓÒ±ß½ç
+                                (y + r + k) == 19)//ï¿½Ò±ß½ï¿½
                             {
                                 sub++;
 
@@ -345,7 +370,7 @@ void SixPiece::Grade(const int checkerboard[][20], const int checkerboard_piece_
                     }
                 if (zong >= 7) table[x][y] += 8888888;
 
-                l = 0, r = 0;//×óÐ±Á¬
+                l = 0, r = 0;//ï¿½ï¿½Ð±ï¿½ï¿½
                 if ((x - 1) > 0 && (y - 1) > 0)
                     l = checkerboard_piece_num[player][quadrant3 - 19 - 1];
                 if ((x + 1) <= 19 && (y + 1) <= 19)
@@ -361,14 +386,14 @@ void SixPiece::Grade(const int checkerboard[][20], const int checkerboard_piece_
 
                     if (l >= 0)
                         if (checkerboard_piece_num[player][quadrant3 - l * 20 - k * 20] < 0 ||
-                            ((y - l - k) == 0 && (x - l - k) == 0))//×ó±ß½ç
+                            ((y - l - k) == 0 && (x - l - k) == 0))//ï¿½ï¿½ß½ï¿?
                         {
                             sub++;
 
                         }
                     if (r >= 0)
                         if (checkerboard_piece_num[player][quadrant3 + k * 20 + r * 20] < 0 ||
-                            ((y + r + k) == 0 && (x + r + k) == 0))//ÓÒ±ß½ç
+                            ((y + r + k) == 0 && (x + r + k) == 0))//ï¿½Ò±ß½ï¿½
                         {
                             sub++;
 
@@ -433,7 +458,7 @@ void SixPiece::Grade(const int checkerboard[][20], const int checkerboard_piece_
                 if (zuo >= 7) table[x][y] += 8888888;
 
 
-                l = 0, r = 0;//ÓÒÐ±Á¬
+                l = 0, r = 0;//ï¿½ï¿½Ð±ï¿½ï¿½
                 if (quadrant4 - 19 + 1 > 1200) {
 
                     l = checkerboard_piece_num[player][quadrant4 - 18];
@@ -452,14 +477,14 @@ void SixPiece::Grade(const int checkerboard[][20], const int checkerboard_piece_
 
                     if (l >= 0)
                         if (checkerboard_piece_num[player][quadrant4 - l * 18 - k * 18] < 0 ||
-                            ((y - l - k) == 0 && (x + l + k) == 0))//×ó±ß½ç
+                            ((y - l - k) == 0 && (x + l + k) == 0))//ï¿½ï¿½ß½ï¿?
                         {
                             sub++;
 
                         }
                     if (r >= 0)
                         if (checkerboard_piece_num[player][quadrant4 + k * 18 + r * 18] < 0 ||
-                            ((y + r + k) == 0 && (x - r - k) == 0))//ÓÒ±ß½ç
+                            ((y + r + k) == 0 && (x - r - k) == 0))//ï¿½Ò±ß½ï¿½
                         {
                             sub++;
 
@@ -528,7 +553,7 @@ void SixPiece::Grade(const int checkerboard[][20], const int checkerboard_piece_
 
 }
 
-void SixPiece::Search(int table[][20], int player, int &x, int &y, int checkerboard[][20])       //ËÑË÷º¯Êý ÕÒ³öÆÀ·Ö±íÖÐ·ÖÖµ×î´óµÄÎ»ÖÃ
+void SixPiece::Search(int table[][20], int player, int &x, int &y, int checkerboard[][20])       //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ò³ï¿½ï¿½ï¿½ï¿½Ö±ï¿½ï¿½Ð·ï¿½Öµï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½
 {
     int i, j;
     int max;
@@ -564,7 +589,7 @@ void SixPiece::Search(int table[][20], int player, int &x, int &y, int checkerbo
 }
 
 Point SixPiece::AI(int checkerboard[][20], int checkerboard_piece_num[][1700], int player, int &winner,
-         chromosome r1)          //AIº¯Êý ÏÈµ÷ÓÃÆÀ·Öº¯Êý£¬¶ÔË«·½ÆåÅÌÆÀ·Ö£¬ ÔÙµ÷ÓÃËÑË÷º¯Êý£¬ÕÒ³ö×îÓÅÎ»ÖÃ
+         chromosome r1)          //AIï¿½ï¿½ï¿½ï¿½ ï¿½Èµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö£ï¿½ ï¿½Ùµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò³ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½
 {
     int x1_max, y1_max;
     int x2_max, y2_max;
@@ -591,7 +616,7 @@ for(int i=1;i<=19;i++)
     Search(table_cmp, player, x1_max, y1_max, checkerboard);
     Search(table_ply, player2, x2_max, y2_max, checkerboard);
 
-//	printf("\n player==%d  µÄ×î´ótableÖµÎª %d %d\n",player,table_ply[x2_max][y2_max],table_cmp[x1_max][y1_max]) ;
+//	printf("\n player==%d  ï¿½ï¿½ï¿½ï¿½ï¿½tableÖµÎª %d %d\n",player,table_ply[x2_max][y2_max],table_cmp[x1_max][y1_max]) ;
     winner = WhoIsWinner(checkerboard_piece_num, player);
 
     if (table_cmp[x1_max][y1_max] >= table_ply[x2_max][y2_max]) {
@@ -606,7 +631,25 @@ for(int i=1;i<=19;i++)
 
 }
 
-int SixPiece::PopulationPlayAGame(chromosome population1, chromosome population2, int checkerboard[][20],
+void SixPiece::SelectionOfChampions(std::vector<int> population[20]) {
+    std::vector<int> a[20];
+    std::vector<int> b, c;
+   
+    for (int i = 1; i < 20; i++) {
+       a[i] = population[i];
+    }
+    for (int i = 1; i <= 20; i++) {
+        for (int j = i + 1; j <= 20; j++) {
+            if (a[i].back() < a[j].back()) {
+                swap(a[i],a[j]);
+            }
+        }
+    }
+    for (int j = 1; j <= 5; j++)
+        champion[j] = a[j];
+}
+
+int SixPiece::PopulationPlayAGame(std::vector<int> population1, std::vector<int> population2, int checkerboard[][20],
                         int checkerboard_piece_num[][1700]) {
     int convergence_limit = 50;
     int flag = 0;
@@ -630,12 +673,28 @@ int SixPiece::PopulationPlayAGame(chromosome population1, chromosome population2
             return 2;//population2Ó®
         }
     }
-    return 0;//Æ½¾Ö
+    return 0;//Æ½ï¿½ï¿½
+}
+
+void SixPiece::CrossingOverPrePare(std::vector<std::vector<int>> champion, int fitness_standard) {
+    int nu = 0;
+    int max_value = FindMaxValue(champion);//ï¿½Òµï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½Ö?
+    for (int i = 1; i <= 5; i++)//ï¿½Ú¾ï¿½È¾É«ï¿½å¿ªÊ¼ï¿½ï¿½ï¿½ï¿½
+    {
+        Variation(champion[i], fitness_standard, max_value);
+        GeneticRecombination(champion, fitness_standard, i, max_value);//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        //	printf("%d ",nu++);
+    }
+
+    for (int i = 1; i <= 20; i++)//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½È¾É«ï¿½ï¿½
+    {
+        population[i] = global_chromosome[i];
+    }
 }
 
 void SixPiece::Championships(int checkerboard1[][20], int checkerboard_piece_num1[][1700], int player) {
     int black_winner = 0, white_winner = 0;
-    for (int population_sequence = 1; population_sequence <= 4; population_sequence++)//20×éÈ¾É«Ìå·Ö³ÉÎå×é£¬Ã¿×éËÄ¸ö£¬ÕâËÄ¸öÈ¾É«Ìå½øÐÐ±È½Ï¡£
+    for (int population_sequence = 1; population_sequence <= 4; population_sequence++)//20ï¿½ï¿½È¾É«ï¿½ï¿½Ö³ï¿½ï¿½ï¿½ï¿½é£¬Ã¿ï¿½ï¿½ï¿½Ä¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¸ï¿½È¾É«ï¿½ï¿½ï¿½ï¿½Ð±È½Ï¡ï¿½
     {
         for (int population_of_self = population_sequence; population_of_self <= 20; population_of_self += 4) {
             for (int population_of_enemy = population_of_self + 1;
@@ -648,24 +707,24 @@ void SixPiece::Championships(int checkerboard1[][20], int checkerboard_piece_num
                                                    checkerboard1,
                                                    checkerboard_piece_num1);
                 if (black_winner == 0) {
-                    population[population_of_self].adaptability += 25;
-                    population[population_of_enemy].adaptability += 25;
+                    population[population_of_self].back() += 25;
+                    population[population_of_enemy].back() += 25;
                 } else if (black_winner == 1) {
-                    population[population_of_self].adaptability += 50;
-                    population[population_of_enemy].adaptability += 0;
+                    population[population_of_self].back() += 50;
+                    population[population_of_enemy].back() += 0;
                 } else if (black_winner == 2) {
-                    population[population_of_enemy].adaptability += 50;
-                    population[population_of_self].adaptability += 0;
+                    population[population_of_enemy].back() += 50;
+                    population[population_of_self].back() += 0;
                 }
                 if (white_winner == 0) {
-                    population[population_of_self].adaptability += 25;
-                    population[population_of_enemy].adaptability += 25;
+                    population[population_of_self].back() += 25;
+                    population[population_of_enemy].back() += 25;
                 } else if (white_winner == 1) {
-                    population[population_of_self].adaptability += 50;
-                    population[population_of_enemy].adaptability += 0;
+                    population[population_of_self].back() += 50;
+                    population[population_of_enemy].back() += 0;
                 } else if (white_winner == 2) {
-                    population[population_of_enemy].adaptability += 50;
-                    population[population_of_self].adaptability += 0;
+                    population[population_of_enemy].back() += 50;
+                    population[population_of_self].back() += 0;
                 }
 
             }
@@ -674,9 +733,9 @@ void SixPiece::Championships(int checkerboard1[][20], int checkerboard_piece_num
 
     int fitness_standard = 0, score_sum = 0;
     for (int i = 1; i <= 20; i++)
-        score_sum += population[i].adaptability;
+        score_sum += population[i].back();
     fitness_standard = score_sum / 20;
-    SelectionOfChampions(population);//µÃ³ö¹Ú¾üµÄÎå¸öÐòÁÐ£»
+    SelectionOfChampions(population);//ï¿½Ã³ï¿½ï¿½Ú¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð£ï¿?
     CrossingOverPrepare(champion, fitness_standard); //
 
 }
@@ -690,8 +749,8 @@ void SixPiece::ResultCopy(int checkerboard[][20], int checkerboard1[][20], int c
 void SixPiece::Train(int checkerboard[][20], int checkerboard_piece_num[][1700], int train_time, int winner, int player) {
     int checkerboard_piece_num1[3][1700];
     int checkerboard1[20][20];
-    ResultCopy(checkerboard, checkerboard1, checkerboard_piece_num, checkerboard_piece_num1);//¿½±´ÆåÅÌ¼ÇÂ¼
-    while (train_time--)//½ø»¯¶àÉÙ´ú
+    ResultCopy(checkerboard, checkerboard1, checkerboard_piece_num, checkerboard_piece_num1);//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì¼ï¿½Â¼
+    while (train_time--)//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ù´ï¿½
     {
         Championships(checkerboard1, checkerboard_piece_num1, player);
     }
@@ -700,9 +759,9 @@ void SixPiece::Train(int checkerboard[][20], int checkerboard_piece_num[][1700],
 void SixPiece::renji() {
     int winner = 0;
     char message[256];
-    int player = 0;          //ÆåÊÖ 1±íÊ¾¼× 2±íÊ¾ÒÒ
-    //int step_num = 0; //²½Êý¼ÇÂ¼
-    int checkerboard[20][20] = {{0}};        //ÆåÅÌ¼ÇÂ¼
+    int player = 0;          //ï¿½ï¿½ï¿½ï¿½ 1ï¿½ï¿½Ê¾ï¿½ï¿½ 2ï¿½ï¿½Ê¾ï¿½ï¿½
+    //int step_num = 0; //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼
+    int checkerboard[20][20] = {{0}};        //ï¿½ï¿½ï¿½Ì¼ï¿½Â¼
     int checkerboard_piece_num[3][1700] = {{0}};
     int enemy = 0;
 
@@ -712,7 +771,7 @@ void SixPiece::renji() {
     char x_position_string_1, x_position_string_2, y_position_string_1, y_position_string_2;
     while (1) {
         fflush(stdout);
-        //¼ÇÂ¼ÓÎÏ·ÖÐµÄÊ¤Õß  0±íÊ¾ÎÞÊ¤Õß 1±íÊ¾¼×Ê¤ 2±íÊ¾ÒÒÊ¤ 3±íÊ¾Æ½¾Ö
+        //ï¿½ï¿½Â¼ï¿½ï¿½Ï·ï¿½Ðµï¿½Ê¤ï¿½ï¿½  0ï¿½ï¿½Ê¾ï¿½ï¿½Ê¤ï¿½ï¿½ 1ï¿½ï¿½Ê¾ï¿½ï¿½Ê¤ 2ï¿½ï¿½Ê¾ï¿½ï¿½Ê¤ 3ï¿½ï¿½Ê¾Æ½ï¿½ï¿½
         scanf("%s", message);
         if (strcmp(message, "move") == 0) {
             scanf("%s", message);
@@ -729,15 +788,15 @@ void SixPiece::renji() {
             //	memcpy(&r,&population[1],sizeof(r));
             memcpy(&r, &champion[2], sizeof(r));
             Point pos1, pos2;
-            pos1 = AI(checkerboard, checkerboard_piece_num, player, winner, r);//´ý¶¨
+            pos1 = AI(checkerboard, checkerboard_piece_num, player, winner, r);//ï¿½ï¿½ï¿½ï¿½
             Record(checkerboard, checkerboard_piece_num, player, pos1.x, pos1.y);
             x_position_string_1 = pos1.x + 'A' - 1;
             y_position_string_1 = pos1.y + 'A' - 1;
-            pos2 = AI(checkerboard, checkerboard_piece_num, player, winner, r);//´ý¶¨
+            pos2 = AI(checkerboard, checkerboard_piece_num, player, winner, r);//ï¿½ï¿½ï¿½ï¿½
             Record(checkerboard, checkerboard_piece_num, player, pos2.x, pos2.y);
             x_position_string_2 = pos2.x + 'A' - 1;
             y_position_string_2 = pos2.y + 'A' - 1; //printf(" %d",num++);
-            //	printf("\n¹Ú¾üÊý×é È¾É«ÌåÖµÎª£º%d %d %d %d %d %d  \n",champion[2].huowu,champion[2].chongwu,champion[2].shuanghuosi,champion[2].huosan,champion[2].huoer,champion[2].adaptability);
+            //	printf("\nï¿½Ú¾ï¿½ï¿½ï¿½ï¿½ï¿½ È¾É«ï¿½ï¿½ÖµÎªï¿½ï¿½%d %d %d %d %d %d  \n",champion[2].huowu,champion[2].chongwu,champion[2].shuanghuosi,champion[2].huosan,champion[2].huoer,champion[2].adaptability);
             printf("\n");
             printf("move %c%c%c%c\n", x_position_string_1, y_position_string_1, x_position_string_2,
                    y_position_string_2);
@@ -760,15 +819,15 @@ void SixPiece::renji() {
                 printf("move GG@@\n");
 
             }
-        } else if (strcmp(message, "error") == 0)//×Å·¨´íÎó?
+        } else if (strcmp(message, "error") == 0)//ï¿½Å·ï¿½ï¿½ï¿½ï¿½ï¿½?
         {
             fflush(stdin);
-        } else if (strcmp(message, "name?") == 0)//Ñ¯ÎÊÒýÇæÃû³Æ
+        } else if (strcmp(message, "name?") == 0)//Ñ¯ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         {
             fflush(stdin);
             printf("name Parsifal\n");
 
-        } else if (strcmp(message, "end") == 0)//¶Ô¾Ö½áÊø
+        } else if (strcmp(message, "end") == 0)//ï¿½Ô¾Ö½ï¿½ï¿½ï¿½
         {
             fflush(stdin);
         } else if (strcmp(message, "quit") == 0) {
@@ -783,10 +842,10 @@ void SixPiece::renji() {
 }
 
 /**************************************************************************************************************/
-int main()   //Ö÷º¯Êý
+int main()   //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 {
     srand((unsigned) time(NULL));
-    for (int i = 1; i <= 20; i++)//¸ø20×éÈ¾É«Ìå¶¨³õÖµ
+    for (int i = 1; i <= 20; i++)//ï¿½ï¿½20ï¿½ï¿½È¾É«ï¿½å¶¨ï¿½ï¿½Öµ
     {
         i1 += 100;
         i2 += 20;

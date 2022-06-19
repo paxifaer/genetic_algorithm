@@ -7,7 +7,7 @@
 
 #include <iostream>
 #include <vector>
-struct Point            //������Ľṹ��?
+struct Point            //������Ľṹ��?
 {
     int x, y;
 };
@@ -34,14 +34,18 @@ class SixPiece {
     std::vector<std::vector<int>> population;
     std::vector<std::vector<int>> champion;//�ھ�����
     std::vector<int> global_chromosome[21];
-    void Init(int checkerboard[][20], int checkerboard_piece_num[][1700]);
+    std::vector<std::vector<int>> checkerboard{20};
+    std::vector<std::vector<int>> checkerboard_piece_num{3};
+    void Init();
 
-    void Record(int checkerboard[][20], int checkerboard_piece_num[3][1700], const int player, int x_position,
+    void Record(std::vector<std::vector<int>> &checkerboard, std::vector<std::vector<int>> &checkerboard_piece_num, const int player, int x_position,
                 int y_position) ;
-    int WhoIsWinner(int checkerboard_piece_num[][1700], const int player) ;                  //ʤ���ж�
+    int WhoIsWinner(const std::vector<std::vector<int>> &checkerboard_piece_num, const int &player) ;                  //ʤ���ж�
 
-    void Grade(const int checkerboard[][20], const int checkerboard_piece_num[][1700], int table[][20], const int ply,
-               chromosome gene);       //�������ֵĳ��򣬸�������ÿ����һ���ķ���
+    void Grade(const std::vector<std::vector<int>> &checkerboard, const std::vector<std::vector<int>> &checkerboard_piece_num, std::vector<std::vector<int>>& table, const int ply,
+               const chromosome &gene);       //棋盘评分的程序，给予棋盘每个点一定的分数
+    
+    int CheckCheckerBoard(const std::vector<std::vector<int>> &checkerboard_piece_num,const int &step,const int &quadrant,const int &player,const int &emeny,const Point & point);
 
     void Search(int table[][20], int player, int &x, int &y, int checkerboard[][20]);       //�������� �ҳ����ֱ��з�ֵ����λ��
 
