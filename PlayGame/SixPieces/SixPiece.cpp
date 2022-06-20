@@ -240,7 +240,7 @@ void SixPiece::CalculatQuardrantScore(std::vector<std::vector<int>> &table, cons
 }
 
 void SixPiece::Grade(const std::vector<std::vector<int>> &checkerboard, const std::vector<std::vector<int>> &checkerboard_piece_num, std::vector<std::vector<int>> &table, const int ply,
-                     const chromosome &gene) //�������ֵĳ��򣬸�������ÿ����һ���ķ���
+                     const chromosome &gene) //
 {
     int x, y, k, quadrant1, quadrant2, quadrant3, quadrant4;
     int enemy = 1;
