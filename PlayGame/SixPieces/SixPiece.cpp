@@ -113,7 +113,7 @@ void SixPiece::Record(std::vector<std::vector<int>> &checkerboard, std::vector<s
         for (int sd = 1; sd <= right_piece_num; sd++)
             checkerboard_piece_num[player][quadrant4 + sd * 18] = checkerboard_piece_num[player][quadrant4];
 
-    // printf("\n l4=%d r4=%d\n",l,r);
+    // printf("\n l4=%d r4=%d\n",l,r);//
 }
 
 int SixPiece::WhoIsWinner(const std::vector<std::vector<int>> &checkerboard_piece_num, const int &player) //ʤ���ж�
