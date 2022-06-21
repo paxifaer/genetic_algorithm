@@ -288,10 +288,10 @@ void SixPiece::Grade(const std::vector<std::vector<int>> &checkerboard, const st
     }
 }
 
-void SixPiece::Search(int table[][20], int player, int &x, int &y, int checkerboard[][20]) //�������� �ҳ����ֱ��з�ֵ����λ��
+void SixPiece::Search(const std::vector<std::vector<int>>& table, const int &player, int &x, int &y, const std::vector<std::vector<int>> &checkerboard)   //搜索函数 找出评分表中分值最大的位置
 {
     int i, j;
-    int max;
+    int max,max_x,max_y;
     int num = 0, time = 0;
 
     max = 0;
@@ -302,10 +302,13 @@ void SixPiece::Search(int table[][20], int player, int &x, int &y, int checkerbo
             if (!checkerboard[i][j] && table[i][j] && table[i][j] > max)
             {
                 max = table[i][j];
+                max_x = i;
+                max_y = j;
             }
         }
     }
-
+    x = max_x;
+    y = max_y;
     if (!checkerboard[7][7] && !max)
     {
         x = 7;
@@ -313,19 +316,6 @@ void SixPiece::Search(int table[][20], int player, int &x, int &y, int checkerbo
         return;
     }
 
-    for (i = 1; i <= 19; i++)
-    {
-        for (j = 1; j <= 19; j++)
-        {
-            if (!checkerboard[i][j] && table[i][j] == max)
-            {
-
-                x = i;
-                y = j;
-                break;
-            }
-        }
-    }
     //	printf("\nmax=%d %c%c \n",max,i+'A'-1,j+'A'-1);
 }
 

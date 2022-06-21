@@ -48,7 +48,7 @@ class SixPiece {
     int CheckCheckerBoard(const std::vector<std::vector<int>> &checkerboard_piece_num,const int &step,const int &quadrant,const int &player,const int &emeny,const Point & point);
 
     void CalculatQuardrantScore(std::vector<std::vector<int>> &table, const chromosome &gene,const int &temp,const int &num,const Point & point);
-    void Search(int table[][20], int player, int &x, int &y, int checkerboard[][20]);       //�������� �ҳ����ֱ��з�ֵ����λ��
+    void Search(const std::vector<std::vector<int>>& table, const int &player, int &x, int &y, const std::vector<std::vector<int>> &checkerboard);  //搜索函数 找出评分表中分值最大的位置
 
 
     Point AI(int checkerboard[][20], int checkerboard_piece_num[][1700], int player, int &winner,
