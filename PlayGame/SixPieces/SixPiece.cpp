@@ -1,15 +1,10 @@
 #include "SixPiece.h"
 void SixPiece::Init() //��ʼ������������¼���ӵ������ʼ��?
 {
-
-    for (int i = 0; i < 20; i++)
-    {
-        checkerboard.resize(20);
-    }
-    for (int i = 0; i < 3; i++)
-    {
-        checkerboard_piece_num.resize(1700);
-    }
+    checkerboard.clear();
+    checkerboard_piece_num.clear();
+    checkerboard.resize(20,std::vector<int>(20));
+    checkerboard_piece_num.resize(3,std::vector<int>(1700));
 }
 
 /***********************************************************************************************/ //��¼
@@ -364,7 +359,7 @@ Point SixPiece::AI(const std::vector<std::vector<int>> &checkerboard, const std:
     }
 }
 
-void SixPiece::SelectionOfChampions(std::vector<int> population[20])
+void SixPiece::SelectionOfChampions(const std::vector<std::vector<int>>  &population)
 {
     std::vector<int> a[20];
     std::vector<int> b, c;
@@ -459,7 +454,7 @@ void SixPiece::CrossingOverPrePare(std::vector<std::vector<int>> champion, int f
     }
 }
 
-void SixPiece::Championships(int checkerboard1[][20], int checkerboard_piece_num1[][1700], int player)
+void SixPiece::Championships(std::vector<std::vector<int>>  &checkerboard1, std::vector<std::vector<int>> & checkerboard_piece_num1, int player)
 {
     int black_winner = 0, white_winner = 0;
     for (int population_sequence = 1; population_sequence <= 4; population_sequence++) // 20��Ⱦɫ��ֳ����飬ÿ���ĸ������ĸ�Ⱦɫ����бȽϡ�
@@ -515,35 +510,37 @@ void SixPiece::Championships(int checkerboard1[][20], int checkerboard_piece_num
         score_sum += population[i].back();
     fitness_standard = score_sum / 20;
     SelectionOfChampions(population);                //�ó��ھ���������У�?
-    CrossingOverPrepare(champion, fitness_standard); //
+    CrossingOverPrePare(champion, fitness_standard); //
 }
 
-void SixPiece::ResultCopy(int checkerboard[][20], int checkerboard1[][20], int checkerboard_piece_num[][1700],
-                          int checkerboard_piece_num1[][1700])
-{
-    memcpy(checkerboard1, checkerboard, sizeof(int) * 20 * 20);
-    memcpy(checkerboard_piece_num1, checkerboard_piece_num, sizeof(int) * 3 * 1700);
-}
+// void SixPiece::ResultCopy(int checkerboard[][20], int checkerboard1[][20], int checkerboard_piece_num[][1700],
+//                           int checkerboard_piece_num1[][1700])
+// {
+//     memcpy(checkerboard1, checkerboard, sizeof(int) * 20 * 20);
+//     memcpy(checkerboard_piece_num1, checkerboard_piece_num, sizeof(int) * 3 * 1700);
+// }
 
-void SixPiece::Train(int checkerboard[][20], int checkerboard_piece_num[][1700], int train_time, int winner, int player)
+void SixPiece::Train(std::vector<std::vector<int>> & checkerboard, std::vector<std::vector<int>> & checkerboard_piece_num,  int & train_time, const int & winner, const int & player)
 {
-    int checkerboard_piece_num1[3][1700];
-    int checkerboard1[20][20];
-    ResultCopy(checkerboard, checkerboard1, checkerboard_piece_num, checkerboard_piece_num1); //�������̼�¼
+    std::vector<std::vector<int>> checkerboard_piece_num1;
+    std::vector<std::vector<int>> checkerboard1;
+    checkerboard1 = checkerboard;
+    checkerboard_piece_num1 = checkerboard_piece_num;
+    // ResultCopy(checkerboard, checkerboard1, checkerboard_piece_num, checkerboard_piece_num1); //�������̼�¼
     while (train_time--)                                                                      //�������ٴ�
     {
         Championships(checkerboard1, checkerboard_piece_num1, player);
     }
 }
 
-void SixPiece::renji()
+void SixPiece::SignalCommunication()
 {
     int winner = 0;
     char message[256];
     int player = 0; //���� 1��ʾ�� 2��ʾ��
     // int step_num = 0; //������¼
-    int checkerboard[20][20] = {{0}}; //���̼�¼
-    int checkerboard_piece_num[3][1700] = {{0}};
+    std::vector<std::vector<int>> checkerboard(20,std::vector<int>(20)); //���̼�¼
+    std::vector<std::vector<int>> checkerboard_piece_num(3,std::vector<int>(1700));
     int enemy = 0;
 
     int train_time = 50;
@@ -553,7 +550,6 @@ void SixPiece::renji()
     while (1)
     {
         fflush(stdout);
-        //��¼��Ϸ�е�ʤ��  0��ʾ��ʤ�� 1��ʾ��ʤ 2��ʾ��ʤ 3��ʾƽ��
         scanf("%s", message);
         if (strcmp(message, "move") == 0)
         {
@@ -568,18 +564,16 @@ void SixPiece::renji()
             Record(checkerboard, checkerboard_piece_num, enemy, x_position2, y_position2);
             Train(checkerboard, checkerboard_piece_num, train_time, winner, enemy);
 
-            //	memcpy(&r,&population[1],sizeof(r));
             memcpy(&r, &champion[2], sizeof(r));
             Point pos1, pos2;
-            pos1 = AI(checkerboard, checkerboard_piece_num, player, winner, r); //����
+            pos1 = AI(checkerboard, checkerboard_piece_num, player, winner, r); 
             Record(checkerboard, checkerboard_piece_num, player, pos1.x, pos1.y);
             x_position_string_1 = pos1.x + 'A' - 1;
             y_position_string_1 = pos1.y + 'A' - 1;
-            pos2 = AI(checkerboard, checkerboard_piece_num, player, winner, r); //����
+            pos2 = AI(checkerboard, checkerboard_piece_num, player, winner, r); 
             Record(checkerboard, checkerboard_piece_num, player, pos2.x, pos2.y);
             x_position_string_2 = pos2.x + 'A' - 1;
             y_position_string_2 = pos2.y + 'A' - 1; // printf(" %d",num++);
-            //	printf("\n�ھ����� Ⱦɫ��ֵΪ��%d %d %d %d %d %d  \n",champion[2].huowu,champion[2].chongwu,champion[2].shuanghuosi,champion[2].huosan,champion[2].huoer,champion[2].adaptability);
             printf("\n");
             printf("move %c%c%c%c\n", x_position_string_1, y_position_string_1, x_position_string_2,
                    y_position_string_2);
@@ -598,7 +592,7 @@ void SixPiece::renji()
                 player = 2;
                 enemy = 1;
             }
-            Init(checkerboard, checkerboard_piece_num);
+            Init();
             if (player == 1)
             {
                 char s1 = 'A' + 7, s2 = 'A' + 7;

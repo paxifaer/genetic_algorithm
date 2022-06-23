@@ -55,19 +55,19 @@ class SixPiece :public General{
 
     Point AI(const std::vector<std::vector<int>> &checkerboard, const std::vector<std::vector<int>> &checkerboard_piece_num, int player, int &winner,
              chromosome r1);
-    void SelectionOfChampions(std::vector<int> population[20]) ;
-    void Championships(int checkerboard1[][20], int checkerboard_piece_num1[][1700], int player) ;
+    void SelectionOfChampions(const std::vector<std::vector<int>> & population) ;
+    void Championships(std::vector<std::vector<int>>  &checkerboard1,std::vector<std::vector<int>> & checkerboard_piece_num1, int player) ;
 
     void ResultCopy(int checkerboard[][20], int checkerboard1[][20], int checkerboard_piece_num[][1700],
                     int checkerboard_piece_num1[][1700]) ;
 
-    void Train(int checkerboard[][20], int checkerboard_piece_num[][1700], int train_time, int winner, int player) ;
+    void Train(std::vector<std::vector<int>> & checkerboard, std::vector<std::vector<int>> & checkerboard_piece_num,  int &train_time,const int & winner,const int & player) ;
 
     int PopulationPlayAGame(std::vector<int> population1, std::vector<int> population2, const std::vector<std::vector<int>> &checkerboard,
                              const std::vector<std::vector<int>> &checkerboard_piece_num) ;
 
     void CrossingOverPrePare(std::vector<std::vector<int>> champion, int fitness_standard) ;
-
+    void SignalCommunication();
 };
 
 #endif //GENETICALGORITHM_SIXPIECE_H
