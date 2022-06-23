@@ -1,26 +1,12 @@
-
-#include <stdio.h>
-#include <windows.h>
-#include <stdlib.h>
-#include <conio.h>
-#include <time.h>
-#include <mmsystem.h>
-#include<string.h>
-#include<cstring>
-#include <algorithm>
-#include <vector>
-
+#include "GeneticIterate.h"
 //     0 huowu;
 //    1 chongwu;
 //    2 shuanghuosi;
 //    3 danhuosi, 4 miansi, 5 huosan,6 miansan,7 huoer;
 //   8 adaptability = 0;
 
-std::vector<std::vector<int>> population;
-std::vector<std::vector<int>> champion;//¹Ú¾üĞòÁĞ
-std::vector<int> global_chromosome[21];
 
-int VariateMasker(std::vector<int> champion, int fitness_standard, int fitness_max)//»ùÒò±äÒì¸ÅÂÊ
+int General::VariateMasker(std::vector<int> champion, int fitness_standard, int fitness_max)//»ùÒò±äÒì¸ÅÂÊ
 {
     float mutation_probability;
     if (champion.back() < fitness_standard) {
@@ -34,7 +20,7 @@ int VariateMasker(std::vector<int> champion, int fitness_standard, int fitness_m
     else return 0;
 
 }// huowu 12  chongwu 9 shuanghuosi 9  danhuosi 8 miansi 7  huosan 6 miansan 4  huoer 3
-void Variate(std::vector<int> &individual, int fitness_standard, int fitness_max) {
+void General::Variate(std::vector<int> &individual, int fitness_standard, int fitness_max) {
     int probability, masker = 0;
    for(int j=0;j<individual.size()-1;j++)
    {
@@ -50,12 +36,12 @@ void Variate(std::vector<int> &individual, int fitness_standard, int fitness_max
 
 }
 
-void Variation(std::vector<int> &individual, int fitness_standard, int fitness_max)//»ùÒò±äÒì
+void General::Variation(std::vector<int> &individual, int fitness_standard, int fitness_max)//»ùÒò±äÒì
 {
     Variate(individual, fitness_standard, fitness_max);
 }
 
-int CrossingOverJudge(int fitness_standard, int fitness_max, int f)//Ã¿ÌõÈ¾É«ÌåµÄ»ùÒòÊÇ·ñ·¢Éú½»²æ»¥»»
+int General::CrossingOverJudge(int fitness_standard, int fitness_max, int f)//Ã¿ÌõÈ¾É«ÌåµÄ»ùÒòÊÇ·ñ·¢Éú½»²æ»¥»»
 {
     float probability = 0.7;
     if (f < fitness_standard)
@@ -72,7 +58,7 @@ int CrossingOverJudge(int fitness_standard, int fitness_max, int f)//Ã¿ÌõÈ¾É«Ìåµ
 
 
 
-void CrossingOver(std::vector<int> & chromosome_x, std::vector<int> & chromosome_y, int &num, int fitness_standard, int fitness_max) {//È¾É«Ìå½»²æ»¥»»
+void General::CrossingOver(std::vector<int> & chromosome_x, std::vector<int> & chromosome_y, int &num, int fitness_standard, int fitness_max) {//È¾É«Ìå½»²æ»¥»»
     int n = num;
     int nu = 0;
 
@@ -91,7 +77,7 @@ void CrossingOver(std::vector<int> & chromosome_x, std::vector<int> & chromosome
     num = n;
 }
 
-void GeneticRecombination(std::vector<std::vector<int>> champion, int fitness_standard, int i, int fitness_max)//¿ªÊ¼»ùÒòÖØ×é
+void General::GeneticRecombination(std::vector<std::vector<int>> champion, int fitness_standard, int i, int fitness_max)//¿ªÊ¼»ùÒòÖØ×é
 {
     int num = 1;
     int nu = 0;
@@ -102,7 +88,7 @@ void GeneticRecombination(std::vector<std::vector<int>> champion, int fitness_st
     }
 }
 
-int FindMaxValue(std::vector<std::vector<int>> population) {
+int General::FindMaxValue(std::vector<std::vector<int>> population) {
     int ma = 0;
     for (int i = 1; i <= 5; i++) {
         if (ma <= population[i].back()) {
@@ -113,7 +99,7 @@ int FindMaxValue(std::vector<std::vector<int>> population) {
 }
 
 
-void CrossingOverPrePare(std::vector<std::vector<int>> champion, int fitness_standard) {
+void General::CrossingOverPrePare(std::vector<std::vector<int>> champion, int fitness_standard) {
     int nu = 0;
     int max_value = FindMaxValue(champion);//ÕÒµ½ÊÊÓ¦¶È×î´óÖµ
     for (int i = 1; i <= 5; i++)//¹Ú¾üÈ¾É«Ìå¿ªÊ¼±äÒì
