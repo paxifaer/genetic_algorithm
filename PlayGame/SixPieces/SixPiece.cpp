@@ -628,39 +628,6 @@ void SixPiece::SignalCommunication()
 /**************************************************************************************************************/
 int main() //������
 {
-    srand((unsigned)time(NULL));
-    for (int i = 1; i <= 20; i++) //��20��Ⱦɫ�嶨��ֵ
-    {
-        i1 += 100;
-        i2 += 20;
-        i1 += 16;
-        i1 += 8;
-        i1 += 4;
-        i1 += 2;
-        i1 += 1;
-        i1 += 1;
-        huowu[i] = i1;
-        chongwu[i] = i2;
-        shuanghuosi[i] = i3;
-        danhuosi[i] = i4;
-        miansi[i] = i5;
-        huosan[i] = i6;
-        miansan[i] = i7;
-        huoer[i] = i8;
-        population[i].chongwu = chongwu[i];
-        population[i].huowu = huowu[i];
-        population[i].shuanghuosi = shuanghuosi[i];
-        population[i].danhuosi = danhuosi[i];
-        population[i].miansi = miansi[i];
-        population[i].huoer = huoer[i];
-        population[i].huosan = huosan[i];
-        population[i].miansan = miansan[i];
-    }
-
-    memcpy(&champion[1], &population[1], sizeof(population[1]));
-    memcpy(&champion[2], &population[2], sizeof(population[2]));
-    memcpy(&champion[3], &population[3], sizeof(population[3]));
-    memcpy(&champion[4], &population[4], sizeof(population[4]));
-    memcpy(&champion[5], &population[5], sizeof(population[5]));
-    renji();
+  SixPiece a;
+  a.SignalCommunication();
 }
