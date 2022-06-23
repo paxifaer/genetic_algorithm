@@ -12,7 +12,8 @@ include_directories(${PROJECT_SOURCE_DIR}/tools)
 link_directories(${THIRD_PARTY_PATH}/lib)
 
 ADD_SUBDIRECTORY(queue)
-
+ADD_SUBDIRECTORY(GenerateIterate)
+ADD_SUBDIRECTORY(PlayGame)
 add_library(${PROJECT_NAME} engine.cpp)
 
 
