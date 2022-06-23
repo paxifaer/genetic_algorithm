@@ -319,13 +319,13 @@ void SixPiece::Search(const std::vector<std::vector<int>>& table, const int &pla
     //	printf("\nmax=%d %c%c \n",max,i+'A'-1,j+'A'-1);
 }
 
-Point SixPiece::AI(int checkerboard[][20], int checkerboard_piece_num[][1700], int player, int &winner,
-                   chromosome r1) // AI���� �ȵ������ֺ�������˫���������֣� �ٵ��������������ҳ�����λ��
+Point SixPiece::AI(const std::vector<std::vector<int>> &checkerboard, const std::vector<std::vector<int>> &checkerboard_piece_num, int player, int &winner,
+                   chromosome r1)  //AI函数 先调用评分函数，对双方棋盘评分， 再调用搜索函数，找出最优位置
 {
     int x1_max, y1_max;
     int x2_max, y2_max;
-    int table_cmp[20][20] = {0};
-    int table_ply[20][20] = {0};
+    std::vector<std::vector<int>> table_cmp(20,std::vector<int>(20));
+    std::vector<std::vector<int>> table_ply(20,std::vector<int>(20));
     int player2;
 
     if (player == 1)
@@ -387,35 +387,59 @@ void SixPiece::SelectionOfChampions(std::vector<int> population[20])
         champion[j] = a[j];
 }
 
-int SixPiece::PopulationPlayAGame(std::vector<int> population1, std::vector<int> population2, int checkerboard[][20],
-                                  int checkerboard_piece_num[][1700])
+ chromosome SixPiece::ChromosomeSwitch(const std::vector<int> &population)
+ {
+    chromosome popu;
+    popu.chongwu = population[Gene::chongwu];
+    popu.danhuosi = population[Gene::danhuosi];
+    popu.huoer = population[Gene::huoer];
+    popu.huosan = population[Gene::huosan];
+    popu.huowu = population[Gene::huowu];
+    popu.miansan = population[Gene::miansan];
+    popu.miansi = population[Gene::miansi];
+    popu.shuanghuosi = population[Gene::shuanghuosi];
+    popu.adaptability =  population[Gene::adaptability];
+    return popu;
+ }
+
+int SixPiece::PopulationPlayAGame(std::vector<int> population1, std::vector<int> population2, const std::vector<std::vector<int>> &checkerboard, 
+                                    const std::vector<std::vector<int>> &checkerboard_piece_num)
 {
     int convergence_limit = 50;
     int flag = 0;
-    int checkerboard1[20][20], checkerboard_piece_num1[3][1700], checkerboard_piece_num2[3][1700];
-    ResultCopy(checkerboard, checkerboard1, checkerboard_piece_num, checkerboard_piece_num1);
-    ResultCopy(checkerboard, checkerboard1, checkerboard_piece_num, checkerboard_piece_num2);
+    // int checkerboard1[20][20], checkerboard_piece_num1[3][1700], checkerboard_piece_num2[3][1700];
+    // ResultCopy(checkerboard, checkerboard1, checkerboard_piece_num, checkerboard_piece_num1);
+    // ResultCopy(checkerboard, checkerboard1, checkerboard_piece_num, checkerboard_piece_num2);
+    std::vector<std::vector<int>> checkerboard1, checkerboard_piece_num1, checkerboard_piece_num2;
+
+    checkerboard1 = checkerboard;
+    checkerboard_piece_num1 = checkerboard_piece_num;
+    checkerboard_piece_num2 = checkerboard_piece_num;
+
     int winner1 = 0, winner2 = 0;
 
     while (convergence_limit--)
     {
         int winner1 = 0, winner2 = 0;
         Point pos1, pos2;
-        pos1 = AI(checkerboard1, checkerboard_piece_num1, 1, winner1, population1);
+        chromosome chro1,chro2;
+        chro1 = ChromosomeSwitch(population1);
+        chro2 = ChromosomeSwitch(population2);
+        pos1 = AI(checkerboard1, checkerboard_piece_num1, 1, winner1, chro1);
         //	printf("\n%d ",winner1);
         Record(checkerboard1, checkerboard_piece_num1, 1, pos1.x, pos1.y);
         if (winner1)
         {
-            return 1; // population1Ӯ
+            return 1; // population1赢
         }
-        pos2 = AI(checkerboard1, checkerboard_piece_num2, 2, winner2, population2);
+        pos2 = AI(checkerboard1, checkerboard_piece_num2, 2, winner2, chro2);
         Record(checkerboard1, checkerboard_piece_num2, 2, pos2.x, pos2.y);
         if (winner2)
         {
-            return 2; // population2Ӯ
+            return 2; // population2赢
         }
     }
-    return 0; //ƽ��
+    return 0;//平局
 }
 
 void SixPiece::CrossingOverPrePare(std::vector<std::vector<int>> champion, int fitness_standard)

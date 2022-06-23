@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <vector>
+#include "../../GenerateIterate/GeneticIterate.h"
 struct Point            //������Ľṹ��?
 {
     int x, y;
@@ -29,7 +30,7 @@ enum  Gene{
     adaptability 
 };
 
-class SixPiece {
+class SixPiece :public General{
    public: 
     std::vector<std::vector<int>> population;
     std::vector<std::vector<int>> champion;//�ھ�����
@@ -50,8 +51,9 @@ class SixPiece {
     void CalculatQuardrantScore(std::vector<std::vector<int>> &table, const chromosome &gene,const int &temp,const int &num,const Point & point);
     void Search(const std::vector<std::vector<int>>& table, const int &player, int &x, int &y, const std::vector<std::vector<int>> &checkerboard);  //搜索函数 找出评分表中分值最大的位置
 
+    chromosome ChromosomeSwitch(const std::vector<int> &population);
 
-    Point AI(int checkerboard[][20], int checkerboard_piece_num[][1700], int player, int &winner,
+    Point AI(const std::vector<std::vector<int>> &checkerboard, const std::vector<std::vector<int>> &checkerboard_piece_num, int player, int &winner,
              chromosome r1);
     void SelectionOfChampions(std::vector<int> population[20]) ;
     void Championships(int checkerboard1[][20], int checkerboard_piece_num1[][1700], int player) ;
@@ -61,8 +63,9 @@ class SixPiece {
 
     void Train(int checkerboard[][20], int checkerboard_piece_num[][1700], int train_time, int winner, int player) ;
 
-    int PopulationPlayAGame(std::vector<int> population1, std::vector<int> population2, int checkerboard[][20],
-                            int checkerboard_piece_num[][1700]) ;
+    int PopulationPlayAGame(std::vector<int> population1, std::vector<int> population2, const std::vector<std::vector<int>> &checkerboard,
+                             const std::vector<std::vector<int>> &checkerboard_piece_num) ;
+
     void CrossingOverPrePare(std::vector<std::vector<int>> champion, int fitness_standard) ;
 
 };
