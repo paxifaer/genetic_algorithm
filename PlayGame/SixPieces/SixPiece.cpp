@@ -626,8 +626,8 @@ void SixPiece::SignalCommunication()
 }
 
 /**************************************************************************************************************/
-int main() //������
-{
-  SixPiece a;
-  a.SignalCommunication();
-}
+//int main() //������
+//{
+//  SixPiece a;
+//  a.SignalCommunication();
+//}

@@ -7,7 +7,7 @@
 
 #include <iostream>
 #include <vector>
-#include "../../GenerateIterate/GeneticIterate.h"
+#include "../../GenerateIterate/GenerateIterate.h"
 struct Point            //������Ľṹ��?
 {
     int x, y;

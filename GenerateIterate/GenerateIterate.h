@@ -8,20 +8,22 @@
 #include <stdlib.h>
 #include <conio.h>
 #include <time.h>
-#include <mmsystem.h>
 #include <string.h>
 #include <cstring>
 #include <algorithm>
 #include <vector>
 #include <string>
 
-std::vector<std::vector<int>> population;
-std::vector<std::vector<int>> champion; //冠军序列
-std::vector<int> global_chromosome[21];
+
 
 class General
 {
+
 public:
+    std::vector<std::vector<int>> population;
+    std::vector<std::vector<int>> champion; //冠军序列
+    std::vector<int> global_chromosome[21];
+
     int VariateMasker(std::vector<int> champion, int fitness_standard, int fitness_max);
     void Variate(std::vector<int> &individual, int fitness_standard, int fitness_max);
 

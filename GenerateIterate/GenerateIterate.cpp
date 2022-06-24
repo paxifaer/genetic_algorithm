@@ -1,4 +1,4 @@
-#include "GeneticIterate.h"
+#include "GenerateIterate.h"
 //     0 huowu;
 //    1 chongwu;
 //    2 shuanghuosi;
@@ -6,7 +6,7 @@
 //   8 adaptability = 0;
 
 
-int General::VariateMasker(std::vector<int> champion, int fitness_standard, int fitness_max)//»ùÒò±äÒì¸ÅÂÊ
+int General::VariateMasker(std::vector<int> champion, int fitness_standard, int fitness_max)//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 {
     float mutation_probability;
     if (champion.back() < fitness_standard) {
@@ -31,17 +31,17 @@ void General::Variate(std::vector<int> &individual, int fitness_standard, int fi
            masker << 1;
        }
        masker >> 1;
-       individual[j]= individual[j] ^ masker;//ÊµÏÖ»ùÒòÍ»±ä£¬½èÓÃÁË×ÓÍøÑÚÂëµÄ·½Ê½,  ÑÚÂë£¨£©£º1011111  £¬ÑÚÂë¼ÆËã·½Ê½£¬¶ÔÓ¦Î»ÑÚÂëÖµÎª0£¬Ôò¸ÃÎ»µÄÖµÈ¡·´(0´ú±í±äÒì£¬1´ú±í²»±äÒì)      £¨111£©10 = (1110001)2      (1110001)2     varite->  (1010001)2 = (79)10
+       individual[j]= individual[j] ^ masker;//Êµï¿½Ö»ï¿½ï¿½ï¿½Í»ï¿½ä£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä·ï¿½Ê½,  ï¿½ï¿½ï¿½ë£¨ï¿½ï¿½ï¿½ï¿½1011111  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ã·½Ê½ï¿½ï¿½ï¿½ï¿½Ó¦Î»ï¿½ï¿½ï¿½ï¿½ÖµÎª0ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½ÖµÈ¡ï¿½ï¿½(0ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ì£¬1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)      ï¿½ï¿½111ï¿½ï¿½10 = (1110001)2      (1110001)2     varite->  (1010001)2 = (79)10
    }
 
 }
 
-void General::Variation(std::vector<int> &individual, int fitness_standard, int fitness_max)//»ùÒò±äÒì
+void General::Variation(std::vector<int> &individual, int fitness_standard, int fitness_max)//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 {
     Variate(individual, fitness_standard, fitness_max);
 }
 
-int General::CrossingOverJudge(int fitness_standard, int fitness_max, int f)//Ã¿ÌõÈ¾É«ÌåµÄ»ùÒòÊÇ·ñ·¢Éú½»²æ»¥»»
+int General::CrossingOverJudge(int fitness_standard, int fitness_max, int f)//Ã¿ï¿½ï¿½È¾É«ï¿½ï¿½Ä»ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½æ»¥ï¿½ï¿½
 {
     float probability = 0.7;
     if (f < fitness_standard)
@@ -58,7 +58,7 @@ int General::CrossingOverJudge(int fitness_standard, int fitness_max, int f)//Ã¿
 
 
 
-void General::CrossingOver(std::vector<int> & chromosome_x, std::vector<int> & chromosome_y, int &num, int fitness_standard, int fitness_max) {//È¾É«Ìå½»²æ»¥»»
+void General::CrossingOver(std::vector<int> & chromosome_x, std::vector<int> & chromosome_y, int &num, int fitness_standard, int fitness_max) {//È¾É«ï¿½å½»ï¿½æ»¥ï¿½ï¿½
     int n = num;
     int nu = 0;
 
@@ -77,13 +77,13 @@ void General::CrossingOver(std::vector<int> & chromosome_x, std::vector<int> & c
     num = n;
 }
 
-void General::GeneticRecombination(std::vector<std::vector<int>> champion, int fitness_standard, int i, int fitness_max)//¿ªÊ¼»ùÒòÖØ×é
+void General::GeneticRecombination(std::vector<std::vector<int>> champion, int fitness_standard, int i, int fitness_max)//ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 {
     int num = 1;
     int nu = 0;
     for (int i = 1; i <= 5; i++) {
         for (int j = i + 1; j <= 5; j++) {
-            CrossingOver(champion[i], champion[j], num, fitness_standard, fitness_max);//Ã¿Á½¸ö²»Í¬µÄÈ¾É«Ìå¿ªÊ¼½»²æ
+            CrossingOver(champion[i], champion[j], num, fitness_standard, fitness_max);//Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¬ï¿½ï¿½È¾É«ï¿½å¿ªÊ¼ï¿½ï¿½ï¿½ï¿½
         }
     }
 }
@@ -101,15 +101,15 @@ int General::FindMaxValue(std::vector<std::vector<int>> population) {
 
 void General::CrossingOverPrePare(std::vector<std::vector<int>> champion, int fitness_standard) {
     int nu = 0;
-    int max_value = FindMaxValue(champion);//ÕÒµ½ÊÊÓ¦¶È×î´óÖµ
-    for (int i = 1; i <= 5; i++)//¹Ú¾üÈ¾É«Ìå¿ªÊ¼±äÒì
+    int max_value = FindMaxValue(champion);//ï¿½Òµï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½Öµ
+    for (int i = 1; i <= 5; i++)//ï¿½Ú¾ï¿½È¾É«ï¿½å¿ªÊ¼ï¿½ï¿½ï¿½ï¿½
     {
         Variation(champion[i], fitness_standard, max_value);
-        GeneticRecombination(champion, fitness_standard, i, max_value);//»ùÒòÖØ×é
+        GeneticRecombination(champion, fitness_standard, i, max_value);//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         //	printf("%d ",nu++);
     }
 
-    for (int i = 1; i <= 20; i++)//Éú³ÉĞÂÒ»´úÈ¾É«Ìå
+    for (int i = 1; i <= 20; i++)//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½È¾É«ï¿½ï¿½
     {
         population[i] = global_chromosome[i];
     }
