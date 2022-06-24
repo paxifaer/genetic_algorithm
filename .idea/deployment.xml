@@ -26,8 +26,13 @@
       <paths name="svn20220520 (9a1af2a9-5044-4837-9a72-fc64681b95b6)">
         <serverdata>
           <mappings>
-            <mapping local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/tmp/tmp.9R771Ri9DL" local="$PROJECT_DIR$" />
           </mappings>
+          <excludedPaths>
+            <excludedPath local="true" path="$PROJECT_DIR$/ThreadPool/cmake-build-debug" />
+            <excludedPath local="true" path="$PROJECT_DIR$/ThreadPool/cmake-build-debug" />
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug" />
+          </excludedPaths>
         </serverdata>
       </paths>
       <paths name="svn87172">

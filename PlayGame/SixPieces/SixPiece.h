@@ -68,6 +68,7 @@ class SixPiece :public General{
 
     void CrossingOverPrePare(std::vector<std::vector<int>> champion, int fitness_standard) ;
     void SignalCommunication();
+    void SignalCommunicationThread(std::vector<int> Chromosome,std::string str);
 };
 
 #endif //GENETICALGORITHM_SIXPIECE_H

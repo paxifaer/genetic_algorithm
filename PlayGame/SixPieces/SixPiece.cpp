@@ -245,10 +245,8 @@ void SixPiece::Grade(const std::vector<std::vector<int>> &checkerboard, const st
 
     for (x = 1; x <= 19; x++)
     {
-
         for (y = 1; y <= 19; y++)
         {
-
             heng = 1, zong = 1, zuo = 1, you = 1;
 
             if (checkerboard[x][y] == 0)
@@ -310,7 +308,6 @@ void SixPiece::Search(const std::vector<std::vector<int>>& table, const int &pla
         y = 7;
         return;
     }
-
     //	printf("\nmax=%d %c%c \n",max,i+'A'-1,j+'A'-1);
 }
 
@@ -532,7 +529,98 @@ void SixPiece::Train(std::vector<std::vector<int>> & checkerboard, std::vector<s
         Championships(checkerboard1, checkerboard_piece_num1, player);
     }
 }
+void SixPiece::SignalCommunicationThread(std::vector<int> Chromosome,std::string str)
+{
+    int winner = 0;
+    char message[256];
+    int player = 0; //���� 1��ʾ�� 2��ʾ��
+    // int step_num = 0; //������¼
+    std::vector<std::vector<int>> checkerboard(20,std::vector<int>(20)); //���̼�¼
+    std::vector<std::vector<int>> checkerboard_piece_num(3,std::vector<int>(1700));
+    int enemy = 0;
 
+    int train_time = 50;
+    chromosome r;
+    int x_position1, y_position1, x_position2, y_position2;
+    char x_position_string_1, x_position_string_2, y_position_string_1, y_position_string_2;
+    std::cout<<"aa"<<std::endl;
+    while (1)
+    {
+        fflush(stdout);
+        scanf("%s", message);
+        if (strcmp(message, "move") == 0)
+        {
+            scanf("%s", message);
+            fflush(stdin);
+            x_position1 = message[0] - 'A' + 1;
+            y_position1 = message[1] - 'A' + 1;
+            x_position2 = message[2] - 'A' + 1;
+            y_position2 = message[3] - 'A' + 1;
+
+            Record(checkerboard, checkerboard_piece_num, enemy, x_position1, y_position1);
+            Record(checkerboard, checkerboard_piece_num, enemy, x_position2, y_position2);
+            Train(checkerboard, checkerboard_piece_num, train_time, winner, enemy);
+
+            memcpy(&r, &champion[2], sizeof(r));
+            Point pos1, pos2;
+            pos1 = AI(checkerboard, checkerboard_piece_num, player, winner, r);
+            Record(checkerboard, checkerboard_piece_num, player, pos1.x, pos1.y);
+            x_position_string_1 = pos1.x + 'A' - 1;
+            y_position_string_1 = pos1.y + 'A' - 1;
+            pos2 = AI(checkerboard, checkerboard_piece_num, player, winner, r);
+            Record(checkerboard, checkerboard_piece_num, player, pos2.x, pos2.y);
+            x_position_string_2 = pos2.x + 'A' - 1;
+            y_position_string_2 = pos2.y + 'A' - 1; // printf(" %d",num++);
+            printf("\n");
+            printf("move %c%c%c%c\n", x_position_string_1, y_position_string_1, x_position_string_2,
+                   y_position_string_2);
+        }
+        else if (strcmp(message, "new") == 0)
+        {
+            scanf("%s", message);
+            fflush(stdin);
+            if (strcmp(message, "black") == 0)
+            {
+                enemy = 2;
+                player = 1;
+            }
+            else
+            {
+                player = 2;
+                enemy = 1;
+            }
+            Init();
+            if (player == 1)
+            {
+                char s1 = 'A' + 7, s2 = 'A' + 7;
+                Record(checkerboard, checkerboard_piece_num, player, 7, 7);
+                printf("\n");
+                printf("move GG@@\n");
+            }
+        }
+        else if (strcmp(message, "error") == 0) //�ŷ�����?
+        {
+            fflush(stdin);
+        }
+        else if (strcmp(message, "name?") == 0) //ѯ����������
+        {
+            fflush(stdin);
+            printf("name Parsifal\n");
+        }
+        else if (strcmp(message, "end") == 0) //�Ծֽ���
+        {
+            fflush(stdin);
+        }
+        else if (strcmp(message, "quit") == 0)
+        {
+            fflush(stdin);
+            printf("Quit!\n");
+            break;
+        }
+
+        // printf("\n%d ",winner);
+    }
+}
 void SixPiece::SignalCommunication()
 {
     int winner = 0;
@@ -547,6 +635,7 @@ void SixPiece::SignalCommunication()
     chromosome r;
     int x_position1, y_position1, x_position2, y_position2;
     char x_position_string_1, x_position_string_2, y_position_string_1, y_position_string_2;
+    std::cout<<"aa"<<std::endl;
     while (1)
     {
         fflush(stdout);
