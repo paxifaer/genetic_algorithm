@@ -547,6 +547,7 @@ void SixPiece::SignalCommunication()
     chromosome r;
     int x_position1, y_position1, x_position2, y_position2;
     char x_position_string_1, x_position_string_2, y_position_string_1, y_position_string_2;
+    std::cout<<"aa"<<std::endl;
     while (1)
     {
         fflush(stdout);
