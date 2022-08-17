@@ -2,6 +2,13 @@
 <project version="4">
   <component name="PublishConfigData" remoteFilesAllowedToDisappearOnAutoupload="false">
     <serverData>
+      <paths name="20220727 (da658898-e74e-41ed-9fa4-39534cd665a0)">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/tmp/tmp.YQaoRNwt7i" local="$PROJECT_DIR$" />
+          </mappings>
+        </serverdata>
+      </paths>
       <paths name="docker (93bd37c4-56fa-4d30-8cba-080dc987abd0)">
         <serverdata>
           <mappings>

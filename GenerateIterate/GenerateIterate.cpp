@@ -6,23 +6,25 @@
 //   8 adaptability = 0;
 
 
-int General::VariateMasker(std::vector<int> champion, int fitness_standard, int fitness_max)//����������
+int General::VariateMasker(std::shared_ptr<GeneVariate> data_muster,int &pos)
+
 {
     float mutation_probability;
-    if (champion.back() < fitness_standard) {
+    if (data_muster->champion[pos].back() < data_muster->fitness_standard) {
         mutation_probability = 0.1;
-    } else if (fitness_max != fitness_standard) {
-        mutation_probability = 0.1 - (0.1 - 0.01) * ((float) fitness_max - (float) champion.back()) / (fitness_max - fitness_standard);
+    } else if (data_muster->fitness_max != data_muster->fitness_standard) {
+        mutation_probability = 0.1 - (0.1 - 0.01) * ((float) data_muster->fitness_max - (float) data_muster->champion[pos].back()) / (data_muster->fitness_max - data_muster->fitness_standard);
     }
-    float variate_judge = (rand() % 100) * mutation_probability;
+    float variate_judge = (rand() % 1000) * mutation_probability;
     if (variate_judge >= 1)
         return 1;
-    else return 0;
+    else
+        return 0;
 
 }// huowu 12  chongwu 9 shuanghuosi 9  danhuosi 8 miansi 7  huosan 6 miansan 4  huoer 3
-void General::Variate(std::vector<int> &individual, int fitness_standard, int fitness_max) {
+void General::Variate(std::shared_ptr<GeneVariate> data_muster, int &pos) {
     int probability, masker = 0;
-   for(int j=0;j<individual.size()-1;j++)
+   for(int j=0;j<data_muster[pos].size()-1;j++)
    {
        masker = 0;
        for (int i = 0; i < 12; i++) {
@@ -36,18 +38,19 @@ void General::Variate(std::vector<int> &individual, int fitness_standard, int fi
 
 }
 
-void General::Variation(std::vector<int> &individual, int fitness_standard, int fitness_max)//�������
-{
-    Variate(individual, fitness_standard, fitness_max);
-}
+//void General::Variation(std::vector<int> &individual, int fitness_standard, int fitness_max)//�������
+//{
+//    Variate(individual, fitness_standard, fitness_max);
+//}
 
-int General::CrossingOverJudge(int fitness_standard, int fitness_max, int f)//ÿ��Ⱦɫ��Ļ����Ƿ������滥��
+int General::CrossingOverJudge(std::shared_ptr<GeneVariate> data_muster,int &pos_x,int &pos_y)//ÿ��Ⱦɫ��Ļ����Ƿ������滥��
 {
+    float f = std::max(data_muster->champion[pos_x].back(),data_muster->champion[pos_y].back());
     float probability = 0.7;
-    if (f < fitness_standard)
+    if (f < data_muster->fitness_standard)
         probability = 0.9;
-    else if (fitness_max != fitness_standard)
-        probability = 0.9 - (float) (0.9 - 0.6) * (f - fitness_standard) / (fitness_max - fitness_standard);
+    else if (data_muster->fitness_max != data_muster->fitness_standard)
+        probability = 0.9 - (float) (0.9 - 0.6) * (f - data_muster->fitness_standard) / (data_muster->fitness_max - data_muster->fitness_standard);
     float judge;
     int x = rand() % 11;
     judge = probability * x;
@@ -58,10 +61,8 @@ int General::CrossingOverJudge(int fitness_standard, int fitness_max, int f)//ÿ
 
 
 
-void General::CrossingOver(std::vector<int> & chromosome_x, std::vector<int> & chromosome_y, int &num, int fitness_standard, int fitness_max) {//Ⱦɫ�彻�滥��
-    int n = num;
-    int nu = 0;
-
+void General::CrossingOver(std::shared_ptr<GeneVariate> data_muster,int &pos_x,int &pos_y)
+{
     for(int j=0;j<chromosome_x.size()-1;j++)
     {
         int judge = CrossingOverJudge(fitness_standard, fitness_max, chromosome_x.back());
@@ -77,35 +78,52 @@ void General::CrossingOver(std::vector<int> & chromosome_x, std::vector<int> & c
     num = n;
 }
 
-void General::GeneticRecombination(std::vector<std::vector<int>> champion, int fitness_standard, int i, int fitness_max)//��ʼ��������
+
+std::vector<int> General::RandomPairing(int &num)
+{
+    std::vector<int> numbers;
+    for(int i = 0;i<num;i++)
+    {
+        numbers.emplace_back(i);
+    }
+    std::random_shuffle(numbers.begin(),numbers.end());
+    return numbers;
+}
+
+void General::RecombinationOfGrne(std::shared_ptr<GeneVariate> data_muster)//��ʼ��������
 {
     int num = 1;
     int nu = 0;
-    for (int i = 1; i <= 5; i++) {
-        for (int j = i + 1; j <= 5; j++) {
-            CrossingOver(champion[i], champion[j], num, fitness_standard, fitness_max);//ÿ������ͬ��Ⱦɫ�忪ʼ����
-        }
+    std::vector<int> random = RandomPairing(data_muster->sum);
+    for(int i=0;i<data_muster->sum;i+=2)
+    {
+        int pos_y = i+1;
+        CrossingOver(data_muster, i, pos_y);//ÿ������ͬ��Ⱦɫ�忪ʼ����
     }
 }
 
-int General::FindMaxValue(std::vector<std::vector<int>> population) {
+int General::FindMaxValue(std::shared_ptr<GeneVariate> data_muster) {
     int ma = 0;
-    for (int i = 1; i <= 5; i++) {
-        if (ma <= population[i].back()) {
-            ma = population[i].back();
+    for (int i = 1; i <= data_muster->sum; i++)
+    {
+        if (ma <= data_muster->champion[i].back())
+        {
+            ma = data_muster->champion[i].back();
         }
     }
     return ma;
 }
 
 
-void General::CrossingOverPrePare(std::vector<std::vector<int>> champion, int fitness_standard) {
+void General::CrossingOverPrePare(std::shared_ptr<GeneVariate> data_muster)
+{
     int nu = 0;
-    int max_value = FindMaxValue(champion);//�ҵ���Ӧ�����ֵ
-    for (int i = 1; i <= 5; i++)//�ھ�Ⱦɫ�忪ʼ����
+    int max_value = FindMaxValue(data_muster);//�ҵ���Ӧ�����ֵ
+
+    RecombinationOfGrne(data_muster);//��������
+    for (int i = 1; i <= data_muster->sum; i++)//�ھ�Ⱦɫ�忪ʼ����
     {
-        Variation(champion[i], fitness_standard, max_value);
-        GeneticRecombination(champion, fitness_standard, i, max_value);//��������
+        Variate(data_muster,i);
         //	printf("%d ",nu++);
     }
 
@@ -114,4 +132,6 @@ void General::CrossingOverPrePare(std::vector<std::vector<int>> champion, int fi
         population[i] = global_chromosome[i];
     }
 }
+
+
 

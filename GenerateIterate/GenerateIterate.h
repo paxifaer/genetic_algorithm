@@ -13,33 +13,46 @@
 #include <algorithm>
 #include <vector>
 #include <string>
-
+#include <memory>
 
 
 class General
 {
 
 public:
-    std::vector<std::vector<int>> population;
-    std::vector<std::vector<int>> champion; //冠军序列
-    std::vector<int> global_chromosome[21];
 
-    int VariateMasker(std::vector<int> champion, int fitness_standard, int fitness_max);
-    void Variate(std::vector<int> &individual, int fitness_standard, int fitness_max);
+    struct GeneVariate
+            {
+        std::vector<std::vector<int>> population;
+        int child_num;
+        std::vector<int> global_chromosome[21];
+        std::vector<std::vector<int>> champion;
+        int  fitness_standard;
+        int  fitness_max;
 
-    void Variation(std::vector<int> &individual, int fitness_standard, int fitness_max);
+        int sum;
+        GeneVariate(): child_num(0),fitness_standard(0),fitness_max(0),sum(0){};
+    };
 
-    int CrossingOverJudge(int fitness_standard, int fitness_max, int f);
 
-    void CrossingOver(std::vector<int> &chromosome_x, std::vector<int> &chromosome_y, int &num, int fitness_standard, int fitness_max);
+    int VariateMasker(std::shared_ptr<GeneVariate> data_muster);
+    void Variate(std::shared_ptr<GeneVariate> data_muster,int &pos);
 
-    void GeneticRecombination(std::vector<std::vector<int>> champion, int fitness_standard, int i, int fitness_max);
+//    void Variation(std::vector<int> &individual, int fitness_standard, int fitness_max);
 
-    int FindMaxValue(std::vector<std::vector<int>> population);
+    int CrossingOverJudge(std::shared_ptr<GeneVariate> data_muster,int &pos_x,int &pos_y);
 
-    void CrossingOverPrePare(std::vector<std::vector<int>> champion, int fitness_standard);
+    void CrossingOver(std::shared_ptr<GeneVariate> data_muster,int &pos_x,int &pos_y);
+
+    void RecombinationOfGrne(std::shared_ptr<GeneVariate> data_muster);
+
+    int FindMaxValue(std::shared_ptr<GeneVariate> data_muster);
+
+    void CrossingOverPrePare(std::shared_ptr<GeneVariate> data_muster);
 
 private:
+
+    std::vector<int> RandomPairing(int &num);
 };
 
 #endif // GENETIC_ALGORITHM_GENETICITERATE_H
