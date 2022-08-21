@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(UO_TOOLS)
+project(Genetic)
 set(CMAKE_CXX_STANDARD 17)
 
 set(THIRD_PARTY_PATH ${PROJECT_SOURCE_DIR}/3rdparty)

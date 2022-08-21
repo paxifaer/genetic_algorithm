@@ -22,7 +22,7 @@ struct chromosome {
     int adaptability = 0;
 
 };
-enum  Gene{
+ enum class Gene{
     huowu = 0,
     chongwu,
     shuanghuosi,
@@ -30,13 +30,44 @@ enum  Gene{
     adaptability 
 };
 
+enum class IterateType{
+    ForTrain=0,
+    ForPlay,
+    HasData
+};
+//struct PieceElement
+//        {
+//    std::vector<std::vector<int>> general_checkerboard;
+//    std::vector<std::vector<int>>  checkerboard;
+//    std::vector<std::vector<int>>  checkerboard_piece_num;
+//    std::vector<std::vector<int>> population;
+//    std::vector<std::vector<int>> champion;
+//    int population_num;
+//    int champaion_num;
+//    int train_time;
+//    int  winner;
+//    int  player;
+//};
+
+struct TrainPiectElement
+{
+    int  player;
+    int population_num;
+    int champaion_num;
+    int train_time;
+    int  winner;
+    int iterate_type;
+    std::vector<std::vector<int>> general_checkerboard;
+    std::vector<std::vector<int>> population;
+    std::vector<std::vector<int>> champion;
+    std::vector<int> global_chromosome;
+    std::vector<std::vector<int>> checkerboard;
+    std::vector<std::vector<int>> checkerboard_piece_num;
+
+};
 class SixPiece :public General{
    public: 
-    std::vector<std::vector<int>> population;
-    std::vector<std::vector<int>> champion;//�ھ�����
-    std::vector<int> global_chromosome[21];
-    std::vector<std::vector<int>> checkerboard{20};
-    std::vector<std::vector<int>> checkerboard_piece_num{3};
+
     void Init();
 
     void Record(std::vector<std::vector<int>> &checkerboard, std::vector<std::vector<int>> &checkerboard_piece_num, const int player, int x_position,
@@ -56,19 +87,24 @@ class SixPiece :public General{
     Point AI(const std::vector<std::vector<int>> &checkerboard, const std::vector<std::vector<int>> &checkerboard_piece_num, int player, int &winner,
              chromosome r1);
     void SelectionOfChampions(const std::vector<std::vector<int>> & population) ;
-    void Championships(std::vector<std::vector<int>>  &checkerboard1,std::vector<std::vector<int>> & checkerboard_piece_num1, int player) ;
+    void MakeChampion(std::shared_ptr<TrainPiectElement> board) ;
 
     void ResultCopy(int checkerboard[][20], int checkerboard1[][20], int checkerboard_piece_num[][1700],
                     int checkerboard_piece_num1[][1700]) ;
 
-    void Train(std::vector<std::vector<int>> & checkerboard, std::vector<std::vector<int>> & checkerboard_piece_num,  int &train_time,const int & winner,const int & player) ;
+    void Train(std::shared_ptr<TrainPiectElement> &board) ;
 
-    int PopulationPlayAGame(std::vector<int> population1, std::vector<int> population2, const std::vector<std::vector<int>> &checkerboard,
+    int PopulationPlayAGame(std::vector<int> population1, std::vector<int> population2, const std::vector<std::vector<int>> checkerboard,
                              const std::vector<std::vector<int>> &checkerboard_piece_num) ;
 
     void CrossingOverPrePare(std::vector<std::vector<int>> champion, int fitness_standard) ;
     void SignalCommunication();
     void SignalCommunicationThread(std::vector<int> Chromosome,std::string str);
+    void Play(int &type,std::shared_ptr<TrainPiectElement> board);
+    void MakePopulationWhenTrain(std::shared_ptr<TrainPiectElement> board);
+    void InitPopulation(std::shared_ptr<TrainPiectElement> board);
+    void InitPopulationForTrain(std::shared_ptr<TrainPiectElement> board);
+    void InitPopulationForPlay(std::shared_ptr<TrainPiectElement> board);
 };
 
 #endif //GENETICALGORITHM_SIXPIECE_H
