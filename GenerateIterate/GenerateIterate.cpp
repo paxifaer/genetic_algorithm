@@ -6,7 +6,7 @@
 //   8 adaptability = 0;
 
 
-int General::VariateMasker(std::shared_ptr<GeneVariate> &data_muster, int &pos) {
+int General::VariateMasker(std::shared_ptr<GeneVariate> data_muster, int &pos) {
     float mutation_probability;
     if (data_muster->champion[pos].back() < data_muster->fitness_standard) {
         mutation_probability = 0.1;
@@ -22,7 +22,7 @@ int General::VariateMasker(std::shared_ptr<GeneVariate> &data_muster, int &pos) 
         return 0;
 
 }// huowu 12  chongwu 9 shuanghuosi 9  danhuosi 8 miansi 7  huosan 6 miansan 4  huoer 3
-void General::Variate(std::shared_ptr<GeneVariate> &data_muster, int &pos)
+void General::Variate(std::shared_ptr<GeneVariate> data_muster, int &pos)
 {
     int probability, masker = 0;
     for(int y=0;y<data_muster->child_num;y++)
@@ -52,7 +52,7 @@ void General::Variate(std::shared_ptr<GeneVariate> &data_muster, int &pos)
 //    Variate(individual, fitness_standard, fitness_max);
 //}
 
-int General::CrossingOverJudge(std::shared_ptr<GeneVariate> &data_muster, int &pos_x, int &pos_y)//ÿ��Ⱦɫ��Ļ����Ƿ������滥��
+int General::CrossingOverJudge(std::shared_ptr<GeneVariate> data_muster, int &pos_x, int &pos_y)//ÿ��Ⱦɫ��Ļ����Ƿ������滥��
 {
     float f = std::max(data_muster->champion[pos_x].back(), data_muster->champion[pos_y].back());
     float probability = 0.7;
@@ -71,7 +71,7 @@ int General::CrossingOverJudge(std::shared_ptr<GeneVariate> &data_muster, int &p
 }
 
 
-void General::CrossingOver(std::shared_ptr<GeneVariate> &data_muster, int &pos_x, int &pos_y)
+void General::CrossingOver(std::shared_ptr<GeneVariate> data_muster, int &pos_x, int &pos_y)
 {
     for (int j = 0; j < data_muster->champion[pos_x].size() - 1; j++)
     {
@@ -93,20 +93,20 @@ std::vector<int> General::RandomPairing(int &num) {
     return numbers;
 }
 
-void General::RecombinationOfGrne(std::shared_ptr<GeneVariate> &data_muster)//��ʼ��������
+void General::RecombinationOfGrne(std::shared_ptr<GeneVariate> data_muster)//��ʼ��������
 {
     int num = 1;
     int nu = 0;
-    std::vector<int> random = RandomPairing(data_muster->sum);
-    for (int i = 0; i < data_muster->sum; i += 2) {
+    std::vector<int> random = RandomPairing(data_muster->champaion_num);
+    for (int i = 0; i < data_muster->champaion_num; i += 2) {
         int pos_y = i + 1;
         CrossingOver(data_muster, i, pos_y);//ÿ������ͬ��Ⱦɫ�忪ʼ����
     }
 }
 
-int General::FindMaxValue(std::shared_ptr<GeneVariate> &data_muster) {
+int General::FindMaxValue(std::shared_ptr<GeneVariate> data_muster) {
     int ma = 0;
-    for (int i = 1; i <= data_muster->sum; i++) {
+    for (int i = 1; i <= data_muster->champaion_num; i++) {
         if (ma <= data_muster->champion[i].back()) {
             ma = data_muster->champion[i].back();
         }
@@ -115,11 +115,11 @@ int General::FindMaxValue(std::shared_ptr<GeneVariate> &data_muster) {
 }
 
 
-void General::CrossingOverPrePare(std::shared_ptr<GeneVariate> &data_muster) {
+void General::CrossingOverPrePare(std::shared_ptr<GeneVariate> data_muster) {
     int nu = 0;
     int max_value = FindMaxValue(data_muster);//�ҵ���Ӧ�����ֵ
     RecombinationOfGrne(data_muster);//��������
-    for (int i = 1; i <= data_muster->sum; i++)//�ھ�Ⱦɫ�忪ʼ����
+    for (int i = 1; i <= data_muster->champaion_num; i++)//�ھ�Ⱦɫ�忪ʼ����
     {
         Variate(data_muster, i);
         //	printf("%d ",nu++);

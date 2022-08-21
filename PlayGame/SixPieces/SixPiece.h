@@ -97,7 +97,7 @@ class SixPiece :public General{
     int PopulationPlayAGame(std::vector<int> population1, std::vector<int> population2, const std::vector<std::vector<int>> checkerboard,
                              const std::vector<std::vector<int>> &checkerboard_piece_num) ;
 
-    void CrossingOverPrePare(std::vector<std::vector<int>> champion, int fitness_standard) ;
+//    void CrossingOverPrePare(std::vector<std::vector<int>> champion, int fitness_standard) ;
     void SignalCommunication();
     void SignalCommunicationThread(std::vector<int> Chromosome,std::string str);
     void Play(int &type,std::shared_ptr<TrainPiectElement> board);
