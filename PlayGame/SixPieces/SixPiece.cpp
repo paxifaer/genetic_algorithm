@@ -537,19 +537,34 @@ void SixPiece::InitPopulationForPlay(std::shared_ptr<TrainPiectElement> board) {
 
 }
 
-std::vector<int> SixPiece::GetPKQueue(const std::weak_ptr<TrainPiectElement> board)
+std::vector<int> SixPiece::GetPKQueue(const std::shared_ptr<TrainPiectElement> board)
 {
     std::vector<int> numbers;
-    for (int i = 0; i < board->; i++) {
+    for (int i = 0; i < board->population_num; i++) {
         numbers.emplace_back(i);
     }
     std::random_shuffle(numbers.begin(), numbers.end());
     return numbers;
 }
 
+void SixPiece::PopulationContest(int &play1,int &player2,std::shared_ptr<TrainPiectElement> board)
+{
+    for(int i=0;i<3;i++)
+    {
+        int black_winner = PopulationPlayAGame(board);
+    }
+}
+
 void SixPiece::MakeChampion(std::shared_ptr<TrainPiectElement> board) {
     int black_winner = 0, white_winner = 0;
 
+    std::vector<int> pk_queue = GetPKQueue(board);
+
+    threadpool pool(6);
+    for(int i=0;i<board->population_num;i+=2)
+    {
+        pool.commit()
+    }
 
     for (int population_sequence = 1;
          population_sequence <= 4; population_sequence++) // 20��Ⱦɫ��ֳ����飬ÿ���ĸ������ĸ�Ⱦɫ����бȽϡ�

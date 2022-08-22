@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.8)
 project(Genetic)
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 11)
 
 set(THIRD_PARTY_PATH ${PROJECT_SOURCE_DIR}/3rdparty)
 
@@ -11,11 +11,13 @@ include_directories(${THIRD_PARTY_PATH}/include)
 
 link_directories(${THIRD_PARTY_PATH}/lib)
 
+ADD_SUBDIRECTORY(EasyThreadPool)
 ADD_SUBDIRECTORY(queue)
 ADD_SUBDIRECTORY(GenerateIterate)
 ADD_SUBDIRECTORY(PlayGame)
 ADD_SUBDIRECTORY(ThreadPool)
-add_library(${PROJECT_NAME} main.cpp)
+
+add_library(${PROJECT_NAME} main.cpp )
 
 
 set(gene Generate)

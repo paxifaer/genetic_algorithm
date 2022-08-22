@@ -8,6 +8,7 @@
 #include <iostream>
 #include <vector>
 #include "../../GenerateIterate/GenerateIterate.h"
+#include "../../EasyThreadPool/easythreadpool.h"
 struct Point            //������Ľṹ��?
 {
     int x, y;
@@ -113,7 +114,8 @@ class SixPiece :public General{
     void InitPopulationForTrain(std::shared_ptr<TrainPiectElement> board);
     void InitPopulationForPlay(std::shared_ptr<TrainPiectElement> board);
 private:
-    std::vector<int> GetPKQueue(const std::weak_ptr<TrainPiectElement> board);
+    std::vector<int> GetPKQueue(const std::shared_ptr<TrainPiectElement> board);
+    void PopulationContest(int &play1,int &player2,std::shared_ptr<TrainPiectElement> board);
 };
 
 #endif //GENETICALGORITHM_SIXPIECE_H
