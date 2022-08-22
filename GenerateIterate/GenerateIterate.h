@@ -33,7 +33,7 @@ public:
                     int i3) : child_num(0), fitness_standard(0), fitness_max(0), champaion_num(0){};
     };
 
-    int FindMaxValue(std::shared_ptr<GeneVariate> data_muster);
+    void CalculateFitnessMaxAndFitnessStandard(std::shared_ptr<GeneVariate> data_muster);
 
     void CrossingOverPrePare(std::shared_ptr<GeneVariate> data_muster);
 

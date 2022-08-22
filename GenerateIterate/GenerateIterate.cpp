@@ -104,20 +104,24 @@ void General::RecombinationOfGrne(std::shared_ptr<GeneVariate> data_muster)//�
     }
 }
 
-int General::FindMaxValue(std::shared_ptr<GeneVariate> data_muster) {
+void General::CalculateFitnessMaxAndFitnessStandard(std::shared_ptr<GeneVariate> data_muster) {
     int ma = 0;
+    int sum=0;
     for (int i = 1; i <= data_muster->champaion_num; i++) {
         if (ma <= data_muster->champion[i].back()) {
             ma = data_muster->champion[i].back();
         }
+        sum+=data_muster->champion[i].back();
     }
-    return ma;
+    data_muster->fitness_max = ma;
+    data_muster->fitness_standard = sum/data_muster->champaion_num;
 }
 
 
 void General::CrossingOverPrePare(std::shared_ptr<GeneVariate> data_muster) {
     int nu = 0;
-    int max_value = FindMaxValue(data_muster);//�ҵ���Ӧ�����ֵ
+    CalculateFitnessMaxAndFitnessStandard(data_muster);//�ҵ���Ӧ�����ֵ
+
     RecombinationOfGrne(data_muster);//��������
     for (int i = 1; i <= data_muster->champaion_num; i++)//�ھ�Ⱦɫ�忪ʼ����
     {

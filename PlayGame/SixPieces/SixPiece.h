@@ -35,6 +35,12 @@ enum class IterateType{
     ForPlay,
     HasData
 };
+enum class PieceDirection{
+    Up = 0,
+    Left,
+    LeftUp,
+    RightUp
+};
 //struct PieceElement
 //        {
 //    std::vector<std::vector<int>> general_checkerboard;
@@ -58,6 +64,7 @@ struct TrainPiectElement
     int  winner;
     int iterate_type;
     std::vector<std::vector<int>> general_checkerboard;
+    std::vector<std::vector<std::vector<int>>> direction_checkerboard{4};
     std::vector<std::vector<int>> population;
     std::vector<std::vector<int>> champion;
     std::vector<int> global_chromosome;
@@ -105,6 +112,8 @@ class SixPiece :public General{
     void InitPopulation(std::shared_ptr<TrainPiectElement> board);
     void InitPopulationForTrain(std::shared_ptr<TrainPiectElement> board);
     void InitPopulationForPlay(std::shared_ptr<TrainPiectElement> board);
+private:
+    std::vector<int> GetPKQueue(const std::weak_ptr<TrainPiectElement> board);
 };
 
 #endif //GENETICALGORITHM_SIXPIECE_H
