@@ -64,14 +64,21 @@ struct TrainPiectElement
     int train_time;
     int  winner;
     int iterate_type;
+    int convergence_step;
+    int contest_round;
     std::vector<std::vector<int>> general_checkerboard;
-    std::vector<std::vector<std::vector<int>>> direction_checkerboard{4};
+
     std::vector<std::vector<int>> population;
     std::vector<std::vector<int>> champion;
-    std::vector<int> global_chromosome;
     std::vector<std::vector<int>> checkerboard;
     std::vector<std::vector<int>> checkerboard_piece_num;
 
+};
+struct TemporaryData
+{
+    std::vector<std::vector<int>> general_checkerboard;
+    std::vector<std::vector<std::vector<int>>> direction_checkerboard;
+    int convergence_step;
 };
 class SixPiece :public General{
    public: 
@@ -102,8 +109,7 @@ class SixPiece :public General{
 
     void Train(std::shared_ptr<TrainPiectElement> &board) ;
 
-    int PopulationPlayAGame(std::vector<int> population1, std::vector<int> population2, const std::vector<std::vector<int>> checkerboard,
-                             const std::vector<std::vector<int>> &checkerboard_piece_num) ;
+    int PopulationPlayAGame(std::shared_ptr<TemporaryData> iterate_basic_data) ;
 
 //    void CrossingOverPrePare(std::vector<std::vector<int>> champion, int fitness_standard) ;
     void SignalCommunication();

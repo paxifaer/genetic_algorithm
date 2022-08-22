@@ -1,15 +1,6 @@
 #include "SixPiece.h"
 #include <memory>
 
-void SixPiece::Init() //��ʼ������������¼���ӵ������ʼ��?
-{
-    checkerboard.clear();
-    checkerboard_piece_num.clear();
-    checkerboard.resize(20, std::vector<int>(20));
-    checkerboard_piece_num.resize(3, std::vector<int>(1700));
-}
-
-/***********************************************************************************************/ //��¼
 
 void
 SixPiece::Record(std::vector<std::vector<int>> &checkerboard, std::vector<std::vector<int>> &checkerboard_piece_num,
@@ -366,9 +357,7 @@ chromosome SixPiece::ChromosomeSwitch(const std::vector<int> &population) {
     return popu;
 }
 
-int SixPiece::PopulationPlayAGame(std::vector<int> population1, std::vector<int> population2,
-                                  const std::vector<std::vector<int>> &checkerboard,
-                                  const std::vector<std::vector<int>> &checkerboard_piece_num) {
+int SixPiece::PopulationPlayAGame(std::shared_ptr<TemporaryData> iterate_basic_data) {
     int convergence_limit = 50;
     int flag = 0;
     // int checkerboard1[20][20], checkerboard_piece_num1[3][1700], checkerboard_piece_num2[3][1700];
@@ -403,21 +392,6 @@ int SixPiece::PopulationPlayAGame(std::vector<int> population1, std::vector<int>
     return 0;//平局
 }
 
-//void SixPiece::CrossingOverPrePare(std::vector<std::vector<int>> champion, int fitness_standard) {
-//    int nu = 0;
-//    int max_value = FindMaxValue(champion); //�ҵ���Ӧ������?
-//    for (int i = 1; i <= 5; i++)            //�ھ�Ⱦɫ�忪ʼ����
-//    {
-//        Variation(champion[i], fitness_standard, max_value);
-//        GeneticRecombination(champion, fitness_standard, i, max_value); //��������
-//        //	printf("%d ",nu++);
-//    }
-//
-//    for (int i = 1; i <= 20; i++) //������һ��Ⱦɫ��
-//    {
-//        population[i] = global_chromosome[i];
-//    }
-//}
 
 void SixPiece::MakePopulationWhenTrain(std::shared_ptr<TrainPiectElement> board) {
     std::shared_ptr<GeneVariate> variate = std::make_shared<GeneVariate>(board->population,
@@ -537,8 +511,7 @@ void SixPiece::InitPopulationForPlay(std::shared_ptr<TrainPiectElement> board) {
 
 }
 
-std::vector<int> SixPiece::GetPKQueue(const std::shared_ptr<TrainPiectElement> board)
-{
+std::vector<int> SixPiece::GetPKQueue(const std::shared_ptr<TrainPiectElement> board) {
     std::vector<int> numbers;
     for (int i = 0; i < board->population_num; i++) {
         numbers.emplace_back(i);
@@ -547,11 +520,38 @@ std::vector<int> SixPiece::GetPKQueue(const std::shared_ptr<TrainPiectElement> b
     return numbers;
 }
 
-void SixPiece::PopulationContest(int &play1,int &player2,std::shared_ptr<TrainPiectElement> board)
-{
-    for(int i=0;i<3;i++)
-    {
+void SixPiece::PopulationContest(int &player1, int &player2, std::shared_ptr<TrainPiectElement> board) {
+
+    for (int i = 0; i < 3; i++) {
+        std::shared_ptr<TemporaryData> iterate;
+        iterate->general_checkerboard = board->general_checkerboard;
+        iterate->convergence_step = board->convergence_step;
         int black_winner = PopulationPlayAGame(board);
+        int white_winner = PopulationPlayAGame(board);
+        switch (black_winner) {
+            case 0:
+                board->population[player1].back() += 25;
+                board->population[player2].back() += 25;
+                break;
+            case 1:
+                board->population[player1].back() += 50;
+                break;
+            case 2:
+                board->population[player2].back() += 50;
+                break;
+        }
+        switch (white_winner) {
+            case 0:
+                board->population[player1].back() += 25;
+                board->population[player2].back() += 25;
+                break;
+            case 1:
+                board->population[player1].back() += 50;
+                break;
+            case 2:
+                board->population[player2].back() += 50;
+                break;
+        }
     }
 }
 
@@ -561,8 +561,7 @@ void SixPiece::MakeChampion(std::shared_ptr<TrainPiectElement> board) {
     std::vector<int> pk_queue = GetPKQueue(board);
 
     threadpool pool(6);
-    for(int i=0;i<board->population_num;i+=2)
-    {
+    for (int i = 0; i < board->population_num; i += 2) {
         pool.commit()
     }
 
@@ -705,100 +704,8 @@ void SixPiece::SignalCommunicationThread(std::vector<int> Chromosome, std::strin
         // printf("\n%d ",winner);
     }
 }
-//void SixPiece::SignalCommunication()
-//{
-//    int winner = 0;
-//    char message[256];
-//    int player = 0; //���� 1��ʾ�� 2��ʾ��
-//    // int step_num = 0; //������¼
-//    std::vector<std::vector<int>> checkerboard(20,std::vector<int>(20)); //���̼�¼
-//    std::vector<std::vector<int>> checkerboard_piece_num(3,std::vector<int>(1700));
-//    int enemy = 0;
-//
-//    int train_time = 50;
-//    chromosome r;
-//    int x_position1, y_position1, x_position2, y_position2;
-//    char x_position_string_1, x_position_string_2, y_position_string_1, y_position_string_2;
-//    std::cout<<"aa"<<std::endl;
-//    while (1)
-//    {
-//        fflush(stdout);
-//        scanf("%s", message);
-//        if (strcmp(message, "move") == 0)
-//        {
-//            scanf("%s", message);
-//            fflush(stdin);
-//            x_position1 = message[0] - 'A' + 1;
-//            y_position1 = message[1] - 'A' + 1;
-//            x_position2 = message[2] - 'A' + 1;
-//            y_position2 = message[3] - 'A' + 1;
-//
-//            Record(checkerboard, checkerboard_piece_num, enemy, x_position1, y_position1);
-//            Record(checkerboard, checkerboard_piece_num, enemy, x_position2, y_position2);
-//            Train(checkerboard, checkerboard_piece_num, train_time, winner, enemy);
-//
-//            memcpy(&r, &champion[2], sizeof(r));
-//            Point pos1, pos2;
-//            pos1 = AI(checkerboard, checkerboard_piece_num, player, winner, r);
-//            Record(checkerboard, checkerboard_piece_num, player, pos1.x, pos1.y);
-//            x_position_string_1 = pos1.x + 'A' - 1;
-//            y_position_string_1 = pos1.y + 'A' - 1;
-//            pos2 = AI(checkerboard, checkerboard_piece_num, player, winner, r);
-//            Record(checkerboard, checkerboard_piece_num, player, pos2.x, pos2.y);
-//            x_position_string_2 = pos2.x + 'A' - 1;
-//            y_position_string_2 = pos2.y + 'A' - 1; // printf(" %d",num++);
-//            printf("\n");
-//            printf("move %c%c%c%c\n", x_position_string_1, y_position_string_1, x_position_string_2,
-//                   y_position_string_2);
-//        }
-//        else if (strcmp(message, "new") == 0)
-//        {
-//            scanf("%s", message);
-//            fflush(stdin);
-//            if (strcmp(message, "black") == 0)
-//            {
-//                enemy = 2;
-//                player = 1;
-//            }
-//            else
-//            {
-//                player = 2;
-//                enemy = 1;
-//            }
-//            Init();
-//            if (player == 1)
-//            {
-//                char s1 = 'A' + 7, s2 = 'A' + 7;
-//                Record(checkerboard, checkerboard_piece_num, player, 7, 7);
-//                printf("\n");
-//                printf("move GG@@\n");
-//            }
-//        }
-//        else if (strcmp(message, "error") == 0) //�ŷ�����?
-//        {
-//            fflush(stdin);
-//        }
-//        else if (strcmp(message, "name?") == 0) //ѯ����������
-//        {
-//            fflush(stdin);
-//            printf("name Parsifal\n");
-//        }
-//        else if (strcmp(message, "end") == 0) //�Ծֽ���
-//        {
-//            fflush(stdin);
-//        }
-//        else if (strcmp(message, "quit") == 0)
-//        {
-//            fflush(stdin);
-//            printf("Quit!\n");
-//            break;
-//        }
-//
-//        // printf("\n%d ",winner);
-//    }
-//}
 
-void SixPiece::Play(int &type, std::shared_ptr<PieceElement> board) {
+void SixPiece::Play(int &type, std::shared_ptr<TrainPiectElement> board) {
     Train(board);
 }
 

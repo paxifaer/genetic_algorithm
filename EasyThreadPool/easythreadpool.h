@@ -67,7 +67,7 @@ public:
     ~threadpool(){
         for(int i=0;i<pool.size();i++)
         {
-            pool[i].detach();
+            pool[i].join();
         }
     }
 private:
