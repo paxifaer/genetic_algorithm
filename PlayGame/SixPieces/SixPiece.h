@@ -9,6 +9,8 @@
 #include <vector>
 #include "../../GenerateIterate/GenerateIterate.h"
 #include "../../EasyThreadPool/easythreadpool.h"
+#include <numeric>
+#include <unordered_map>
 struct Point            //������Ľṹ��?
 {
     int x, y;
@@ -120,8 +122,10 @@ class SixPiece :public General{
     void InitPopulationForTrain(std::shared_ptr<TrainPiectElement> board);
     void InitPopulationForPlay(std::shared_ptr<TrainPiectElement> board);
 private:
-    std::vector<int> GetPKQueue(const std::shared_ptr<TrainPiectElement> board);
-    void PopulationContest(int &play1,int &player2,std::shared_ptr<TrainPiectElement> board);
+    void GetPKQueue(std::vector<int> &pk_queue);
+    void PopulationContest(std::shared_ptr<TrainPiectElement> board);
+    static void SingleContest(int &player1,int &player2,std::shared_ptr<TrainPiectElement> board,unordered_map<int,int> &ma);
+    void UpdateNextRoundQueue(std::vector<int> &pk_queue,unordered_map<int,int> &ma);
 };
 
 #endif //GENETICALGORITHM_SIXPIECE_H

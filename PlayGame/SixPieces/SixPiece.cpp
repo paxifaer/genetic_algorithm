@@ -511,17 +511,47 @@ void SixPiece::InitPopulationForPlay(std::shared_ptr<TrainPiectElement> board) {
 
 }
 
-std::vector<int> SixPiece::GetPKQueue(const std::shared_ptr<TrainPiectElement> board) {
-    std::vector<int> numbers;
-    for (int i = 0; i < board->population_num; i++) {
-        numbers.emplace_back(i);
+void SixPiece::GetPKQueue(std::vector<int> &pk_queue) {
+    for (int i = 0; i < pk_queue.size(); i++) {
+        pk_queue.emplace_back(i);
     }
-    std::random_shuffle(numbers.begin(), numbers.end());
-    return numbers;
+    std::random_shuffle(pk_queue.begin(), pk_queue.end());
 }
 
-void SixPiece::PopulationContest(int &player1, int &player2, std::shared_ptr<TrainPiectElement> board) {
+void UpdateNextRoundQueue(std::vector<int> &pk_queue,unordered_map<int,int> &ma)
+{
+    pk_queue.clear();
+    for(unordered_map<int,int>::iterator it = ma.begin();it!=ma.end();it++)//find winner,save into pk_queue
+    {
+        if(it->second==1)
+            pk_queue.emplace_back(it->first);
+    }
+    std::random_shuffle(pk_queue.begin(),pk_queue.end());//random opponent
+}
 
+void SixPiece::PopulationContest(std::shared_ptr<TrainPiectElement> board)
+{
+
+    std::vector<int> pk_queue {board->population_num};
+    iota(pk_queue.begin(), pk_queue.end(), 0);
+    GetPKQueue(pk_queue);
+    while(--board->contest_round)
+    {
+        threadpool pool{6};
+        unordered_map<int,int> ma;//contest use  multiple threads
+       for(int i=0;i<pk_queue.size();i+=2)
+       {
+           pool.commit(SingleContest,pk_queue[i],pk_queue[i+1],board,ma);
+       }
+        UpdateNextRoundQueue(pk_queue,ma);
+    }
+
+}
+
+
+void SixPiece::SingleContest(int &player1,int &player2,std::shared_ptr<TrainPiectElement> board,unordered_map<int,int> &ma)
+{
+    int win_player ;
     for (int i = 0; i < 3; i++) {
         std::shared_ptr<TemporaryData> iterate;
         iterate->general_checkerboard = board->general_checkerboard;
@@ -553,17 +583,15 @@ void SixPiece::PopulationContest(int &player1, int &player2, std::shared_ptr<Tra
                 break;
         }
     }
+    win_player = board->population[player1].back() < board->population[player2].back() ? player2:player1;
+    ma[win_player] = 1;
 }
+
 
 void SixPiece::MakeChampion(std::shared_ptr<TrainPiectElement> board) {
     int black_winner = 0, white_winner = 0;
 
-    std::vector<int> pk_queue = GetPKQueue(board);
-
-    threadpool pool(6);
-    for (int i = 0; i < board->population_num; i += 2) {
-        pool.commit()
-    }
+    PopulationContest(board);
 
     for (int population_sequence = 1;
          population_sequence <= 4; population_sequence++) // 20��Ⱦɫ��ֳ����飬ÿ���ĸ������ĸ�Ⱦɫ����бȽϡ�
