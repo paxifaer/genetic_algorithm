@@ -537,7 +537,7 @@ void SixPiece::PopulationContest(std::shared_ptr<TrainPiectElement> board)
     GetPKQueue(pk_queue);
     while(--board->contest_round)
     {
-        threadpool pool{6};
+        threadpool pool{2};
         unordered_map<int,int> ma;//contest use  multiple threads
        for(int i=0;i<pk_queue.size();i+=2)
        {
