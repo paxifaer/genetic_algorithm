@@ -357,33 +357,31 @@ chromosome SixPiece::ChromosomeSwitch(const std::vector<int> &population) {
     return popu;
 }
 
-int SixPiece::PopulationPlayAGame(std::shared_ptr<TemporaryData> iterate_basic_data) {
-    int convergence_limit = 50;
-    int flag = 0;
-    // int checkerboard1[20][20], checkerboard_piece_num1[3][1700], checkerboard_piece_num2[3][1700];
-    // ResultCopy(checkerboard, checkerboard1, checkerboard_piece_num, checkerboard_piece_num1);
-    // ResultCopy(checkerboard, checkerboard1, checkerboard_piece_num, checkerboard_piece_num2);
-    std::vector<std::vector<int>> checkerboard1, checkerboard_piece_num1, checkerboard_piece_num2;
+void SixPiece::CacheTemporaryDate(const std::shared_ptr<TrainPiectElement> board,std::shared_ptr<TemporaryData> tem)
+{
+    tem->general_checkerboard = board->general_checkerboard;
+}
 
-    checkerboard1 = checkerboard;
-    checkerboard_piece_num1 = checkerboard_piece_num;
-    checkerboard_piece_num2 = checkerboard_piece_num;
+int SixPiece::PopulationPlayAGame(const int &player1,const int &player2,const std::shared_ptr<TrainPiectElement> board) {
 
-    int winner1 = 0, winner2 = 0;
+    std::shared_ptr<TemporaryData> ply_1st,ply_2nd;
+    CacheTemporaryDate(board,ply_1st);
+    CacheTemporaryDate(board,ply_2nd);
 
-    while (convergence_limit--) {
+    int times = board->convergence_step;
+
+    while (times--) {
         int winner1 = 0, winner2 = 0;
         Point pos1, pos2;
         chromosome chro1, chro2;
-        chro1 = ChromosomeSwitch(population1);
-        chro2 = ChromosomeSwitch(population2);
-        pos1 = AI(checkerboard1, checkerboard_piece_num1, 1, winner1, chro1);
+
+        pos1 = ply_1st->ma.begin()->second;
         //	printf("\n%d ",winner1);
         Record(checkerboard1, checkerboard_piece_num1, 1, pos1.x, pos1.y);
         if (winner1) {
             return 1; // population1赢
         }
-        pos2 = AI(checkerboard1, checkerboard_piece_num2, 2, winner2, chro2);
+        pos2 = ply_2nd->ma.begin()->second;
         Record(checkerboard1, checkerboard_piece_num2, 2, pos2.x, pos2.y);
         if (winner2) {
             return 2; // population2赢
@@ -518,10 +516,10 @@ void SixPiece::GetPKQueue(std::vector<int> &pk_queue) {
     std::random_shuffle(pk_queue.begin(), pk_queue.end());
 }
 
-void UpdateNextRoundQueue(std::vector<int> &pk_queue,unordered_map<int,int> &ma)
+void UpdateNextRoundQueue(std::vector<int> &pk_queue,std::unordered_map<int,int> &ma)
 {
     pk_queue.clear();
-    for(unordered_map<int,int>::iterator it = ma.begin();it!=ma.end();it++)//find winner,save into pk_queue
+    for(std::unordered_map<int,int>::iterator it = ma.begin();it!=ma.end();it++)//find winner,save into pk_queue
     {
         if(it->second==1)
             pk_queue.emplace_back(it->first);
@@ -529,7 +527,16 @@ void UpdateNextRoundQueue(std::vector<int> &pk_queue,unordered_map<int,int> &ma)
     std::random_shuffle(pk_queue.begin(),pk_queue.end());//random opponent
 }
 
-void SixPiece::PopulationContest(std::shared_ptr<TrainPiectElement> board)
+void SixPiece::SelectChampion(std::shared_ptr<TrainPiectElement> board,std::vector<int> &pk_queue)//del old champion,and update new champion
+{
+    board->champion.clear();
+    for(int i=0;i<pk_queue.size();i++)
+    {
+        board->champion.emplace_back(board->population[pk_queue[i]]);
+    }
+}
+
+void SixPiece::PopulationContest(std::shared_ptr<TrainPiectElement> board)//contest and make new champion
 {
 
     std::vector<int> pk_queue {board->population_num};
@@ -537,25 +544,22 @@ void SixPiece::PopulationContest(std::shared_ptr<TrainPiectElement> board)
     GetPKQueue(pk_queue);
     while(--board->contest_round)
     {
-        threadpool pool{2};
-        unordered_map<int,int> ma;//contest use  multiple threads
+        easythreadpool pool{2};
+        std::unordered_map<int,int> ma;//contest use  multiple threads
        for(int i=0;i<pk_queue.size();i+=2)
        {
-           pool.commit(SingleContest,pk_queue[i],pk_queue[i+1],board,ma);
+           pool.enqueue(SingleContest,pk_queue[i],pk_queue[i+1],board,ma);
        }
         UpdateNextRoundQueue(pk_queue,ma);
     }
-
+    SelectChampion(board,pk_queue);
 }
 
 
-void SixPiece::SingleContest(int &player1,int &player2,std::shared_ptr<TrainPiectElement> board,unordered_map<int,int> &ma)
+void SixPiece::SingleContest(int &player1,int &player2,std::shared_ptr<TrainPiectElement> board,std::unordered_map<int,int> &ma)
 {
     int win_player ;
     for (int i = 0; i < 3; i++) {
-        std::shared_ptr<TemporaryData> iterate;
-        iterate->general_checkerboard = board->general_checkerboard;
-        iterate->convergence_step = board->convergence_step;
         int black_winner = PopulationPlayAGame(board);
         int white_winner = PopulationPlayAGame(board);
         switch (black_winner) {
@@ -587,55 +591,14 @@ void SixPiece::SingleContest(int &player1,int &player2,std::shared_ptr<TrainPiec
     ma[win_player] = 1;
 }
 
+void SixPiece::ReproduceTheNextGeneration(std::shared_ptr<TrainPiectElement> board)
+{
+
+}
 
 void SixPiece::MakeChampion(std::shared_ptr<TrainPiectElement> board) {
-    int black_winner = 0, white_winner = 0;
-
     PopulationContest(board);
-
-    for (int population_sequence = 1;
-         population_sequence <= 4; population_sequence++) // 20��Ⱦɫ��ֳ����飬ÿ���ĸ������ĸ�Ⱦɫ����бȽϡ�
-    {
-        for (int population_of_self = population_sequence; population_of_self <= 20; population_of_self += 4) {
-            for (int population_of_enemy = population_of_self + 1;
-                 population_of_enemy <= population_of_self + 3; population_of_enemy++) {
-
-                black_winner = PopulationPlayAGame(population[population_of_self], population[population_of_enemy],
-                                                   checkerboard1,
-                                                   checkerboard_piece_num1);
-                white_winner = PopulationPlayAGame(population[population_of_enemy], population[population_of_self],
-                                                   checkerboard1,
-                                                   checkerboard_piece_num1);
-                if (black_winner == 0) {
-                    population[population_of_self].back() += 25;
-                    population[population_of_enemy].back() += 25;
-                } else if (black_winner == 1) {
-                    population[population_of_self].back() += 50;
-                    population[population_of_enemy].back() += 0;
-                } else if (black_winner == 2) {
-                    population[population_of_enemy].back() += 50;
-                    population[population_of_self].back() += 0;
-                }
-                if (white_winner == 0) {
-                    population[population_of_self].back() += 25;
-                    population[population_of_enemy].back() += 25;
-                } else if (white_winner == 1) {
-                    population[population_of_self].back() += 50;
-                    population[population_of_enemy].back() += 0;
-                } else if (white_winner == 2) {
-                    population[population_of_enemy].back() += 50;
-                    population[population_of_self].back() += 0;
-                }
-            }
-        }
-    }
-
-    int fitness_standard = 0, score_sum = 0;
-    for (int i = 1; i <= 20; i++)
-        score_sum += population[i].back();
-    fitness_standard = score_sum / 20;
-    SelectionOfChampions(population);                //�ó��ھ���������У�?
-    CrossingOverPrePare(champion, fitness_standard); //
+    MakePopulationWhenTrain(board);
 }
 
 // void SixPiece::ResultCopy(int checkerboard[][20], int checkerboard1[][20], int checkerboard_piece_num[][1700],

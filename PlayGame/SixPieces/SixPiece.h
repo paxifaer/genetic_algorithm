@@ -11,6 +11,7 @@
 #include "../../EasyThreadPool/easythreadpool.h"
 #include <numeric>
 #include <unordered_map>
+#include <map>
 struct Point            //������Ľṹ��?
 {
     int x, y;
@@ -80,8 +81,9 @@ struct TemporaryData
 {
     std::vector<std::vector<int>> general_checkerboard;
     std::vector<std::vector<std::vector<int>>> direction_checkerboard;
-    int convergence_step;
+    std::map<int,Point> ma;
 };
+
 class SixPiece :public General{
    public: 
 
@@ -111,7 +113,7 @@ class SixPiece :public General{
 
     void Train(std::shared_ptr<TrainPiectElement> &board) ;
 
-    int PopulationPlayAGame(std::shared_ptr<TemporaryData> iterate_basic_data) ;
+    int PopulationPlayAGame(const int &player1,const int &player2,const std::shared_ptr<TrainPiectElement> board) ;
 
 //    void CrossingOverPrePare(std::vector<std::vector<int>> champion, int fitness_standard) ;
     void SignalCommunication();
@@ -124,8 +126,11 @@ class SixPiece :public General{
 private:
     void GetPKQueue(std::vector<int> &pk_queue);
     void PopulationContest(std::shared_ptr<TrainPiectElement> board);
-    static void SingleContest(int &player1,int &player2,std::shared_ptr<TrainPiectElement> board,unordered_map<int,int> &ma);
-    void UpdateNextRoundQueue(std::vector<int> &pk_queue,unordered_map<int,int> &ma);
+    static void SingleContest(int &player1,int &player2,std::shared_ptr<TrainPiectElement> board,std::unordered_map<int,int> &ma);
+    void UpdateNextRoundQueue(std::vector<int> &pk_queue,std::unordered_map<int,int> &ma);
+    void SelectChampion(std::shared_ptr<TrainPiectElement> board,std::vector<int> &pk_queue);
+    void ReproduceTheNextGeneration(std::shared_ptr<TrainPiectElement> board);
+    void CacheTemporaryDate(const std::shared_ptr<TrainPiectElement> board,std::shared_ptr<TemporaryData> tem);
 };
 
 #endif //GENETICALGORITHM_SIXPIECE_H
