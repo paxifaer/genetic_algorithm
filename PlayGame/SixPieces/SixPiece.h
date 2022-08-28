@@ -39,11 +39,12 @@ enum class IterateType{
     ForPlay,
     HasData
 };
-enum class PieceDirection{
-    Up = 0,
-    Left,
-    LeftUp,
-    RightUp
+struct PieceDirection{
+    int up ;
+    int left;
+    int left_up;
+    int right_up;
+    long long int score;
 };
 //struct PieceElement
 //        {
@@ -77,11 +78,14 @@ struct TrainPiectElement
     std::vector<std::vector<int>> checkerboard_piece_num;
 
 };
+
 struct TemporaryData
 {
     std::vector<std::vector<int>> general_checkerboard;
-    std::vector<std::vector<std::vector<int>>> direction_checkerboard;
-    std::map<int,Point> ma;
+    std::vector<std::vector<PieceDirection>> direction_checkerboard;
+    std::vector<int> gene;
+    Point six{-1,-1};
+    Point max_pos;
 };
 
 class SixPiece :public General{
@@ -103,8 +107,7 @@ class SixPiece :public General{
 
     chromosome ChromosomeSwitch(const std::vector<int> &population);
 
-    Point AI(const std::vector<std::vector<int>> &checkerboard, const std::vector<std::vector<int>> &checkerboard_piece_num, int player, int &winner,
-             chromosome r1);
+    Point AI(std::shared_ptr<TemporaryData> tem);
     void SelectionOfChampions(const std::vector<std::vector<int>> & population) ;
     void MakeChampion(std::shared_ptr<TrainPiectElement> board) ;
 
@@ -129,8 +132,12 @@ private:
     static void SingleContest(int &player1,int &player2,std::shared_ptr<TrainPiectElement> board,std::unordered_map<int,int> &ma);
     void UpdateNextRoundQueue(std::vector<int> &pk_queue,std::unordered_map<int,int> &ma);
     void SelectChampion(std::shared_ptr<TrainPiectElement> board,std::vector<int> &pk_queue);
-    void ReproduceTheNextGeneration(std::shared_ptr<TrainPiectElement> board);
+//    void ReproduceTheNextGeneration(std::shared_ptr<TrainPiectElement> board);
     void CacheTemporaryDate(const std::shared_ptr<TrainPiectElement> board,std::shared_ptr<TemporaryData> tem);
+    void PlayStrategy(std::shared_ptr<TemporaryData> tem);
+    void UpdateQuadrantStatus(std::shared_ptr<TemporaryData> tem,int &player);
+    void UpdateGrade(std::shared_ptr<TemporaryData> tem,int &player);
+    void CheckAndAddScore(std::shared_ptr<TemporaryData> tem,int &player,int &pos_x,int &pos_y,int &length);
 };
 
 #endif //GENETICALGORITHM_SIXPIECE_H

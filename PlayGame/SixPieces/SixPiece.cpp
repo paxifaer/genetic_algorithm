@@ -282,9 +282,7 @@ void SixPiece::Search(const std::vector<std::vector<int>> &table, const int &pla
     //	printf("\nmax=%d %c%c \n",max,i+'A'-1,j+'A'-1);
 }
 
-Point SixPiece::AI(const std::vector<std::vector<int>> &checkerboard,
-                   const std::vector<std::vector<int>> &checkerboard_piece_num, int player, int &winner,
-                   chromosome r1)  //AI函数 先调用评分函数，对双方棋盘评分， 再调用搜索函数，找出最优位置
+Point SixPiece::AI(std::shared_ptr<TemporaryData> tem)  //AI函数 先调用评分函数，对双方棋盘评分， 再调用搜索函数，找出最优位置
 {
     int x1_max, y1_max;
     int x2_max, y2_max;
@@ -357,16 +355,118 @@ chromosome SixPiece::ChromosomeSwitch(const std::vector<int> &population) {
     return popu;
 }
 
-void SixPiece::CacheTemporaryDate(const std::shared_ptr<TrainPiectElement> board,std::shared_ptr<TemporaryData> tem)
+void SixPiece::CacheTemporaryDate(const std::shared_ptr<TrainPiectElement> board, std::shared_ptr<TemporaryData> tem)
 {
     tem->general_checkerboard = board->general_checkerboard;
 }
 
-int SixPiece::PopulationPlayAGame(const int &player1,const int &player2,const std::shared_ptr<TrainPiectElement> board) {
 
-    std::shared_ptr<TemporaryData> ply_1st,ply_2nd;
-    CacheTemporaryDate(board,ply_1st);
-    CacheTemporaryDate(board,ply_2nd);
+void  SixPiece::CheckAndAddScore(std::shared_ptr<TemporaryData> tem,int &player,int &pos_x,int &pos_y,int &length)
+{
+    int left_num_ply1 = 0 ,left_num_ply2 = 0,up_num_ply1 = 0,up_num_ply2 = 0,left_up_num_ply1 = 0,left_up_num_ply2 = 0,right_up_num_ply1 = 0,right_up_num_ply2 = 0;
+    if(pos_x-1>=0)
+}
+
+void SixPiece::UpdateGrade(std::shared_ptr<TemporaryData> tem,int &player)
+{
+    int heng_len = tem->general_checkerboard.size();
+    for(int i=0;i<heng_len;i++)
+    {
+        for(int j=0;j<heng_len;j++)
+        {
+            if(tem->general_checkerboard[i][j]==0)
+            {
+                CheckAndAddScore(tem,player,i,j,heng_len);
+            }
+        }
+    }
+}
+
+
+
+void SixPiece::UpdateQuadrantStatus(std::shared_ptr<TemporaryData> tem,int &player)
+{
+
+    int heng_len = tem->general_checkerboard.size();
+    int zong_len = tem->general_checkerboard[0].size();
+    tem->direction_checkerboard.resize(heng_len,std::vector<PieceDirection>(heng_len));
+    for (int i = 0; i < heng_len; i++)
+    {
+        for(int j=0;j<heng_len;j++)
+        {
+            if(tem->general_checkerboard[i][j] == player)
+            {
+                if(i>0&&tem->general_checkerboard[i-1][j]==player)
+                {
+                    int num = tem->direction_checkerboard[i-1][j].left;
+                    int real_num = num+1;
+                    tem->direction_checkerboard[i][j].left = real_num;
+                    while(--num)
+                    {
+                        tem->direction_checkerboard[i-num][j].left = real_num;
+                    }
+                }
+                else if(i==0||tem->general_checkerboard[i-1][j]!=player)
+                {
+                    tem->direction_checkerboard[i][j].left = 1;
+                }
+
+                if(j>0&&tem->general_checkerboard[i][j-1]==player)
+                {
+                    int num = tem->direction_checkerboard[i][j-1].up;
+                    int real_num = num+1;
+                    tem->direction_checkerboard[i][j].up = real_num;
+                    while(--num)
+                    {
+                        tem->direction_checkerboard[i][j-num].up = real_num;
+                    }
+                }
+                else if(j==0||tem->general_checkerboard[i][j-1]!=player)
+                {
+                    tem->direction_checkerboard[i][j].up = 1;
+                }
+
+                if(j>0&&i>0&&tem->general_checkerboard[i-1][j-1]==player)
+                {
+                    int num = tem->direction_checkerboard[i-1][j-1].left_up;
+                    int real_num = num+1;
+                    tem->direction_checkerboard[i][j].left_up = real_num;
+                    while(--num)
+                    {
+                        tem->direction_checkerboard[i-num][j-num].left_up = real_num;
+                    }
+                }
+                else if(j==0||i==0||tem->general_checkerboard[i-1][j-1]!=player)
+                {
+                    tem->direction_checkerboard[i][j].left_up = 1;
+                }
+
+                if(j>0&&i<heng_len-1&&tem->general_checkerboard[i+1][j-1]==player)
+                {
+                    int num = tem->direction_checkerboard[i+1][j-1].right_up;
+                    int real_num = num+1;
+                    tem->direction_checkerboard[i][j].right_up = real_num;
+                    while(--num)
+                    {
+                        tem->direction_checkerboard[i+num][j-num].right_up = real_num;
+                    }
+                }
+                else if(j==0||i==heng_len-1||tem->general_checkerboard[i+1][j-1]!=player)
+                {
+                    tem->direction_checkerboard[i][j].right_up = 1;
+                }
+
+            }
+        }
+    }
+}
+
+int
+SixPiece::PopulationPlayAGame(const int &player1, const int &player2, const std::shared_ptr<TrainPiectElement> board) {
+
+    std::shared_ptr<TemporaryData> ply_1st, ply_2nd;
+    CacheTemporaryDate(board, ply_1st);
+    CacheTemporaryDate(board, ply_2nd);
 
     int times = board->convergence_step;
 
@@ -516,22 +616,21 @@ void SixPiece::GetPKQueue(std::vector<int> &pk_queue) {
     std::random_shuffle(pk_queue.begin(), pk_queue.end());
 }
 
-void UpdateNextRoundQueue(std::vector<int> &pk_queue,std::unordered_map<int,int> &ma)
-{
+void SixPiece::UpdateNextRoundQueue(std::vector<int> &pk_queue, std::unordered_map<int, int> &ma) {
     pk_queue.clear();
-    for(std::unordered_map<int,int>::iterator it = ma.begin();it!=ma.end();it++)//find winner,save into pk_queue
+    for (std::unordered_map<int, int>::iterator it = ma.begin(); it != ma.end(); it++)//find winner,save into pk_queue
     {
-        if(it->second==1)
+        if (it->second == 1)
             pk_queue.emplace_back(it->first);
     }
-    std::random_shuffle(pk_queue.begin(),pk_queue.end());//random opponent
+    std::random_shuffle(pk_queue.begin(), pk_queue.end());//random opponent
 }
 
-void SixPiece::SelectChampion(std::shared_ptr<TrainPiectElement> board,std::vector<int> &pk_queue)//del old champion,and update new champion
+void SixPiece::SelectChampion(std::shared_ptr<TrainPiectElement> board,
+                              std::vector<int> &pk_queue)//del old champion,and update new champion
 {
     board->champion.clear();
-    for(int i=0;i<pk_queue.size();i++)
-    {
+    for (int i = 0; i < pk_queue.size(); i++) {
         board->champion.emplace_back(board->population[pk_queue[i]]);
     }
 }
@@ -539,26 +638,24 @@ void SixPiece::SelectChampion(std::shared_ptr<TrainPiectElement> board,std::vect
 void SixPiece::PopulationContest(std::shared_ptr<TrainPiectElement> board)//contest and make new champion
 {
 
-    std::vector<int> pk_queue {board->population_num};
+    std::vector<int> pk_queue{board->population_num};
     iota(pk_queue.begin(), pk_queue.end(), 0);
     GetPKQueue(pk_queue);
-    while(--board->contest_round)
-    {
+    while (--board->contest_round) {
         easythreadpool pool{2};
-        std::unordered_map<int,int> ma;//contest use  multiple threads
-       for(int i=0;i<pk_queue.size();i+=2)
-       {
-           pool.enqueue(SingleContest,pk_queue[i],pk_queue[i+1],board,ma);
-       }
-        UpdateNextRoundQueue(pk_queue,ma);
+        std::unordered_map<int, int> ma;//contest use  multiple threads
+        for (int i = 0; i < pk_queue.size(); i += 2) {
+            pool.enqueue(SingleContest, pk_queue[i], pk_queue[i + 1], board, ma);
+        }
+        UpdateNextRoundQueue(pk_queue, ma);
     }
-    SelectChampion(board,pk_queue);
+    SelectChampion(board, pk_queue);
 }
 
 
-void SixPiece::SingleContest(int &player1,int &player2,std::shared_ptr<TrainPiectElement> board,std::unordered_map<int,int> &ma)
-{
-    int win_player ;
+void SixPiece::SingleContest(int &player1, int &player2, std::shared_ptr<TrainPiectElement> board,
+                             std::unordered_map<int, int> &ma) {
+    int win_player;
     for (int i = 0; i < 3; i++) {
         int black_winner = PopulationPlayAGame(board);
         int white_winner = PopulationPlayAGame(board);
@@ -587,14 +684,14 @@ void SixPiece::SingleContest(int &player1,int &player2,std::shared_ptr<TrainPiec
                 break;
         }
     }
-    win_player = board->population[player1].back() < board->population[player2].back() ? player2:player1;
+    win_player = board->population[player1].back() < board->population[player2].back() ? player2 : player1;
     ma[win_player] = 1;
 }
 
-void SixPiece::ReproduceTheNextGeneration(std::shared_ptr<TrainPiectElement> board)
-{
-
-}
+//void SixPiece::ReproduceTheNextGeneration(std::shared_ptr<TrainPiectElement> board)
+//{
+//
+//}
 
 void SixPiece::MakeChampion(std::shared_ptr<TrainPiectElement> board) {
     PopulationContest(board);
