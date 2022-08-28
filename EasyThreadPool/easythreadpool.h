@@ -170,3 +170,89 @@ inline void easythreadpool::newThread()
 
 
 
+using namespace std;
+class ParallelCalculate{
+
+private:
+    int max_num=0;
+    using Task = std::function<void()>;
+    std::vector<Task>queue;
+public:
+    ParallelCalculate(size_t t):max_num(t)
+    {
+    }
+    ~ParallelCalculate()
+    {
+
+    }
+
+    template<class F,class... Args>
+    void commit(F&& f,Args&&... args)
+    {
+        using Restype = decltype(f(args...));
+        auto task = std::bind(std::forward<F>(f),std::forward<Args>(args)...);
+        {
+
+            queue.emplace_back([task](){
+                (task)();
+
+            });
+
+        }
+    }
+
+    template <class F>
+    void ParallelAccum(F &a)
+    {
+
+        auto first = queue.begin();
+        auto last = queue.end();
+
+        //计算迭代器中包含的元素数量
+        const unsigned int len = std::distance(first, last);
+
+        const unsigned int num_thread = 6;
+
+        //最终实际上每个线程处理的元素个数
+        const unsigned int block_size = len / num_thread;
+        //保存每个线程累加的结果
+//        vector<T> results(num_thread);
+        //启动比num_thread - 1个线程，因为main函数本身已开启一个线程
+        vector<thread> threads(num_thread - 1);
+
+        //开始并行计算
+        std::vector<Task>::iterator block_begin = first;
+        for (unsigned int i = 0; i < (num_thread - 1); ++i)
+        {
+            std::vector<Task>::iterator block_end = block_begin;
+            //将迭代器向前推进一个块,到达当前块的末尾位置
+            std::advance(block_end, block_size);
+            //传递参数,通常情况下thread的构造函数将复制所提供的参数,需要将模板参数转为引用
+            threads[i] = thread(Calculate, block_begin, block_end);
+            block_begin = block_end;
+        }
+        //处理最后一个线程,由于block_size = len / num_thread得到的结果不一定为整数,该线程处理剩余的所有元素
+        Calculate(block_begin, last);
+        //对threads中所有线程调用join()
+        std::for_each(threads.begin(), threads.end(), std::mem_fn(&thread::join));
+        //
+//        return accumulate(results.begin(), results.end(), sum);
+    }
+
+
+
+private:
+
+    static void Calculate( std::vector<Task>::iterator first,  std::vector<Task>::iterator last)
+    {
+        for (; first != last; ++first)
+        {
+            Task task = *first;
+            task();
+        }
+    };
+};
+
+
+
+
