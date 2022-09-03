@@ -7,6 +7,9 @@
           <mappings>
             <mapping deploy="/tmp/tmp.YQaoRNwt7i" local="$PROJECT_DIR$" />
           </mappings>
+          <excludedPaths>
+            <excludedPath local="true" path="$PROJECT_DIR$/cmake-build-debug" />
+          </excludedPaths>
         </serverdata>
       </paths>
       <paths name="docker (93bd37c4-56fa-4d30-8cba-080dc987abd0)">

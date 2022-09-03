@@ -17,20 +17,10 @@ struct Point            //������Ľṹ��?
     int x, y;
 };
 
-struct chromosome {
-    int huowu;
-    int chongwu;
-    int shuanghuosi;
-    int danhuosi, miansi, huosan, miansan, huoer;
-
-    int adaptability = 0;
-
-};
  enum class Gene{
     huowu = 0,
-    chongwu,
-    shuanghuosi,
-    danhuosi,miansi,huosan,miansan, huoer,
+    mianwu,
+    huosi,miansi,huosan,miansan, huoer,mianer,
     adaptability 
 };
 
@@ -39,12 +29,14 @@ enum class IterateType{
     ForPlay,
     HasData
 };
+enum class Direction{
+    Up,Left,LeftUp,RightUp
+};
 struct PieceDirection{
-    int up ;
-    int left;
-    int left_up;
-    int right_up;
+    std::vector<int>direction_piece_num;
+    std::vector<int>direction_piece_type;//活死
     long long int score;
+
 };
 //struct PieceElement
 //        {
@@ -81,11 +73,15 @@ struct TrainPiectElement
 
 struct TemporaryData
 {
+    int target_num=6;
+    int len;
+    long long int max_score;
     std::vector<std::vector<int>> general_checkerboard;
     std::vector<std::vector<PieceDirection>> direction_checkerboard;
     std::vector<int> gene;
     Point six{-1,-1};
     Point max_pos;
+    TemporaryData():max_score(0){};
 };
 
 class SixPiece :public General{
@@ -137,7 +133,12 @@ private:
     void PlayStrategy(std::shared_ptr<TemporaryData> tem);
     void UpdateQuadrantStatus(std::shared_ptr<TemporaryData> tem,int &player);
     void UpdateGrade(std::shared_ptr<TemporaryData> tem,int &player);
-    void CheckAndAddScore(std::shared_ptr<TemporaryData> tem,int &player,int &pos_x,int &pos_y,int &length);
+    void FindMaxAndAddScore(std::shared_ptr<TemporaryData> tem,int &x,int &y);
+    void UpdatePieceType(std::shared_ptr<TemporaryData> tem,int &player);
+    int GetPieceNum(std::shared_ptr<TemporaryData> tem, int &player,int &x,int &y,int type);
+    int GetPieceType(std::shared_ptr<TemporaryData> tem,int &player,int type,int &x,int &y);
+    void InitializePieceDirectionSpace(std::shared_ptr<TemporaryData> tem);
+    long long int GetScore(std::shared_ptr<TemporaryData> tem,int &x,int &y,int direction);
 };
 
 #endif //GENETICALGORITHM_SIXPIECE_H
