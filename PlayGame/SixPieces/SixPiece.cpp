@@ -578,7 +578,7 @@ void SixPiece::InitializePieceDirectionSpace(std::shared_ptr<TemporaryData> tem)
             }
         }
     }
-};
+};;
 
 void SixPiece::UpdateQuadrantStatus(std::shared_ptr<TemporaryData> tem, int &player) {
 
