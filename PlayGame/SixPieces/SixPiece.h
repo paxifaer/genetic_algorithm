@@ -112,7 +112,7 @@ class SixPiece :public General{
 
     void Train(std::shared_ptr<TrainPiectElement> &board) ;
 
-    int PopulationPlayAGame(const int &player1,const int &player2,const std::shared_ptr<TrainPiectElement> board) ;
+    int PopulationPlayAGame(const int &player_gene_pos1,const int &player_gene_pos2,const std::shared_ptr<TrainPiectElement> board) ;
 
 //    void CrossingOverPrePare(std::vector<std::vector<int>> champion, int fitness_standard) ;
     void SignalCommunication();
@@ -129,7 +129,7 @@ private:
     void UpdateNextRoundQueue(std::vector<int> &pk_queue,std::unordered_map<int,int> &ma);
     void SelectChampion(std::shared_ptr<TrainPiectElement> board,std::vector<int> &pk_queue);
 //    void ReproduceTheNextGeneration(std::shared_ptr<TrainPiectElement> board);
-    void CacheTemporaryDate(const std::shared_ptr<TrainPiectElement> board,std::shared_ptr<TemporaryData> tem);
+    void CacheTemporaryDate(const std::shared_ptr<TrainPiectElement> board,std::shared_ptr<TemporaryData> tem,const int &player_gene_pos);
     void PlayStrategy(std::shared_ptr<TemporaryData> tem);
     void UpdateQuadrantStatus(std::shared_ptr<TemporaryData> tem,int &player);
     void FindMaxAndAddScore(std::shared_ptr<TemporaryData> tem,int &x,int &y);

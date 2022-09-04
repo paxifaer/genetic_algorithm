@@ -451,8 +451,9 @@ chromosome SixPiece::ChromosomeSwitch(const std::vector<int> &population) {
     return popu;
 }
 
-void SixPiece::CacheTemporaryDate(const std::shared_ptr<TrainPiectElement> board, std::shared_ptr<TemporaryData> tem) {
+void SixPiece::CacheTemporaryDate(const std::shared_ptr<TrainPiectElement> board, std::shared_ptr<TemporaryData> tem,const int &player_gene_pos) {
     tem->general_checkerboard = board->general_checkerboard;
+    tem->gene = board->population[player_gene_pos];
 }
 
 long long int SixPiece::GetScore(std::shared_ptr<TemporaryData> tem, int &x, int &y,int direction) {
@@ -737,18 +738,23 @@ void SixPiece::UpdateQuadrantStatus(std::shared_ptr<TemporaryData> tem, int &pla
 }
 
 int
-SixPiece::PopulationPlayAGame(const int &player1, const int &player2, const std::shared_ptr<TrainPiectElement> board) {
+SixPiece::PopulationPlayAGame(const int &player_gene_pos1, const int &player_gene_pos2, const std::shared_ptr<TrainPiectElement> board) {
 
     std::shared_ptr<TemporaryData> ply_1st, ply_2nd;
-    CacheTemporaryDate(board, ply_1st);
-    CacheTemporaryDate(board, ply_2nd);
+    CacheTemporaryDate(board, ply_1st,player_gene_pos1);
+    CacheTemporaryDate(board, ply_2nd,player_gene_pos2);
 
     int times = board->convergence_step;
-    int ply1 = player1;
-    int ply2 = player2;
+    int ply1 = 0;
+    int ply2 = 1;
     while (times--) {
         UpdateQuadrantStatus(ply_1st, ply1);
+        if(ply_1st->six.x)
+            return 1;
         UpdateQuadrantStatus(ply_2nd, ply2);
+
+
+
     }
     return 0;//平局
 }
@@ -822,7 +828,7 @@ void SixPiece::PopulationContest(std::shared_ptr<TrainPiectElement> board)//cont
 }
 
 
-void SixPiece::SingleContest(int &player1, int &player2, std::shared_ptr<TrainPiectElement> board,
+void SixPiece::SingleContest(int &player_gene_pos1, int &player_gene_pos2, std::shared_ptr<TrainPiectElement> board,
                              std::unordered_map<int, int> &ma) {
     int win_player;
     for (int i = 0; i < 3; i++) {
@@ -830,30 +836,30 @@ void SixPiece::SingleContest(int &player1, int &player2, std::shared_ptr<TrainPi
         int white_winner = PopulationPlayAGame(board);
         switch (black_winner) {
             case 0:
-                board->population[player1].back() += 25;
-                board->population[player2].back() += 25;
+                board->population[player_gene_pos1].back() += 25;
+                board->population[player_gene_pos2].back() += 25;
                 break;
             case 1:
-                board->population[player1].back() += 50;
+                board->population[player_gene_pos1].back() += 50;
                 break;
             case 2:
-                board->population[player2].back() += 50;
+                board->population[player_gene_pos2].back() += 50;
                 break;
         }
         switch (white_winner) {
             case 0:
-                board->population[player1].back() += 25;
-                board->population[player2].back() += 25;
+                board->population[player_gene_pos1].back() += 25;
+                board->population[player_gene_pos2].back() += 25;
                 break;
             case 1:
-                board->population[player1].back() += 50;
+                board->population[player_gene_pos1].back() += 50;
                 break;
             case 2:
-                board->population[player2].back() += 50;
+                board->population[player_gene_pos2].back() += 50;
                 break;
         }
     }
-    win_player = board->population[player1].back() < board->population[player2].back() ? player2 : player1;
+    win_player = board->population[player_gene_pos1].back() < board->population[player_gene_pos2].back() ? player_gene_pos2 : player_gene_pos1;
     ma[win_player] = 1;
 }
 
