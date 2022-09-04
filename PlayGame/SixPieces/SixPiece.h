@@ -73,15 +73,15 @@ struct TrainPiectElement
 
 struct TemporaryData
 {
-    int target_num=6;
+    int target_num;
     int len;
     long long int max_score;
     std::vector<std::vector<int>> general_checkerboard;
     std::vector<std::vector<PieceDirection>> direction_checkerboard;
     std::vector<int> gene;
-    Point six{-1,-1};
+    Point six;
     Point max_pos;
-    TemporaryData():max_score(0){};
+    TemporaryData():target_num(6),max_score(0), six{-1,-1}, max_pos{-1,-1}{};
 };
 
 class SixPiece :public General{
@@ -132,10 +132,9 @@ private:
     void CacheTemporaryDate(const std::shared_ptr<TrainPiectElement> board,std::shared_ptr<TemporaryData> tem);
     void PlayStrategy(std::shared_ptr<TemporaryData> tem);
     void UpdateQuadrantStatus(std::shared_ptr<TemporaryData> tem,int &player);
-    void UpdateGrade(std::shared_ptr<TemporaryData> tem,int &player);
     void FindMaxAndAddScore(std::shared_ptr<TemporaryData> tem,int &x,int &y);
-    void UpdatePieceType(std::shared_ptr<TemporaryData> tem,int &player);
-    int GetPieceNum(std::shared_ptr<TemporaryData> tem, int &player,int &x,int &y,int type);
+    void UpdatePieceTypeAndNum(std::shared_ptr<TemporaryData> tem,int &player);
+    int GetPieceNum(std::shared_ptr<TemporaryData> tem, int &player,int type,int &x,int &y);
     int GetPieceType(std::shared_ptr<TemporaryData> tem,int &player,int type,int &x,int &y);
     void InitializePieceDirectionSpace(std::shared_ptr<TemporaryData> tem);
     long long int GetScore(std::shared_ptr<TemporaryData> tem,int &x,int &y,int direction);
