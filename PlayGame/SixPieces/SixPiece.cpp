@@ -817,19 +817,22 @@ void SixPiece::PopulationContest(std::shared_ptr<TrainPiectElement> board)//cont
     iota(pk_queue.begin(), pk_queue.end(), 0);
     GetPKQueue(pk_queue);
     while (--board->contest_round) {
-        easythreadpool pool{2};
+        ParallelCalculate pool{3};
         std::unordered_map<int, int> ma;//contest use  multiple threads
         for (int i = 0; i < pk_queue.size(); i += 2) {
-            pool.enqueue(SingleContest, pk_queue[i], pk_queue[i + 1], board, ma);
+
+            pool.commit([&](){SingleContest( pk_queue[i], pk_queue[i + 1], board, ma);});
         }
+        int i=1;
+        pool.ParallelAccum(i);
         UpdateNextRoundQueue(pk_queue, ma);
     }
     SelectChampion(board, pk_queue);
 }
 
 
-void SixPiece::SingleContest(int &player_gene_pos1, int &player_gene_pos2, std::shared_ptr<TrainPiectElement> board,
-                             std::unordered_map<int, int> &ma) {
+void SixPiece::SingleContest(int player_gene_pos1, int player_gene_pos2, std::shared_ptr<TrainPiectElement> board,
+                             std::unordered_map<int, int> ma) {
     int win_player;
     for (int i = 0; i < 3; i++) {
         int black_winner = PopulationPlayAGame(board);

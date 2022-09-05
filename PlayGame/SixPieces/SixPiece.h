@@ -125,7 +125,7 @@ class SixPiece :public General{
 private:
     void GetPKQueue(std::vector<int> &pk_queue);
     void PopulationContest(std::shared_ptr<TrainPiectElement> board);
-    static void SingleContest(int &player1,int &player2,std::shared_ptr<TrainPiectElement> board,std::unordered_map<int,int> &ma);
+    static void SingleContest(int player1,int player2,std::shared_ptr<TrainPiectElement> board,std::unordered_map<int,int> ma);
     void UpdateNextRoundQueue(std::vector<int> &pk_queue,std::unordered_map<int,int> &ma);
     void SelectChampion(std::shared_ptr<TrainPiectElement> board,std::vector<int> &pk_queue);
 //    void ReproduceTheNextGeneration(std::shared_ptr<TrainPiectElement> board);
