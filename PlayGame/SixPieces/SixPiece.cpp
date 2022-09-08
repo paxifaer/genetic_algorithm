@@ -504,17 +504,19 @@ long long int SixPiece::GetScore(std::shared_ptr<TemporaryData> tem, int &x, int
 }
 
 void SixPiece::FindMaxAndAddScore(std::shared_ptr<TemporaryData> tem, int &x, int &y) {
-    long long int sum_score = 0;
     if (tem->direction_checkerboard[x][y].direction_piece_num[static_cast<int>(Direction::Left)] >= 6 ||
         tem->direction_checkerboard[x][y].direction_piece_num[static_cast<int>(Direction::LeftUp)] >= 6
         || tem->direction_checkerboard[x][y].direction_piece_num[static_cast<int>(Direction::Up)] >= 6
         || tem->direction_checkerboard[x][y].direction_piece_num[static_cast<int>(Direction::RightUp)] >= 6) {
-        tem->six = {x, y};
+        if(tem->now_player==tem->real_player)
+            tem->real_six = {x, y};
+        else
+            tem->opponent_six = {x, y};
     }
-        sum_score = GetScore(tem,x,y,0)+GetScore(tem,x,y,1)+GetScore(tem,x,y,2)+GetScore(tem,x,y,3);
-        if(sum_score>tem->max_score)
+        tem->direction_checkerboard[x][y].score += GetScore(tem,x,y,0)+GetScore(tem,x,y,1)+GetScore(tem,x,y,2)+GetScore(tem,x,y,3);
+        if(tem->direction_checkerboard[x][y].score > tem->max_score)
         {
-            tem->max_score = sum_score;
+            tem->max_score = tem->direction_checkerboard[x][y].score;
             tem->max_pos = {x,y};
         }
 
@@ -624,7 +626,7 @@ int SixPiece::GetPieceNum(std::shared_ptr<TemporaryData> tem, int &player,int ty
     }
     return sum;
 }
-void SixPiece::UpdatePieceTypeAndNum(std::shared_ptr<TemporaryData> tem, int &player) {
+void SixPiece::UpdatePieceTypeAndNum(std::shared_ptr<TemporaryData> tem) {
     int len = tem->general_checkerboard.size();
     for (int i = 0; i < len; i++) {
         for (int j = 0; j < len; j++) {
@@ -650,7 +652,7 @@ void SixPiece::UpdatePieceTypeAndNum(std::shared_ptr<TemporaryData> tem, int &pl
 
                 FindMaxAndAddScore(tem, i, j);
             }
-            if(tem->six.x!=-1)
+            if(tem->real_six.x!=-1||tem->opponent_six.x!=-1)
                 break;
         }
     }
@@ -667,7 +669,7 @@ void SixPiece::InitializePieceDirectionSpace(std::shared_ptr<TemporaryData> tem)
     }
 };;
 
-void SixPiece::UpdateQuadrantStatus(std::shared_ptr<TemporaryData> tem, int &player) {
+void SixPiece::UpdateQuadrantStatus(std::shared_ptr<TemporaryData> tem) {
 
     tem->len = tem->general_checkerboard.size();
     tem->direction_checkerboard.resize(tem->len, std::vector<PieceDirection>(tem->len));
@@ -732,7 +734,7 @@ void SixPiece::UpdateQuadrantStatus(std::shared_ptr<TemporaryData> tem, int &pla
                 }
             }
         }
-        UpdatePieceTypeAndNum(tem,player);
+        UpdatePieceTypeAndNum(tem);
     }
 
 }
@@ -745,13 +747,24 @@ SixPiece::PopulationPlayAGame(const int &player_gene_pos1, const int &player_gen
     CacheTemporaryDate(board, ply_2nd,player_gene_pos2);
 
     int times = board->convergence_step;
-    int ply1 = 0;
-    int ply2 = 1;
-    while (times--) {
+    int ply1 = 0;ply_1st->real_player = 0;
+    int ply2 = 1;ply_2nd->real_player = 1;
+    while (times--)
+    {
+
         UpdateQuadrantStatus(ply_1st, ply1);
         if(ply_1st->six.x)
             return 1;
+        UpdateQuadrantStatus(ply_1st, ply2);
+        if(ply_1st->six.x)
+            return 1;
+
+        UpdateQuadrantStatus(ply_2nd, ply1);
+        if(ply_2nd->six.x)
+            return 2;
         UpdateQuadrantStatus(ply_2nd, ply2);
+        if(ply_2nd->six.x)
+            return 2;
 
 
 

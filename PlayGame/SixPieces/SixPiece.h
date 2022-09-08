@@ -35,6 +35,7 @@ enum class Direction{
 struct PieceDirection{
     std::vector<int>direction_piece_num;
     std::vector<int>direction_piece_type;//活死
+
     long long int score;
 
 };
@@ -76,12 +77,15 @@ struct TemporaryData
     int target_num;
     int len;
     long long int max_score;
+    int real_player;
+    int now_player;
     std::vector<std::vector<int>> general_checkerboard;
     std::vector<std::vector<PieceDirection>> direction_checkerboard;
     std::vector<int> gene;
-    Point six;
+    Point real_six;
+    Point opponent_six;
     Point max_pos;
-    TemporaryData():target_num(6),max_score(0), six{-1,-1}, max_pos{-1,-1}{};
+    TemporaryData():target_num(6),max_score(0), real_six{-1,-1},opponent_six{-1,-1}, max_pos{-1,-1}{};
 };
 
 class SixPiece :public General{
@@ -133,7 +137,7 @@ private:
     void PlayStrategy(std::shared_ptr<TemporaryData> tem);
     void UpdateQuadrantStatus(std::shared_ptr<TemporaryData> tem,int &player);
     void FindMaxAndAddScore(std::shared_ptr<TemporaryData> tem,int &x,int &y);
-    void UpdatePieceTypeAndNum(std::shared_ptr<TemporaryData> tem,int &player);
+    void UpdatePieceTypeAndNum(std::shared_ptr<TemporaryData> tem);
     int GetPieceNum(std::shared_ptr<TemporaryData> tem, int &player,int type,int &x,int &y);
     int GetPieceType(std::shared_ptr<TemporaryData> tem,int &player,int type,int &x,int &y);
     void InitializePieceDirectionSpace(std::shared_ptr<TemporaryData> tem);
