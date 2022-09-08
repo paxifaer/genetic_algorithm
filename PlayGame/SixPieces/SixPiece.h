@@ -129,19 +129,20 @@ class SixPiece :public General{
 private:
     void GetPKQueue(std::vector<int> &pk_queue);
     void PopulationContest(std::shared_ptr<TrainPiectElement> board);
-    static void SingleContest(int player1,int player2,std::shared_ptr<TrainPiectElement> board,std::unordered_map<int,int> ma);
+    void SingleContest(int player1,int player2,std::shared_ptr<TrainPiectElement> board,std::unordered_map<int,int> ma);
     void UpdateNextRoundQueue(std::vector<int> &pk_queue,std::unordered_map<int,int> &ma);
     void SelectChampion(std::shared_ptr<TrainPiectElement> board,std::vector<int> &pk_queue);
 //    void ReproduceTheNextGeneration(std::shared_ptr<TrainPiectElement> board);
     void CacheTemporaryDate(const std::shared_ptr<TrainPiectElement> board,std::shared_ptr<TemporaryData> tem,const int &player_gene_pos);
     void PlayStrategy(std::shared_ptr<TemporaryData> tem);
-    void UpdateQuadrantStatus(std::shared_ptr<TemporaryData> tem,int &player);
+    void UpdateQuadrantStatus(std::shared_ptr<TemporaryData> tem);
     void FindMaxAndAddScore(std::shared_ptr<TemporaryData> tem,int &x,int &y);
     void UpdatePieceTypeAndNum(std::shared_ptr<TemporaryData> tem);
     int GetPieceNum(std::shared_ptr<TemporaryData> tem, int &player,int type,int &x,int &y);
     int GetPieceType(std::shared_ptr<TemporaryData> tem,int &player,int type,int &x,int &y);
     void InitializePieceDirectionSpace(std::shared_ptr<TemporaryData> tem);
     long long int GetScore(std::shared_ptr<TemporaryData> tem,int &x,int &y,int direction);
+    void SetRecord(Point &pos,std::shared_ptr<TemporaryData> tem);
 };
 
 #endif //GENETICALGORITHM_SIXPIECE_H

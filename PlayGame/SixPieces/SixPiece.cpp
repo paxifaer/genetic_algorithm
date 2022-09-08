@@ -678,8 +678,8 @@ void SixPiece::UpdateQuadrantStatus(std::shared_ptr<TemporaryData> tem) {
     {
         for (int i = 0; i < tem->len; i++) {
             for (int j = 0; j < tem->len; j++) {
-                if (tem->general_checkerboard[i][j] == player) {
-                    if (i > 0 && tem->general_checkerboard[i - 1][j] == player) {
+                if (tem->general_checkerboard[i][j] == tem->real_player) {
+                    if (i > 0 && tem->general_checkerboard[i - 1][j] == tem->real_player) {
                         int num = tem->direction_checkerboard[i -
                                                               1][j].direction_piece_num[static_cast<int>(Direction::Left)];
                         int real_num = num + 1;
@@ -688,11 +688,11 @@ void SixPiece::UpdateQuadrantStatus(std::shared_ptr<TemporaryData> tem) {
                             tem->direction_checkerboard[i -
                                                         num][j].direction_piece_num[static_cast<int>(Direction::Left)] = real_num;
                         }
-                    } else if (i == 0 || tem->general_checkerboard[i - 1][j] != player) {
+                    } else if (i == 0 || tem->general_checkerboard[i - 1][j] != tem->real_player) {
                         tem->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::Left)] = 1;
                     }
 
-                    if (j > 0 && tem->general_checkerboard[i][j - 1] == player) {
+                    if (j > 0 && tem->general_checkerboard[i][j - 1] == tem->real_player) {
                         int num = tem->direction_checkerboard[i][j -
                                                                  1].direction_piece_num[static_cast<int>(Direction::Up)];
                         int real_num = num + 1;
@@ -701,11 +701,11 @@ void SixPiece::UpdateQuadrantStatus(std::shared_ptr<TemporaryData> tem) {
                             tem->direction_checkerboard[i][j -
                                                            num].direction_piece_num[static_cast<int>(Direction::Up)] = real_num;
                         }
-                    } else if (j == 0 || tem->general_checkerboard[i][j - 1] != player) {
+                    } else if (j == 0 || tem->general_checkerboard[i][j - 1] != tem->real_player) {
                         tem->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::Up)] = 1;
                     }
 
-                    if (j > 0 && i > 0 && tem->general_checkerboard[i - 1][j - 1] == player) {
+                    if (j > 0 && i > 0 && tem->general_checkerboard[i - 1][j - 1] == tem->real_player) {
                         int num = tem->direction_checkerboard[i - 1][j -
                                                                      1].direction_piece_num[static_cast<int>(Direction::LeftUp)];
                         int real_num = num + 1;
@@ -714,11 +714,11 @@ void SixPiece::UpdateQuadrantStatus(std::shared_ptr<TemporaryData> tem) {
                             tem->direction_checkerboard[i - num][j -
                                                                  num].direction_piece_num[static_cast<int>(Direction::LeftUp)] = real_num;
                         }
-                    } else if (j == 0 || i == 0 || tem->general_checkerboard[i - 1][j - 1] != player) {
+                    } else if (j == 0 || i == 0 || tem->general_checkerboard[i - 1][j - 1] != tem->real_player) {
                         tem->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::LeftUp)] = 1;
                     }
 
-                    if (j > 0 && i < tem->len - 1 && tem->general_checkerboard[i + 1][j - 1] == player) {
+                    if (j > 0 && i < tem->len - 1 && tem->general_checkerboard[i + 1][j - 1] == tem->real_player) {
                         int num = tem->direction_checkerboard[i + 1][j -
                                                                      1].direction_piece_num[static_cast<int>(Direction::RightUp)];
                         int real_num = num + 1;
@@ -727,7 +727,7 @@ void SixPiece::UpdateQuadrantStatus(std::shared_ptr<TemporaryData> tem) {
                             tem->direction_checkerboard[i + num][j -
                                                                  num].direction_piece_num[static_cast<int>(Direction::RightUp)] = real_num;
                         }
-                    } else if (j == 0 || i == tem->len - 1 || tem->general_checkerboard[i + 1][j - 1] != player) {
+                    } else if (j == 0 || i == tem->len - 1 || tem->general_checkerboard[i + 1][j - 1] != tem->real_player) {
                         tem->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::RightUp)] = 1;
                     }
 
@@ -739,6 +739,11 @@ void SixPiece::UpdateQuadrantStatus(std::shared_ptr<TemporaryData> tem) {
 
 }
 
+void SixPiece::SetRecord(Point &pos,std::shared_ptr<TemporaryData> tem)
+{
+    tem->general_checkerboard[pos.x][pos.y]=tem->real_player;
+}
+
 int
 SixPiece::PopulationPlayAGame(const int &player_gene_pos1, const int &player_gene_pos2, const std::shared_ptr<TrainPiectElement> board) {
 
@@ -747,27 +752,33 @@ SixPiece::PopulationPlayAGame(const int &player_gene_pos1, const int &player_gen
     CacheTemporaryDate(board, ply_2nd,player_gene_pos2);
 
     int times = board->convergence_step;
-    int ply1 = 0;ply_1st->real_player = 0;
-    int ply2 = 1;ply_2nd->real_player = 1;
+    ply_1st->real_player = 0;
+    ply_2nd->real_player = 1;
     while (times--)
     {
-
-        UpdateQuadrantStatus(ply_1st, ply1);
-        if(ply_1st->six.x)
-            return 1;
-        UpdateQuadrantStatus(ply_1st, ply2);
-        if(ply_1st->six.x)
-            return 1;
-
-        UpdateQuadrantStatus(ply_2nd, ply1);
-        if(ply_2nd->six.x)
-            return 2;
-        UpdateQuadrantStatus(ply_2nd, ply2);
-        if(ply_2nd->six.x)
-            return 2;
-
-
-
+        for(int i=0;i<2;i++)
+        {
+            UpdateQuadrantStatus(ply_1st);
+            if (ply_1st->real_six.x)
+                return 1;
+            UpdateQuadrantStatus(ply_1st);
+            if (ply_1st->opponent_six.x)
+                SetRecord(ply_1st->opponent_six, ply_1st);
+            else
+                SetRecord(ply_1st->max_pos, ply_1st);
+        }
+//            return 1;
+        for(int i=0;i<2;i++)
+        {
+            UpdateQuadrantStatus(ply_2nd);
+            if (ply_2nd->real_six.x)
+                return 2;
+            UpdateQuadrantStatus(ply_2nd);
+            if (ply_2nd->opponent_six.x)
+                SetRecord(ply_2nd->opponent_six, ply_2nd);
+            else
+                SetRecord(ply_2nd->max_pos, ply_2nd);
+        }
     }
     return 0;//平局
 }
@@ -833,7 +844,6 @@ void SixPiece::PopulationContest(std::shared_ptr<TrainPiectElement> board)//cont
         ParallelCalculate pool{3};
         std::unordered_map<int, int> ma;//contest use  multiple threads
         for (int i = 0; i < pk_queue.size(); i += 2) {
-
             pool.commit([&](){SingleContest( pk_queue[i], pk_queue[i + 1], board, ma);});
         }
         int i=1;
@@ -848,7 +858,7 @@ void SixPiece::SingleContest(int player_gene_pos1, int player_gene_pos2, std::sh
                              std::unordered_map<int, int> ma) {
     int win_player;
     for (int i = 0; i < 3; i++) {
-        int black_winner = PopulationPlayAGame(board);
+        int black_winner = PopulationPlayAGame(player_gene_pos1,player_gene_pos2,board);
         int white_winner = PopulationPlayAGame(board);
         switch (black_winner) {
             case 0:
