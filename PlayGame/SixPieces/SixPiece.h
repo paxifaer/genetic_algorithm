@@ -90,7 +90,9 @@ struct TemporaryData
 
 class SixPiece :public General{
    public:
+    void InitPopulation(shared_ptr<TrainPiectElement> board);
 
+    void MakeChampion(shared_ptr<TrainPiectElement> board);
     int PopulationPlayAGame(const int &player_gene_pos1,const int &player_gene_pos2,const std::shared_ptr<TrainPiectElement> board) ;
     void SignalCommunication();
     void MakePopulationWhenTrain(std::shared_ptr<TrainPiectElement> board);
@@ -111,6 +113,8 @@ private:
     void InitializePieceDirectionSpace(std::shared_ptr<TemporaryData> tem);
     long long int GetScore(std::shared_ptr<TemporaryData> tem,int &x,int &y,int direction);
     void SetRecord(Point &pos,std::shared_ptr<TemporaryData> tem);
+
+
 };
 
 #endif //GENETICALGORITHM_SIXPIECE_H
