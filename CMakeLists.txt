@@ -15,7 +15,6 @@ ADD_SUBDIRECTORY(EasyThreadPool)
 ADD_SUBDIRECTORY(queue)
 ADD_SUBDIRECTORY(GenerateIterate)
 ADD_SUBDIRECTORY(PlayGame)
-ADD_SUBDIRECTORY(ThreadPool)
 
 add_library(${PROJECT_NAME} main.cpp )
 

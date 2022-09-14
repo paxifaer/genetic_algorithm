@@ -131,4 +131,7 @@ void General::CrossingOverPrePare(std::shared_ptr<GeneVariate> data_muster) {
 }
 
 
-
+int main()
+{
+    return 0;
+}

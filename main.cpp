@@ -4,6 +4,6 @@
 int main()
 {
     SixPiece a;
-    a.SignalCommunication();
+//    a.SignalCommunication();
     return 0;
 }

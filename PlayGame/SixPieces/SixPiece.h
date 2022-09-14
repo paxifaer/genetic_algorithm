@@ -39,19 +39,7 @@ struct PieceDirection{
     long long int score;
 
 };
-//struct PieceElement
-//        {
-//    std::vector<std::vector<int>> general_checkerboard;
-//    std::vector<std::vector<int>>  checkerboard;
-//    std::vector<std::vector<int>>  checkerboard_piece_num;
-//    std::vector<std::vector<int>> population;
-//    std::vector<std::vector<int>> champion;
-//    int population_num;
-//    int champaion_num;
-//    int train_time;
-//    int  winner;
-//    int  player;
-//};
+
 
 struct TrainPiectElement
 {
