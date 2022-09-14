@@ -546,10 +546,7 @@ void SixPiece::MakeChampion(std::shared_ptr<TrainPiectElement> board) {
     MakePopulationWhenTrain(board);
 }
 
-int main()
-{
-    return 0;
-}
+
 
 
 
