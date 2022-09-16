@@ -43,20 +43,15 @@ struct PieceDirection{
 
 struct TrainPiectElement
 {
-    int  player;
     int population_num;
     int champaion_num;
-    int train_time;
-    int  winner;
     int iterate_type;
     int convergence_step;
     int contest_round;
+    int match_times;
     std::vector<std::vector<int>> general_checkerboard;
-
     std::vector<std::vector<int>> population;
     std::vector<std::vector<int>> champion;
-    std::vector<std::vector<int>> checkerboard;
-    std::vector<std::vector<int>> checkerboard_piece_num;
 
 };
 

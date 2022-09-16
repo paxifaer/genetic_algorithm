@@ -152,6 +152,7 @@ long long int SixPiece::GetScore(std::shared_ptr<TemporaryData> tem, int &x, int
             }
         }
     }
+    return 0;
 }
 
 void SixPiece::FindMaxAndAddScore(std::shared_ptr<TemporaryData> tem, int &x, int &y) {
@@ -508,7 +509,7 @@ void SixPiece::PopulationContest(std::shared_ptr<TrainPiectElement> board)//cont
 void SixPiece::SingleContest(int player_gene_pos1, int player_gene_pos2, std::shared_ptr<TrainPiectElement> board,
                              std::unordered_map<int, int> ma) {
     int win_player;
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < board->match_times; i++) {
         int black_winner = PopulationPlayAGame(player_gene_pos1,player_gene_pos2,board);
         int white_winner = PopulationPlayAGame(player_gene_pos2,player_gene_pos1,board);
         switch (black_winner) {

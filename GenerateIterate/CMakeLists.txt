@@ -1,3 +1,3 @@
 project(GenerateIterate)
 
-add_library(${PROJECT_NAME} GenerateIterate.cpp GenerateIterate.h)
+add_library(${PROJECT_NAME} SHARED GenerateIterate.cpp GenerateIterate.h)

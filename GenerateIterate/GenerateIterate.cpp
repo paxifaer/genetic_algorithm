@@ -119,7 +119,6 @@ void General::CalculateFitnessMaxAndFitnessStandard(std::shared_ptr<GeneVariate>
 
 
 void General::CrossingOverPrePare(std::shared_ptr<GeneVariate> data_muster) {
-    int nu = 0;
     CalculateFitnessMaxAndFitnessStandard(data_muster);//�ҵ���Ӧ�����ֵ
 
     RecombinationOfGrne(data_muster);//��������
