@@ -404,8 +404,8 @@ SixPiece::PopulationPlayAGame(const int &player_gene_pos1, const int &player_gen
     CacheTemporaryDate(board, ply_2nd,player_gene_pos2);
 
     int times = board->convergence_step;
-    ply_1st->real_player = 0;
-    ply_2nd->real_player = 1;
+    ply_1st->real_player = 1;
+    ply_2nd->real_player = 2;
     while (times--)
     {
         for(int i=0;i<2;i++)
@@ -483,6 +483,7 @@ void SixPiece::SelectChampion(std::shared_ptr<TrainPiectElement> board,
     board->champion.clear();
     for (int i = 0; i < pk_queue.size(); i++) {
         board->champion.emplace_back(board->population[pk_queue[i]]);
+        cout<<"冠军是 : "<<i<<endl;
     }
 }
 
@@ -512,6 +513,7 @@ void SixPiece::SingleContest(int player_gene_pos1, int player_gene_pos2, std::sh
     for (int i = 0; i < board->match_times; i++) {
         int black_winner = PopulationPlayAGame(player_gene_pos1,player_gene_pos2,board);
         int white_winner = PopulationPlayAGame(player_gene_pos2,player_gene_pos1,board);
+        cout<<"white_winer is "<<white_winner<<endl;
         switch (black_winner) {
             case 0:
                 board->population[player_gene_pos1].back() += 25;

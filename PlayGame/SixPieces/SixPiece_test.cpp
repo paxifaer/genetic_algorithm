@@ -76,11 +76,15 @@ std::shared_ptr<TrainPiectElement> MakeTestData()
     board->iterate_type=0;
     board->match_times = 3;
     board->champaion_num=64;
+    board->general_checkerboard.resize(19,vector<int>(19));
+    board->general_checkerboard[7][7] = 1;
     return board;
 }
 int main()
 {
     std::shared_ptr<TrainPiectElement> board = MakeTestData();
+    SixPiece test;
+    test.MakeChampion(board);
 
 
 

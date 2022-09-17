@@ -81,7 +81,7 @@ class SixPiece :public General{
     void MakePopulationWhenTrain(std::shared_ptr<TrainPiectElement> board);
     void InitPopulationForTrain(std::shared_ptr<TrainPiectElement> board);
     void InitPopulationForPlay(std::shared_ptr<TrainPiectElement> board);
-private:
+//private:
     void GetPKQueue(std::vector<int> &pk_queue);
     void PopulationContest(std::shared_ptr<TrainPiectElement> board);
     void SingleContest(int player1,int player2,std::shared_ptr<TrainPiectElement> board,std::unordered_map<int,int> ma);
