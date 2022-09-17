@@ -80,12 +80,24 @@ std::shared_ptr<TrainPiectElement> MakeTestData()
     board->general_checkerboard[7][7] = 1;
     return board;
 }
+
+void TestRandomQueue()
+{
+    std::shared_ptr<TrainPiectElement> board = MakeTestData();
+    SixPiece test;
+    std::vector<int> pk_queue;
+    pk_queue.resize(board->population_num);
+//    iota(pk_queue.begin(), pk_queue.end(), 0);
+    test.GetPKQueue(pk_queue);
+    for(int i=0;i<pk_queue.size();i++)
+        cout<<pk_queue[i]<<" ";
+}
 int main()
 {
     std::shared_ptr<TrainPiectElement> board = MakeTestData();
     SixPiece test;
     test.MakeChampion(board);
-
+//      TestRandomQueue();
 
 
 

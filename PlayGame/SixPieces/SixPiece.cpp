@@ -462,7 +462,7 @@ void SixPiece::InitPopulation(std::shared_ptr<TrainPiectElement> board) {
 
 void SixPiece::GetPKQueue(std::vector<int> &pk_queue) {
     for (int i = 0; i < pk_queue.size(); i++) {
-        pk_queue.emplace_back(i);
+        pk_queue[i]=i;
     }
     std::random_shuffle(pk_queue.begin(), pk_queue.end());
 }
@@ -490,8 +490,8 @@ void SixPiece::SelectChampion(std::shared_ptr<TrainPiectElement> board,
 void SixPiece::PopulationContest(std::shared_ptr<TrainPiectElement> board)//contest and make new champion
 {
 
-    std::vector<int> pk_queue{board->population_num};
-    iota(pk_queue.begin(), pk_queue.end(), 0);
+    std::vector<int> pk_queue;
+    pk_queue.resize(board->population_num);
     GetPKQueue(pk_queue);
     while (--board->contest_round) {
         ParallelCalculate pool{3};
