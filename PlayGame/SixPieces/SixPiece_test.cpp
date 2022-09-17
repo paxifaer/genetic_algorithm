@@ -92,14 +92,59 @@ void TestRandomQueue()
     for(int i=0;i<pk_queue.size();i++)
         cout<<pk_queue[i]<<" ";
 }
-int main()
+class TestParallel{
+public:
+    int test=10;
+    void sss()
+    {
+        ParallelCalculate pool{3};
+
+        pool.commit([&](){cal(test,test);});
+        int i=1;
+        pool.ParallelAccum(i);
+    }
+    void cal(int a,int a1)
+    {
+        cout<<a;
+    }
+};
+
+void TestParallelCal()
+{
+    SixPiece test;
+    TestParallel te;
+    te.sss();
+
+}
+
+struct test{
+    int a;
+    vector<int >vec;
+};
+
+void FixTempory()
 {
     std::shared_ptr<TrainPiectElement> board = MakeTestData();
     SixPiece test;
-    test.MakeChampion(board);
+    std::vector<int> pk_queue;
+    pk_queue.resize(board->population_num);
+
+
+
+    std::shared_ptr<TemporaryData> ply_1st = std::make_shared<TemporaryData>();
+    std::shared_ptr<TemporaryData> ply_2st = std::make_shared<TemporaryData>();
+//    ply_1st->general_checkerboard = std::move(board->general_checkerboard);
+    test.CacheTemporaryDate(board, ply_1st,1);
+
+}
+int main()
+{
+//    std::shared_ptr<TrainPiectElement> board = MakeTestData();
+//    SixPiece test;
+//    test.MakeChampion(board);
 //      TestRandomQueue();
-
-
+//    TestParallelCal();
+    FixTempory();
 
     return 0;
 }

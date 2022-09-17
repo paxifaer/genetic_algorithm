@@ -102,7 +102,9 @@ void SixPiece::InitPopulationForPlay(std::shared_ptr<TrainPiectElement> board) {
 
 
 
-void SixPiece::CacheTemporaryDate(const std::shared_ptr<TrainPiectElement> board, std::shared_ptr<TemporaryData> tem,const int &player_gene_pos) {
+void SixPiece::CacheTemporaryDate(std::shared_ptr<TrainPiectElement> board, std::shared_ptr<TemporaryData> tem,const int &player_gene_pos) {
+
+
     tem->general_checkerboard = board->general_checkerboard;
     tem->gene = board->population[player_gene_pos];
 }
@@ -399,7 +401,8 @@ void SixPiece::SetRecord(Point &pos,std::shared_ptr<TemporaryData> tem)
 int
 SixPiece::PopulationPlayAGame(const int &player_gene_pos1, const int &player_gene_pos2, const std::shared_ptr<TrainPiectElement> board) {
 
-    std::shared_ptr<TemporaryData> ply_1st, ply_2nd;
+    std::shared_ptr<TemporaryData> ply_1st = std::make_shared<TemporaryData>();
+    std::shared_ptr<TemporaryData> ply_2nd = std::make_shared<TemporaryData>();
     CacheTemporaryDate(board, ply_1st,player_gene_pos1);
     CacheTemporaryDate(board, ply_2nd,player_gene_pos2);
 
@@ -493,11 +496,17 @@ void SixPiece::PopulationContest(std::shared_ptr<TrainPiectElement> board)//cont
     std::vector<int> pk_queue;
     pk_queue.resize(board->population_num);
     GetPKQueue(pk_queue);
+
+    for (int i = 0; i < pk_queue.size(); i += 2)
+        cout<<pk_queue[i]<<" ";
+
     while (--board->contest_round) {
         ParallelCalculate pool{3};
         std::unordered_map<int, int> ma;//contest use  multiple threads
         for (int i = 0; i < pk_queue.size(); i += 2) {
-            pool.commit([&](){SingleContest( pk_queue[i], pk_queue[i + 1], board, ma);});
+            int a1 = pk_queue[i],a2 = pk_queue[i + 1];
+            pool.commit([&](){SingleContest( a1, a2, board, ma);});
+//              pool.commit(SingleContest,pk_queue[i], pk_queue[i + 1], board, ma);
         }
         int i=1;
         pool.ParallelAccum(i);
@@ -507,7 +516,7 @@ void SixPiece::PopulationContest(std::shared_ptr<TrainPiectElement> board)//cont
 }
 
 
-void SixPiece::SingleContest(int player_gene_pos1, int player_gene_pos2, std::shared_ptr<TrainPiectElement> board,
+void SixPiece::SingleContest(int &player_gene_pos1, int &player_gene_pos2, std::shared_ptr<TrainPiectElement> board,
                              std::unordered_map<int, int> ma) {
     int win_player;
     for (int i = 0; i < board->match_times; i++) {
