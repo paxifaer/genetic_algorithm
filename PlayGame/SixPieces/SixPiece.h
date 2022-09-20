@@ -74,13 +74,17 @@ struct TemporaryData
 class SixPiece :public General{
    public:
     void InitPopulation(shared_ptr<TrainPiectElement> board);
-
     void MakeChampion(shared_ptr<TrainPiectElement> board);
     int PopulationPlayAGame(const int &player_gene_pos1,const int &player_gene_pos2,const std::shared_ptr<TrainPiectElement> board) ;
     void SignalCommunication();
     void MakePopulationWhenTrain(std::shared_ptr<TrainPiectElement> board);
     void InitPopulationForTrain(std::shared_ptr<TrainPiectElement> board);
     void InitPopulationForPlay(std::shared_ptr<TrainPiectElement> board);
+
+
+    void DisPlayBoard(std::vector<std::vector<int>> general_checkerboard);
+
+
 //private:
     void GetPKQueue(std::vector<int> &pk_queue);
     void PopulationContest(std::shared_ptr<TrainPiectElement> board);

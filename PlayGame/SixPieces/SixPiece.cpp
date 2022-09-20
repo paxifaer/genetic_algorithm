@@ -104,7 +104,6 @@ void SixPiece::InitPopulationForPlay(std::shared_ptr<TrainPiectElement> board) {
 
 void SixPiece::CacheTemporaryDate(std::shared_ptr<TrainPiectElement> board, std::shared_ptr<TemporaryData> tem,const int &player_gene_pos) {
 
-
     tem->general_checkerboard = board->general_checkerboard;
     tem->gene = board->population[player_gene_pos];
 }
@@ -209,29 +208,35 @@ int SixPiece::GetPieceType(std::shared_ptr<TemporaryData> tem, int &player, int 
     int num1 = tem->target_num - sum;
     int num2 = tem->target_num - sum;
     while (num1--) {
-        int find_move_x =
-                step_x * (tem->direction_checkerboard[x - step_x][y - step_y].direction_piece_num[type] + num1);
-        int find_move_y =
-                step_y * (tem->direction_checkerboard[x - step_x][y - step_y].direction_piece_num[type] + num1);
-        if ((x - find_move_x) >= 0 && (y - find_move_y) >= 0 &&
-            tem->general_checkerboard[find_move_x][find_move_y] != player) {
-            continue;
-        } else {
-            res++;
-            break;
+        if(x - step_x>=0&&x - step_x<19&&y - step_y>=0&&y - step_y<19)
+        {
+            int find_move_x =
+                    step_x * (tem->direction_checkerboard[x - step_x][y - step_y].direction_piece_num[type] + num1);
+            int find_move_y =
+                    step_y * (tem->direction_checkerboard[x - step_x][y - step_y].direction_piece_num[type] + num1);
+            if ((x - find_move_x) >= 0 && (y - find_move_y) >= 0 &&
+                tem->general_checkerboard[find_move_x][find_move_y] != player) {
+                continue;
+            } else {
+                res++;
+                break;
+            }
         }
     }
     while (num2--) {
-        int find_move_x =
-                step_x * (tem->direction_checkerboard[x - step_x][y - step_y].direction_piece_num[type] + num2);
-        int find_move_y =
-                step_y * (tem->direction_checkerboard[x - step_x][y - step_y].direction_piece_num[type] + num2);
-        if ((x + find_move_x) < tem->len && (y - find_move_y) < tem->len &&
-            tem->general_checkerboard[find_move_x][find_move_y] != player) {
-            continue;
-        } else {
-            res++;
-            break;
+        if(x - step_x>=0&&x - step_x<19&&y - step_y>=0&&y - step_y<19)
+        {
+            int find_move_x =
+                    step_x * (tem->direction_checkerboard[x - step_x][y - step_y].direction_piece_num[type] + num2);
+            int find_move_y =
+                    step_y * (tem->direction_checkerboard[x - step_x][y - step_y].direction_piece_num[type] + num2);
+            if ((x + find_move_x) < tem->len && (y - find_move_y) < tem->len &&
+                tem->general_checkerboard[find_move_x][find_move_y] != player) {
+                continue;
+            } else {
+                res++;
+                break;
+            }
         }
     }
     return res;
@@ -328,7 +333,7 @@ void SixPiece::UpdateQuadrantStatus(std::shared_ptr<TemporaryData> tem) {
     tem->len = tem->general_checkerboard.size();
     tem->direction_checkerboard.resize(tem->len, std::vector<PieceDirection>(tem->len));
     InitializePieceDirectionSpace(tem);
-    if (tem->direction_checkerboard.empty())
+    if (!tem->direction_checkerboard.empty())
     {
         for (int i = 0; i < tem->len; i++) {
             for (int j = 0; j < tem->len; j++) {
@@ -398,11 +403,23 @@ void SixPiece::SetRecord(Point &pos,std::shared_ptr<TemporaryData> tem)
     tem->general_checkerboard[pos.x][pos.y]=tem->real_player;
 }
 
+void SixPiece::DisPlayBoard(std::vector<std::vector<int>> general_checkerboard)
+{
+    for(int i=0;i<general_checkerboard.size();i++)
+    {
+        cout<<endl;
+        for(int j=0;j<general_checkerboard[0].size();j++)
+            cout<<general_checkerboard[i][j]<<" ";
+    }
+}
+
 int
 SixPiece::PopulationPlayAGame(const int &player_gene_pos1, const int &player_gene_pos2, const std::shared_ptr<TrainPiectElement> board) {
 
     std::shared_ptr<TemporaryData> ply_1st = std::make_shared<TemporaryData>();
     std::shared_ptr<TemporaryData> ply_2nd = std::make_shared<TemporaryData>();
+    ply_1st->now_player = 1;
+    ply_2nd->now_player = 2;
     CacheTemporaryDate(board, ply_1st,player_gene_pos1);
     CacheTemporaryDate(board, ply_2nd,player_gene_pos2);
 
@@ -414,10 +431,10 @@ SixPiece::PopulationPlayAGame(const int &player_gene_pos1, const int &player_gen
         for(int i=0;i<2;i++)
         {
             UpdateQuadrantStatus(ply_1st);
-            if (ply_1st->real_six.x)
+            if (ply_1st->real_six.x>0)
                 return 1;
             UpdateQuadrantStatus(ply_1st);
-            if (ply_1st->opponent_six.x)
+            if (ply_1st->opponent_six.x>0)
                 SetRecord(ply_1st->opponent_six, ply_1st);
             else
                 SetRecord(ply_1st->max_pos, ply_1st);
@@ -426,10 +443,10 @@ SixPiece::PopulationPlayAGame(const int &player_gene_pos1, const int &player_gen
         for(int i=0;i<2;i++)
         {
             UpdateQuadrantStatus(ply_2nd);
-            if (ply_2nd->real_six.x)
+            if (ply_2nd->real_six.x>0)
                 return 2;
             UpdateQuadrantStatus(ply_2nd);
-            if (ply_2nd->opponent_six.x)
+            if (ply_2nd->opponent_six.x>0)
                 SetRecord(ply_2nd->opponent_six, ply_2nd);
             else
                 SetRecord(ply_2nd->max_pos, ply_2nd);
@@ -497,16 +514,13 @@ void SixPiece::PopulationContest(std::shared_ptr<TrainPiectElement> board)//cont
     pk_queue.resize(board->population_num);
     GetPKQueue(pk_queue);
 
-    for (int i = 0; i < pk_queue.size(); i += 2)
-        cout<<pk_queue[i]<<" ";
 
     while (--board->contest_round) {
         ParallelCalculate pool{3};
         std::unordered_map<int, int> ma;//contest use  multiple threads
         for (int i = 0; i < pk_queue.size(); i += 2) {
-            int a1 = pk_queue[i],a2 = pk_queue[i + 1];
-            pool.commit([&](){SingleContest( a1, a2, board, ma);});
-//              pool.commit(SingleContest,pk_queue[i], pk_queue[i + 1], board, ma);
+            int player1 =pk_queue[i],player2 = pk_queue[i + 1];
+            pool.commit([&](){SingleContest( player1, player2, board, ma);});
         }
         int i=1;
         pool.ParallelAccum(i);

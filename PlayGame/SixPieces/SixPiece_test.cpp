@@ -139,12 +139,10 @@ void FixTempory()
 }
 int main()
 {
-//    std::shared_ptr<TrainPiectElement> board = MakeTestData();
-//    SixPiece test;
-//    test.MakeChampion(board);
-//      TestRandomQueue();
-//    TestParallelCal();
-    FixTempory();
+    std::shared_ptr<TrainPiectElement> board = MakeTestData();
+    SixPiece test;
+    test.MakeChampion(board);
+//    FixTempory();
 
     return 0;
 }
