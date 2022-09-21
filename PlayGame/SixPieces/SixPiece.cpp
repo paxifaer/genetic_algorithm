@@ -167,19 +167,24 @@ void SixPiece::FindMaxAndAddScore(std::shared_ptr<TemporaryData> tem, int &x, in
             tem->opponent_six = {x, y};
     }
         tem->direction_checkerboard[x][y].score += GetScore(tem,x,y,0)+GetScore(tem,x,y,1)+GetScore(tem,x,y,2)+GetScore(tem,x,y,3);
+
+    cout<<" max_score is : "<<tem->max_score<<endl;
         if(tem->direction_checkerboard[x][y].score > tem->max_score)
         {
+
             tem->max_score = tem->direction_checkerboard[x][y].score;
             tem->max_pos = {x,y};
+            cout<<" aaaa  max_score is : "<<tem->max_score<<endl;
         }
 
 }
 
 
 int SixPiece::GetPieceType(std::shared_ptr<TemporaryData> tem, int &player, int type, int &x, int &y) {
-    int sum = 1;
+    int sum1 = 1,sum2=1;
     int step_x = 0, step_y = 0;
     int res = 0;
+    int opponent_player = player==1?2:1;
     switch (type) {
         case static_cast<int>(Direction::Left):
             step_x = 1;
@@ -197,25 +202,41 @@ int SixPiece::GetPieceType(std::shared_ptr<TemporaryData> tem, int &player, int 
             step_x = 1;
             step_y = -1;
             break;
+        case static_cast<int>(Direction::OpponentLeft):
+            step_x = 1;
+            step_y = 0;
+            break;
+        case static_cast<int>(Direction::OpponentUp):
+            step_x = 0;
+            step_y = 1;
+            break;
+        case static_cast<int>(Direction::OpponentLeftUp):
+            step_x = 1;
+            step_y = 1;
+            break;
+        case static_cast<int>(Direction::OpponentRightUp):
+            step_x = 1;
+            step_y = -1;
+            break;
     };
 
     if ((x - step_x) >= 0 && (y - step_y) >= 0&&(x - step_x) < tem->len && (y - step_y < tem->len)) {
-        sum += tem->direction_checkerboard[x - step_x][y - step_y].direction_piece_num[type];
+        sum1 += tem->direction_checkerboard[x - step_x][y - step_y].direction_piece_num[type];
     }
     if ((x + step_x) >= 0 && (y + step_y >= 0)&&(x + step_x) < tem->len && (y + step_y < tem->len)) {
-        sum += tem->direction_checkerboard[x + step_x][y + step_y].direction_piece_num[type];
+        sum2 += tem->direction_checkerboard[x + step_x][y + step_y].direction_piece_num[type];
     }
-    int num1 = tem->target_num - sum;
-    int num2 = tem->target_num - sum;
+    int num1 = tem->target_num - sum1;
+    int num2 = tem->target_num - sum2;
     while (num1--) {
         if(x - step_x>=0&&x - step_x<tem->len&&y - step_y>=0&&y - step_y<tem->len)
         {
             int find_move_x =
-                    step_x * (tem->direction_checkerboard[x - step_x][y - step_y].direction_piece_num[type] + num1);
+                    step_x * (tem->direction_checkerboard[x - step_x][y - step_y].direction_piece_num[type] + num1);//step_x maybe -1,1 by direction,
             int find_move_y =
                     step_y * (tem->direction_checkerboard[x - step_x][y - step_y].direction_piece_num[type] + num1);
-            if ((x - find_move_x) >= 0 && (y - find_move_y) >= 0 &&
-                tem->general_checkerboard[find_move_x][find_move_y] != player) {
+            if ((x - find_move_x) >= 0 && (y - find_move_y) >= 0 &&(x - find_move_x) <tem->len && (y - find_move_y) <tem->len&&
+                tem->general_checkerboard[x - find_move_x][y - find_move_y] != opponent_player) {
                 continue;
             } else {
                 res++;
@@ -230,8 +251,8 @@ int SixPiece::GetPieceType(std::shared_ptr<TemporaryData> tem, int &player, int 
                     step_x * (tem->direction_checkerboard[x - step_x][y - step_y].direction_piece_num[type] + num2);
             int find_move_y =
                     step_y * (tem->direction_checkerboard[x - step_x][y - step_y].direction_piece_num[type] + num2);
-            if ((x + find_move_x) < tem->len && (y - find_move_y) < tem->len &&
-                tem->general_checkerboard[find_move_x][find_move_y] != player) {
+            if ((x + find_move_x) < tem->len && (y + find_move_y) < tem->len &&(x + find_move_x) >=0 && (y + find_move_y) >=0 &&
+                tem->general_checkerboard[x + find_move_x][y + find_move_y] != opponent_player) {
                 continue;
             } else {
                 res++;
@@ -282,50 +303,114 @@ int SixPiece::GetPieceNum(std::shared_ptr<TemporaryData> tem, int &player,int ty
                                                           1].direction_piece_num[static_cast<int>(Direction::RightUp)];
             }
             break;
+        case 4:
+            if (x > 0 && tem->general_checkerboard[x - 1][y] == player) {
+                sum += tem->direction_checkerboard[x - 1][y].direction_piece_num[static_cast<int>(Direction::OpponentLeft)];
+            }
+            if (x < tem->len - 1 && tem->general_checkerboard[x + 1][y] == player) {
+                sum += tem->direction_checkerboard[x + 1][y].direction_piece_num[static_cast<int>(Direction::OpponentLeft)];
+            }
+            break;
+        case 5:
+            if (y > 0 && tem->general_checkerboard[x][y - 1] == player) {
+                sum += tem->direction_checkerboard[x][y - 1].direction_piece_num[static_cast<int>(Direction::OpponentUp)];
+            }
+            if (y < tem->len - 1 && tem->general_checkerboard[x][y + 1] == player) {
+                sum += tem->direction_checkerboard[x][y + 1].direction_piece_num[static_cast<int>(Direction::OpponentUp)];
+            }
+            break;
+        case 6:
+            if (y > 0 && x > 0 && tem->general_checkerboard[x - 1][y - 1] == player) {
+                sum += tem->direction_checkerboard[x - 1][y -
+                                                          1].direction_piece_num[static_cast<int>(Direction::OpponentLeftUp)];
+            }
+            if (y < tem->len - 1 && x < tem->len - 1 && tem->general_checkerboard[x + 1][y + 1] == player) {
+                sum += tem->direction_checkerboard[x + 1][y +
+                                                          1].direction_piece_num[static_cast<int>(Direction::OpponentLeftUp)];
+            }
+            break;
+        case 7:
+            if (y > 0 && x < tem->len - 1 && tem->general_checkerboard[x + 1][y - 1] == player) {
+                sum += tem->direction_checkerboard[x + 1][y -
+                                                          1].direction_piece_num[static_cast<int>(Direction::OpponentRightUp)];
+            }
+            if (y < tem->len - 1 && x > 0 && tem->general_checkerboard[x - 1][y + 1] == player) {
+                sum += tem->direction_checkerboard[x - 1][y +
+                                                          1].direction_piece_num[static_cast<int>(Direction::OpponentRightUp)];
+            }
+            break;
     }
     return sum;
 }
+
+
+void SixPiece::CalCulateScoreForNowPlayer(std::shared_ptr<TemporaryData> tem,int &i,int &j)
+{
+    tem->direction_checkerboard[i][j].direction_piece_type[static_cast<int>(Direction::Left)] = GetPieceType(
+            tem, tem->now_player, static_cast<int>(Direction::Left), i, j);
+    tem->direction_checkerboard[i][j].direction_piece_type[static_cast<int>(Direction::Up)] = GetPieceType(
+            tem, tem->now_player, static_cast<int>(Direction::Up), i, j);
+    tem->direction_checkerboard[i][j].direction_piece_type[static_cast<int>(Direction::LeftUp)] = GetPieceType(
+            tem, tem->now_player, static_cast<int>(Direction::LeftUp), i, j);
+    tem->direction_checkerboard[i][j].direction_piece_type[static_cast<int>(Direction::RightUp)] = GetPieceType(
+            tem, tem->now_player, static_cast<int>(Direction::RightUp), i, j);
+
+    tem->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::Left)] = GetPieceNum(
+            tem, tem->now_player, static_cast<int>(Direction::Left), i, j);
+    tem->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::Up)] = GetPieceNum(
+            tem, tem->now_player, static_cast<int>(Direction::Up), i, j);
+    tem->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::LeftUp)] = GetPieceNum(
+            tem, tem->now_player, static_cast<int>(Direction::LeftUp), i, j);
+    tem->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::RightUp)] = GetPieceNum(
+            tem, tem->now_player, static_cast<int>(Direction::RightUp), i, j);
+}
+
+
+void SixPiece::CalCulateScoreForOppoNentPlayer(std::shared_ptr<TemporaryData> tem,int &i,int &j)
+{
+    tem->direction_checkerboard[i][j].direction_piece_type[static_cast<int>(Direction::OpponentLeft)] = GetPieceType(
+            tem, tem->opponent_player, static_cast<int>(Direction::OpponentLeft), i, j);
+    tem->direction_checkerboard[i][j].direction_piece_type[static_cast<int>(Direction::OpponentUp)] = GetPieceType(
+            tem, tem->opponent_player, static_cast<int>(Direction::OpponentUp), i, j);
+    tem->direction_checkerboard[i][j].direction_piece_type[static_cast<int>(Direction::OpponentLeftUp)] = GetPieceType(
+            tem, tem->opponent_player, static_cast<int>(Direction::OpponentLeftUp), i, j);
+    tem->direction_checkerboard[i][j].direction_piece_type[static_cast<int>(Direction::OpponentRightUp)] = GetPieceType(
+            tem, tem->opponent_player, static_cast<int>(Direction::OpponentRightUp), i, j);
+
+    tem->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::OpponentLeft)] = GetPieceNum(
+            tem, tem->opponent_player, static_cast<int>(Direction::OpponentLeft), i, j);
+    tem->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::OpponentUp)] = GetPieceNum(
+            tem, tem->opponent_player, static_cast<int>(Direction::OpponentUp), i, j);
+    tem->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::OpponentLeftUp)] = GetPieceNum(
+            tem, tem->opponent_player, static_cast<int>(Direction::OpponentLeftUp), i, j);
+    tem->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::OpponentRightUp)] = GetPieceNum(
+            tem, tem->opponent_player, static_cast<int>(Direction::OpponentRightUp), i, j);
+}
+
+
 void SixPiece::UpdatePieceTypeAndNum(std::shared_ptr<TemporaryData> tem) {
-    int len = tem->general_checkerboard.size();
-    for (int i = 0; i < len; i++) {
-        for (int j = 0; j < len; j++) {
+    cout<<"time"<<endl;
+    for (int i = 0; i < tem->len; i++) {
+        for (int j = 0; j < tem->len; j++) {
             if (tem->general_checkerboard[i][j] == 0) {
 
-                tem->direction_checkerboard[i][j].direction_piece_type[static_cast<int>(Direction::Left)] = GetPieceType(
-                        tem, tem->now_player, static_cast<int>(Direction::Left), i, j);
-                tem->direction_checkerboard[i][j].direction_piece_type[static_cast<int>(Direction::Up)] = GetPieceType(
-                        tem, tem->now_player, static_cast<int>(Direction::Up), i, j);
-                tem->direction_checkerboard[i][j].direction_piece_type[static_cast<int>(Direction::LeftUp)] = GetPieceType(
-                        tem, tem->now_player, static_cast<int>(Direction::LeftUp), i, j);
-                tem->direction_checkerboard[i][j].direction_piece_type[static_cast<int>(Direction::RightUp)] = GetPieceType(
-                        tem, tem->now_player, static_cast<int>(Direction::RightUp), i, j);
-
-                tem->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::Left)] = GetPieceNum(
-                        tem, tem->now_player, static_cast<int>(Direction::Left), i, j);
-                tem->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::Up)] = GetPieceNum(
-                        tem, tem->now_player, static_cast<int>(Direction::Up), i, j);
-                tem->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::LeftUp)] = GetPieceNum(
-                        tem, tem->now_player, static_cast<int>(Direction::LeftUp), i, j);
-                tem->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::RightUp)] = GetPieceNum(
-                        tem, tem->now_player, static_cast<int>(Direction::RightUp), i, j);
-
-
-                DisplayScore(tem);
-
+                CalCulateScoreForNowPlayer(tem,i,j);
+                CalCulateScoreForOppoNentPlayer( tem,i,j);
                 FindMaxAndAddScore(tem, i, j);
             }
             if(tem->real_six.x!=-1||tem->opponent_six.x!=-1)
                 break;
         }
     }
+//    DisplayScore(tem);
 }
 
 void SixPiece::InitializePieceDirectionSpace(std::shared_ptr<TemporaryData> tem) {
     if (tem->direction_checkerboard[0][0].direction_piece_num.empty()) {
         for (int i = 0; i < tem->len; i++) {
             for (int j = 0; j < tem->len; j++) {
-                tem->direction_checkerboard[i][j].direction_piece_num.resize(4);
-                tem->direction_checkerboard[i][j].direction_piece_type.resize(4);
+                tem->direction_checkerboard[i][j].direction_piece_num.resize(8);
+                tem->direction_checkerboard[i][j].direction_piece_type.resize(8);
             }
         }
     }
@@ -335,7 +420,8 @@ void SixPiece::UpdateQuadrantStatus(std::shared_ptr<TemporaryData> tem) {
 
     tem->len = tem->general_checkerboard.size();
     tem->direction_checkerboard.resize(tem->len, std::vector<PieceDirection>(tem->len));
-    InitializePieceDirectionSpace(tem);
+    InitializePieceDirectionSpace(tem);//if is not empty,Won't initialize ;
+    cout<<"UpdateQuadrantStatus"<<endl;
     if (!tem->direction_checkerboard.empty())
     {
         for (int i = 0; i < tem->len; i++) {
@@ -343,7 +429,7 @@ void SixPiece::UpdateQuadrantStatus(std::shared_ptr<TemporaryData> tem) {
                 if (tem->general_checkerboard[i][j] == tem->real_player) {
                     if (i > 0 && tem->general_checkerboard[i - 1][j] == tem->real_player) {
                         int num = tem->direction_checkerboard[i -
-                                                              1][j].direction_piece_num[static_cast<int>(Direction::Left)];
+                                                              1][j].direction_piece_num[static_cast<int>(Direction::Left)];//迭代每一步棋子数量
                         int real_num = num + 1;
                         tem->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::Left)] = real_num;
                         while (--num) {
@@ -410,11 +496,11 @@ void SixPiece::SetRecord(Point &pos,std::shared_ptr<TemporaryData> tem)
 
 int
 SixPiece::PopulationPlayAGame(const int &player_gene_pos1, const int &player_gene_pos2, const std::shared_ptr<TrainPiectElement> board) {
-
+cout<<"PopulationPlayAGame"<<endl;
     std::shared_ptr<TemporaryData> ply_1st = std::make_shared<TemporaryData>();
     std::shared_ptr<TemporaryData> ply_2nd = std::make_shared<TemporaryData>();
-    ply_1st->now_player = 1;
-    ply_2nd->now_player = 2;
+    ply_1st->now_player = 1;ply_1st->opponent_player = 2;
+    ply_2nd->now_player = 2;ply_2nd->opponent_player = 1;
     CacheTemporaryDate(board, ply_1st,player_gene_pos1);
     CacheTemporaryDate(board, ply_2nd,player_gene_pos2);
 
@@ -531,6 +617,7 @@ void SixPiece::SingleContest(int &player_gene_pos1, int &player_gene_pos2, std::
     int win_player;
     for (int i = 0; i < board->match_times; i++) {
         int black_winner = PopulationPlayAGame(player_gene_pos1,player_gene_pos2,board);
+        cout<<"black_winer is "<<black_winner<<endl;
         int white_winner = PopulationPlayAGame(player_gene_pos2,player_gene_pos1,board);
         cout<<"white_winer is "<<white_winner<<endl;
         switch (black_winner) {
@@ -562,65 +649,65 @@ void SixPiece::SingleContest(int &player_gene_pos1, int &player_gene_pos2, std::
     ma[win_player] = 1;
 }
 
-void SixPiece::DisPlayBoard(std::vector<std::vector<int>> general_checkerboard)
-{
-    for(int i=0;i<general_checkerboard.size();i++)
-    {
-        cout<<endl;
-        for(int j=0;j<general_checkerboard[0].size();j++)
-            cout<<general_checkerboard[i][j]<<" ";
-    }
-}
-
-void SixPiece::DisplayScore(std::shared_ptr<TemporaryData> tem)
-{
-    for(int i=0;i<tem->len;i++)
-    {
-
-        for(int j=0;j<tem->len;j++)
-        {
-            cout<<"  "<<tem->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::RightUp)]<<" " ;
-
-        }
-        cout<<endl;
-    }
-
-    for(int i=0;i<tem->len;i++)
-    {
-
-        for(int j=0;j<tem->len;j++)
-        {
-            cout<<" "<<tem->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::LeftUp)]<<" "  ;
-
-        }
-        cout<<endl;
-    }
-    cout<<endl;
-    for(int i=0;i<tem->len;i++)
-    {
-
-        for(int j=0;j<tem->len;j++)
-        {
-
-            cout<<" "<<tem->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::Up)]<<"  "  ;
-
-        }
-        cout<<endl;
-    }
-    cout<<endl;
-
-    for(int i=0;i<tem->len;i++)
-    {
-
-        for(int j=0;j<tem->len;j++)
-        {
-
-            cout<<" "<<tem->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::Left)]<<" "  ;
-        }
-        cout<<endl;
-    }
-    cout<<endl;
-}
+//void SixPiece::DisPlayBoard(std::vector<std::vector<int>> general_checkerboard)
+//{
+//    for(int i=0;i<general_checkerboard.size();i++)
+//    {
+//        cout<<endl;
+//        for(int j=0;j<general_checkerboard[0].size();j++)
+//            cout<<general_checkerboard[i][j]<<" ";
+//    }
+//}
+//
+//void SixPiece::DisplayScore(std::shared_ptr<TemporaryData> tem)
+//{
+//    for(int i=0;i<tem->len;i++)
+//    {
+//
+//        for(int j=0;j<tem->len;j++)
+//        {
+//            cout<<"  "<<tem->direction_checkerboard[i][j].score<<" " ;
+//
+//        }
+//        cout<<endl;
+//    }
+//
+////    for(int i=0;i<tem->len;i++)
+////    {
+////
+////        for(int j=0;j<tem->len;j++)
+////        {
+////            cout<<" "<<tem->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::LeftUp)]<<" "  ;
+////
+////        }
+////        cout<<endl;
+////    }
+////    cout<<endl;
+////    for(int i=0;i<tem->len;i++)
+////    {
+////
+////        for(int j=0;j<tem->len;j++)
+////        {
+////
+////            cout<<" "<<tem->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::Up)]<<"  "  ;
+////
+////        }
+////        cout<<endl;
+////    }
+////    cout<<endl;
+////
+////    for(int i=0;i<tem->len;i++)
+////    {
+////
+////        for(int j=0;j<tem->len;j++)
+////        {
+////
+////            cout<<" "<<tem->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::Left)]<<" "  ;
+////        }
+////        cout<<endl;
+////    }
+////    cout<<endl;
+//}
 
 
 

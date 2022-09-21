@@ -30,7 +30,7 @@ enum class IterateType{
     HasData
 };
 enum class Direction{
-    Up,Left,LeftUp,RightUp
+    Up,Left,LeftUp,RightUp,OpponentUp,OpponentLeft,OpponentLeftUp,OpponentRightUp
 };
 struct PieceDirection{
     std::vector<int>direction_piece_num;
@@ -62,6 +62,7 @@ struct TemporaryData
     long long int max_score;
     int real_player;
     int now_player;
+    int opponent_player;
     std::vector<std::vector<int>> general_checkerboard;
     std::vector<std::vector<PieceDirection>> direction_checkerboard;
     std::vector<int> gene;
@@ -82,8 +83,8 @@ class SixPiece :public General{
     void InitPopulationForPlay(std::shared_ptr<TrainPiectElement> board);
 
     //for test
-    void DisPlayBoard(std::vector<std::vector<int>> general_checkerboard);
-    void DisplayScore(std::shared_ptr<TemporaryData> tem);
+//    void DisPlayBoard(std::vector<std::vector<int>> general_checkerboard);
+//    void DisplayScore(std::shared_ptr<TemporaryData> tem);
 
 //private:
     void GetPKQueue(std::vector<int> &pk_queue);
@@ -99,6 +100,8 @@ class SixPiece :public General{
     int GetPieceType(std::shared_ptr<TemporaryData> tem,int &player,int type,int &x,int &y);
     void InitializePieceDirectionSpace(std::shared_ptr<TemporaryData> tem);
     long long int GetScore(std::shared_ptr<TemporaryData> tem,int &x,int &y,int direction);
+    void CalCulateScoreForNowPlayer(std::shared_ptr<TemporaryData> tem,int &pos_x,int &pos_y);
+    void CalCulateScoreForOppoNentPlayer(std::shared_ptr<TemporaryData> tem,int &pos_x,int &pos_y);
     void SetRecord(Point &pos,std::shared_ptr<TemporaryData> tem);
 
 
