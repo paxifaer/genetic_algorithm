@@ -81,9 +81,9 @@ class SixPiece :public General{
     void InitPopulationForTrain(std::shared_ptr<TrainPiectElement> board);
     void InitPopulationForPlay(std::shared_ptr<TrainPiectElement> board);
 
-
+    //for test
     void DisPlayBoard(std::vector<std::vector<int>> general_checkerboard);
-
+    void DisplayScore(std::shared_ptr<TemporaryData> tem);
 
 //private:
     void GetPKQueue(std::vector<int> &pk_queue);
