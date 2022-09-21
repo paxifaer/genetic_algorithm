@@ -327,13 +327,60 @@ void TestGetPiece()
     }
 }
 
+
+
+void TestGetPieceNum()
+{
+    SixPiece test;
+    std::shared_ptr<TrainPiectElement> board = MakeTestData();
+    std::shared_ptr<TemporaryData> ply_1st = std::make_shared<TemporaryData>();
+    test.CacheTemporaryDate(board, ply_1st,1);
+    ply_1st->now_player=1;
+    ply_1st->real_player = 1;
+    ply_1st->opponent_player=2;
+    ply_1st->len = ply_1st->general_checkerboard.size();
+    ply_1st->direction_checkerboard.resize(ply_1st->len, std::vector<PieceDirection>(ply_1st->len));
+
+
+
+
+    test.InitializePieceDirectionSpace(ply_1st);
+    Point a = {7,7};
+    ply_1st->general_checkerboard[7][7]=ply_1st->real_player;
+//    test.SetRecord(a,ply_1st);
+    ply_1st->direction_checkerboard[7][7].direction_piece_num[static_cast<int>(Direction::Up)]= test.GetPieceNum(
+            ply_1st, ply_1st->real_player, static_cast<int>(Direction::Up), a.x, a.y);
+    a = {7,8};
+    test.SetRecord(a,ply_1st);
+    cout<<test.GetPieceNum(ply_1st, ply_1st->real_player,static_cast<int>(Direction::Up),a.x,a.y);
+}
+void TestSingleContest()
+{
+    SixPiece test;
+    std::shared_ptr<TrainPiectElement> board = MakeTestData();
+    std::shared_ptr<TemporaryData> ply_1st = std::make_shared<TemporaryData>();
+    test.CacheTemporaryDate(board, ply_1st,1);
+    ply_1st->now_player=1;
+    ply_1st->real_player = 1;
+    ply_1st->opponent_player=2;
+    ply_1st->len = ply_1st->general_checkerboard.size();
+    ply_1st->direction_checkerboard.resize(ply_1st->len, std::vector<PieceDirection>(ply_1st->len));
+
+    test.InitializePieceDirectionSpace(ply_1st);
+    int player_gene_pos1 = 25940; int player_gene_pos2 = 46722;
+    std::unordered_map<int, int> ma;
+    test.SingleContest(ply_1st->now_player,ply_1st->opponent_player,board,ma);
+
+}
 int main()
 {
-    std::shared_ptr<TrainPiectElement> board = MakeTestData();
-    SixPiece test;
+//    std::shared_ptr<TrainPiectElement> board = MakeTestData();
+//    SixPiece test;
 //    test.MakeChampion(board);
 //    FixTempory();
 //    TestParallelCal();
-    TestGetPiece();
+//    TestGetPiece();
+//    TestGetPieceNum();
+    TestSingleContest();
     return 0;
 }
