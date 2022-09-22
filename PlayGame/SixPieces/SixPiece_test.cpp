@@ -346,13 +346,13 @@ void TestGetPieceNum()
 
     test.InitializePieceDirectionSpace(ply_1st);
     Point a = {7,7};
-    ply_1st->general_checkerboard[7][7]=ply_1st->real_player;
+    ply_1st->general_checkerboard[7][7]=ply_1st->opponent_player;
 //    test.SetRecord(a,ply_1st);
-    ply_1st->direction_checkerboard[7][7].direction_piece_num[static_cast<int>(Direction::Up)]= test.GetPieceNum(
-            ply_1st, ply_1st->real_player, static_cast<int>(Direction::Up), a.x, a.y);
+    ply_1st->direction_checkerboard[7][7].direction_piece_num[static_cast<int>(Direction::OpponentUp)]= test.GetPieceNum(
+            ply_1st, ply_1st->real_player, static_cast<int>(Direction::OpponentUp), a.x, a.y);
     a = {7,8};
     test.SetRecord(a,ply_1st);
-    cout<<test.GetPieceNum(ply_1st, ply_1st->real_player,static_cast<int>(Direction::Up),a.x,a.y);
+    cout<<test.GetPieceNum(ply_1st, ply_1st->opponent_player,static_cast<int>(Direction::OpponentUp),a.x,a.y);
 }
 void TestSingleContest()
 {

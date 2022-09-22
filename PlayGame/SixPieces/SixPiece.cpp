@@ -266,6 +266,7 @@ int SixPiece::GetPieceType(std::shared_ptr<TemporaryData> tem, int &player, int 
 int SixPiece::GetPieceNum(std::shared_ptr<TemporaryData> tem, int &player,int type,int &x,int &y)
 {
     int sum =1;
+
     switch(type)
     {
         case static_cast<int>(Direction::Left):
@@ -414,7 +415,120 @@ void SixPiece::InitializePieceDirectionSpace(std::shared_ptr<TemporaryData> tem)
             }
         }
     }
-};;
+}
+
+
+void SixPiece::InitializeDirectionBoard(int &i,int &j,std::shared_ptr<TemporaryData> tem)
+{
+    if (i > 0 && tem->general_checkerboard[i - 1][j] == tem->now_player) {
+        int num = tem->direction_checkerboard[i -
+                                              1][j].direction_piece_num[static_cast<int>(Direction::Left)];//迭代每一步棋子数量
+        int real_num = num + 1;
+        tem->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::Left)] = real_num;
+        while (--num) {
+            tem->direction_checkerboard[i -
+                                        num][j].direction_piece_num[static_cast<int>(Direction::Left)] = real_num;
+        }
+    } else if (i == 0 || tem->general_checkerboard[i - 1][j] != tem->now_player) {
+        tem->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::Left)] = 1;
+    }
+
+    if (j > 0 && tem->general_checkerboard[i][j - 1] == tem->now_player) {
+        int num = tem->direction_checkerboard[i][j -
+                                                 1].direction_piece_num[static_cast<int>(Direction::Up)];
+        int real_num = num + 1;
+        tem->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::Up)] = real_num;
+        while (--num) {
+            tem->direction_checkerboard[i][j -
+                                           num].direction_piece_num[static_cast<int>(Direction::Up)] = real_num;
+        }
+    } else if (j == 0 || tem->general_checkerboard[i][j - 1] != tem->now_player) {
+        tem->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::Up)] = 1;
+    }
+
+    if (j > 0 && i > 0 && tem->general_checkerboard[i - 1][j - 1] == tem->now_player) {
+        int num = tem->direction_checkerboard[i - 1][j -
+                                                     1].direction_piece_num[static_cast<int>(Direction::LeftUp)];
+        int real_num = num + 1;
+        tem->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::LeftUp)] = real_num;
+        while (--num) {
+            tem->direction_checkerboard[i - num][j -
+                                                 num].direction_piece_num[static_cast<int>(Direction::LeftUp)] = real_num;
+        }
+    } else if (j == 0 || i == 0 || tem->general_checkerboard[i - 1][j - 1] != tem->now_player) {
+        tem->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::LeftUp)] = 1;
+    }
+
+    if (j > 0 && i < tem->len - 1 && tem->general_checkerboard[i + 1][j - 1] == tem->now_player) {
+        int num = tem->direction_checkerboard[i + 1][j -
+                                                     1].direction_piece_num[static_cast<int>(Direction::RightUp)];
+        int real_num = num + 1;
+        tem->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::RightUp)] = real_num;
+        while (--num) {
+            tem->direction_checkerboard[i + num][j -
+                                                 num].direction_piece_num[static_cast<int>(Direction::RightUp)] = real_num;
+        }
+    } else if (j == 0 || i == tem->len - 1 || tem->general_checkerboard[i + 1][j - 1] != tem->now_player) {
+        tem->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::RightUp)] = 1;
+    }
+
+}
+
+void SixPiece::InitializeDirectionBoardForOpponent(int &i,int &j,std::shared_ptr<TemporaryData> tem)
+{
+    if (i > 0 && tem->general_checkerboard[i - 1][j] == tem->opponent_player) {
+        int num = tem->direction_checkerboard[i -
+                                              1][j].direction_piece_num[static_cast<int>(Direction::OpponentLeft)];//迭代每一步棋子数量
+        int real_num = num + 1;
+        tem->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::OpponentLeft)] = real_num;
+        while (--num) {
+            tem->direction_checkerboard[i -
+                                        num][j].direction_piece_num[static_cast<int>(Direction::OpponentLeft)] = real_num;
+        }
+    } else if (i == 0 || tem->general_checkerboard[i - 1][j] != tem->opponent_player) {
+        tem->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::OpponentLeft)] = 1;
+    }
+
+    if (j > 0 && tem->general_checkerboard[i][j - 1] == tem->opponent_player) {
+        int num = tem->direction_checkerboard[i][j -
+                                                 1].direction_piece_num[static_cast<int>(Direction::OpponentUp)];
+        int real_num = num + 1;
+        tem->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::OpponentUp)] = real_num;
+        while (--num) {
+            tem->direction_checkerboard[i][j -
+                                           num].direction_piece_num[static_cast<int>(Direction::OpponentUp)] = real_num;
+        }
+    } else if (j == 0 || tem->general_checkerboard[i][j - 1] != tem->opponent_player) {
+        tem->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::OpponentUp)] = 1;
+    }
+
+    if (j > 0 && i > 0 && tem->general_checkerboard[i - 1][j - 1] == tem->opponent_player) {
+        int num = tem->direction_checkerboard[i - 1][j -
+                                                     1].direction_piece_num[static_cast<int>(Direction::OpponentLeftUp)];
+        int real_num = num + 1;
+        tem->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::OpponentLeftUp)] = real_num;
+        while (--num) {
+            tem->direction_checkerboard[i - num][j -
+                                                 num].direction_piece_num[static_cast<int>(Direction::OpponentLeftUp)] = real_num;
+        }
+    } else if (j == 0 || i == 0 || tem->general_checkerboard[i - 1][j - 1] != tem->opponent_player) {
+        tem->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::OpponentLeftUp)] = 1;
+    }
+
+    if (j > 0 && i < tem->len - 1 && tem->general_checkerboard[i + 1][j - 1] == tem->opponent_player) {
+        int num = tem->direction_checkerboard[i + 1][j -
+                                                     1].direction_piece_num[static_cast<int>(Direction::OpponentRightUp)];
+        int real_num = num + 1;
+        tem->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::OpponentRightUp)] = real_num;
+        while (--num) {
+            tem->direction_checkerboard[i + num][j -
+                                                 num].direction_piece_num[static_cast<int>(Direction::OpponentRightUp)] = real_num;
+        }
+    } else if (j == 0 || i == tem->len - 1 || tem->general_checkerboard[i + 1][j - 1] != tem->opponent_player) {
+        tem->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::OpponentRightUp)] = 1;
+    }
+}
+
 
 void SixPiece::UpdateQuadrantStatus(std::shared_ptr<TemporaryData> tem) {
 
@@ -426,62 +540,11 @@ void SixPiece::UpdateQuadrantStatus(std::shared_ptr<TemporaryData> tem) {
     {
         for (int i = 0; i < tem->len; i++) {
             for (int j = 0; j < tem->len; j++) {
-                if (tem->general_checkerboard[i][j] == tem->real_player) {
-                    if (i > 0 && tem->general_checkerboard[i - 1][j] == tem->real_player) {
-                        int num = tem->direction_checkerboard[i -
-                                                              1][j].direction_piece_num[static_cast<int>(Direction::Left)];//迭代每一步棋子数量
-                        int real_num = num + 1;
-                        tem->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::Left)] = real_num;
-                        while (--num) {
-                            tem->direction_checkerboard[i -
-                                                        num][j].direction_piece_num[static_cast<int>(Direction::Left)] = real_num;
-                        }
-                    } else if (i == 0 || tem->general_checkerboard[i - 1][j] != tem->real_player) {
-                        tem->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::Left)] = 1;
-                    }
-
-                    if (j > 0 && tem->general_checkerboard[i][j - 1] == tem->real_player) {
-                        int num = tem->direction_checkerboard[i][j -
-                                                                 1].direction_piece_num[static_cast<int>(Direction::Up)];
-                        int real_num = num + 1;
-                        tem->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::Up)] = real_num;
-                        while (--num) {
-                            tem->direction_checkerboard[i][j -
-                                                           num].direction_piece_num[static_cast<int>(Direction::Up)] = real_num;
-                        }
-                    } else if (j == 0 || tem->general_checkerboard[i][j - 1] != tem->real_player) {
-                        tem->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::Up)] = 1;
-                    }
-
-                    if (j > 0 && i > 0 && tem->general_checkerboard[i - 1][j - 1] == tem->real_player) {
-                        int num = tem->direction_checkerboard[i - 1][j -
-                                                                     1].direction_piece_num[static_cast<int>(Direction::LeftUp)];
-                        int real_num = num + 1;
-                        tem->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::LeftUp)] = real_num;
-                        while (--num) {
-                            tem->direction_checkerboard[i - num][j -
-                                                                 num].direction_piece_num[static_cast<int>(Direction::LeftUp)] = real_num;
-                        }
-                    } else if (j == 0 || i == 0 || tem->general_checkerboard[i - 1][j - 1] != tem->real_player) {
-                        tem->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::LeftUp)] = 1;
-                    }
-
-                    if (j > 0 && i < tem->len - 1 && tem->general_checkerboard[i + 1][j - 1] == tem->real_player) {
-                        int num = tem->direction_checkerboard[i + 1][j -
-                                                                     1].direction_piece_num[static_cast<int>(Direction::RightUp)];
-                        int real_num = num + 1;
-                        tem->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::RightUp)] = real_num;
-                        while (--num) {
-                            tem->direction_checkerboard[i + num][j -
-                                                                 num].direction_piece_num[static_cast<int>(Direction::RightUp)] = real_num;
-                        }
-                    } else if (j == 0 || i == tem->len - 1 || tem->general_checkerboard[i + 1][j - 1] != tem->real_player) {
-                        tem->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::RightUp)] = 1;
-                    }
-
-
-
-
+                if (tem->general_checkerboard[i][j] == tem->now_player) {
+                    InitializeDirectionBoard(i,j,tem);
+                }
+                if (tem->general_checkerboard[i][j] == tem->opponent_player) {
+                    InitializeDirectionBoardForOpponent(i,j,tem);
                 }
             }
         }
@@ -492,8 +555,8 @@ void SixPiece::UpdateQuadrantStatus(std::shared_ptr<TemporaryData> tem) {
 
 void SixPiece::SetRecord(Point &pos,std::shared_ptr<TemporaryData> tem)
 {
-    cout<<"  pos _x"<<pos.x<<"  pos _y "<<pos.y<<endl;
-    tem->general_checkerboard[pos.x][pos.y]=tem->real_player;
+    cout<<"setboard  pos _x"<<pos.x<<"  pos _y "<<pos.y<<endl;
+    tem->general_checkerboard[pos.x][pos.y]=tem->now_player;
 }
 
 
@@ -514,8 +577,7 @@ cout<<"PopulationPlayAGame"<<endl;
     ply_2nd->real_player = 2;
     while (times--)
     {
-        for(int i=0;i<2;i++)
-        {
+
             cout<<"  is nowPlayer"<<endl;
             UpdateQuadrantStatus(ply_1st);
             if (ply_1st->real_six.x>0)
@@ -525,10 +587,9 @@ cout<<"PopulationPlayAGame"<<endl;
                 SetRecord(ply_1st->opponent_six, ply_1st);
             else
                 SetRecord(ply_1st->max_pos, ply_1st);
-        }
+
 //            return 1;
-        for(int i=0;i<2;i++)
-        {
+
             cout<<"  is opponentPlayer"<<endl;
             UpdateQuadrantStatus(ply_2nd);
             if (ply_2nd->real_six.x>0)
@@ -538,7 +599,9 @@ cout<<"PopulationPlayAGame"<<endl;
                 SetRecord(ply_2nd->opponent_six, ply_2nd);
             else
                 SetRecord(ply_2nd->max_pos, ply_2nd);
-        }
+
+        DisPlayBoard(ply_1st->general_checkerboard);
+        DisPlayBoard(ply_2nd->general_checkerboard);
     }
     return 0;//平局
 }
@@ -625,6 +688,8 @@ void SixPiece::SingleContest(int &player_gene_pos1, int &player_gene_pos2, std::
     for (int i = 0; i < board->match_times; i++) {
         int black_winner = PopulationPlayAGame(player_gene_pos1,player_gene_pos2,board);
         cout<<"black_winer is "<<black_winner<<endl;
+        cout<<"general_checkerboard size is "<<board->general_checkerboard.size()<<endl;
+
         int white_winner = PopulationPlayAGame(player_gene_pos2,player_gene_pos1,board);
         cout<<"white_winer is "<<white_winner<<endl;
         switch (black_winner) {
@@ -656,28 +721,26 @@ void SixPiece::SingleContest(int &player_gene_pos1, int &player_gene_pos2, std::
     ma[win_player] = 1;
 }
 
-//void SixPiece::DisPlayBoard(std::vector<std::vector<int>> general_checkerboard)
-//{
-//    for(int i=0;i<general_checkerboard.size();i++)
-//    {
-//        cout<<endl;
-//        for(int j=0;j<general_checkerboard[0].size();j++)
-//            cout<<general_checkerboard[i][j]<<" ";
-//    }
-//}
-//
-//void SixPiece::DisplayScore(std::shared_ptr<TemporaryData> tem)
-//{
-//    for(int i=0;i<tem->len;i++)
-//    {
-//
-//        for(int j=0;j<tem->len;j++)
-//        {
-//            cout<<"  "<<tem->direction_checkerboard[i][j].score<<" " ;
-//
-//        }
-//        cout<<endl;
-//    }
+void SixPiece::DisPlayBoard(std::vector<std::vector<int>> general_checkerboard)
+{
+    for(int i=0;i<general_checkerboard.size();i++)
+    {
+        cout<<endl;
+        for(int j=0;j<general_checkerboard[0].size();j++)
+            cout<<general_checkerboard[i][j]<<" ";
+    }
+}
+
+void SixPiece::DisplayScore(std::shared_ptr<TemporaryData> tem) {
+    for (int i = 0; i < tem->len; i++) {
+
+        for (int j = 0; j < tem->len; j++) {
+            cout << "  " << tem->direction_checkerboard[i][j].score << " ";
+
+        }
+        cout << endl;
+    }
+}
 //
 ////    for(int i=0;i<tem->len;i++)
 ////    {
