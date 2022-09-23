@@ -249,7 +249,7 @@ void TestGetPiece()
 
     test.InitializePieceDirectionSpace(ply_1st);
     Point a = {7,7};
-    test.SetRecord(a,ply_1st);
+    test.SetRecord(a,ply_1st,ply_1st);
 //    int i = 7,j=7;
 
     for (int i = 0; i < ply_1st->len; i++) {
@@ -311,8 +311,6 @@ void TestGetPiece()
         }
     }
 
-
-
     for (int i = 0; i < ply_1st->len; i++) {
         for (int j = 0; j < ply_1st->len; j++) {
             if (ply_1st->general_checkerboard[i][j] == 0) {
@@ -320,6 +318,7 @@ void TestGetPiece()
                 test.CalCulateScoreForNowPlayer(ply_1st,i,j);
                 test.CalCulateScoreForOppoNentPlayer( ply_1st,i,j);
                 test.FindMaxAndAddScore(ply_1st, i, j);
+
             }
             if(ply_1st->real_six.x!=-1||ply_1st->opponent_six.x!=-1)
                 break;
@@ -351,7 +350,7 @@ void TestGetPieceNum()
     ply_1st->direction_checkerboard[7][7].direction_piece_num[static_cast<int>(Direction::OpponentUp)]= test.GetPieceNum(
             ply_1st, ply_1st->real_player, static_cast<int>(Direction::OpponentUp), a.x, a.y);
     a = {7,8};
-    test.SetRecord(a,ply_1st);
+//    test.SetRecord(a,ply_1st);
     cout<<test.GetPieceNum(ply_1st, ply_1st->opponent_player,static_cast<int>(Direction::OpponentUp),a.x,a.y);
 }
 void TestSingleContest()

@@ -102,7 +102,7 @@ class SixPiece :public General{
     long long int GetScore(std::shared_ptr<TemporaryData> tem,int &x,int &y,int direction);
     void CalCulateScoreForNowPlayer(std::shared_ptr<TemporaryData> tem,int &pos_x,int &pos_y);
     void CalCulateScoreForOppoNentPlayer(std::shared_ptr<TemporaryData> tem,int &pos_x,int &pos_y);
-    void SetRecord(Point &pos,std::shared_ptr<TemporaryData> tem);
+    void SetRecord(Point &pos,std::shared_ptr<TemporaryData> tem_player1,std::shared_ptr<TemporaryData> tem_player2);
     void InitializeDirectionBoard(int &position_x,int &pisition_y,std::shared_ptr<TemporaryData> tem);
     void InitializeDirectionBoardForOpponent(int &position_x,int &pisition_y,std::shared_ptr<TemporaryData> tem);
 
