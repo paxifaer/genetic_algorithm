@@ -373,13 +373,13 @@ void TestSingleContest()
 }
 int main()
 {
-//    std::shared_ptr<TrainPiectElement> board = MakeTestData();
-//    SixPiece test;
-//    test.MakeChampion(board);
+    std::shared_ptr<TrainPiectElement> board = MakeTestData();
+    SixPiece test;
+    test.MakeChampion(board);
 //    FixTempory();
 //    TestParallelCal();
 //    TestGetPiece();
 //    TestGetPieceNum();
-    TestSingleContest();
+//    TestSingleContest();
     return 0;
 }
