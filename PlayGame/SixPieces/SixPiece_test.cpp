@@ -68,8 +68,8 @@ std::shared_ptr<TrainPiectElement> MakeTestData()
     std::shared_ptr<TrainPiectElement> board = make_shared<TrainPiectElement>();
     InitChampion(board);
     SixPiece test;
-    test.InitPopulationForTrain(board);
-
+//    test.InitPopulationForTrain(board);
+    test.InitPopulationForPlay(board);
     board->population_num = board->population.size();
     board->convergence_step=50;
     board->contest_round = 10;
@@ -368,18 +368,35 @@ void TestSingleContest()
     test.InitializePieceDirectionSpace(ply_1st);
     int player_gene_pos1 = 25940; int player_gene_pos2 = 46722;
     std::unordered_map<int, int> ma;
+
+
+
+    auto beginTime = std::chrono::high_resolution_clock::now();
     test.SingleContest(ply_1st->now_player,ply_1st->opponent_player,board,ma);
+    auto endTime = std::chrono::high_resolution_clock::now();
+    auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(endTime-beginTime);
+
+    double programTimes = ((double) elapsedTime.count()); //programTimes：20000
+    cout<<"single test time is "<<programTimes<<endl;
+}
+
+void  TestTime()
+{
+
+    TestSingleContest();
+
 
 }
 int main()
 {
-    std::shared_ptr<TrainPiectElement> board = MakeTestData();
-    SixPiece test;
-    test.MakeChampion(board);
+//    std::shared_ptr<TrainPiectElement> board = MakeTestData();
+//    SixPiece test;
+//    test.MakeChampion(board);
 //    FixTempory();
 //    TestParallelCal();
 //    TestGetPiece();
 //    TestGetPieceNum();
 //    TestSingleContest();
+    TestTime();
     return 0;
 }

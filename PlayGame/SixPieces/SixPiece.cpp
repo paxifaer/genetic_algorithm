@@ -1,6 +1,6 @@
 #include "SixPiece.h"
 #include <memory>
-
+#include <chrono>
 
 void SixPiece::InitPopulationForTrain(std::shared_ptr<TrainPiectElement> board) {
     int i1 = 1500, i2 = 400, i3 = 300, i4 = 150, i5 = 75, i6 = 30, i7 = 6, i8 = 4;
@@ -618,6 +618,7 @@ int
 SixPiece::PopulationPlayAGame(const int &player_gene_pos1, const int &player_gene_pos2, const std::shared_ptr<TrainPiectElement> board) {
 //    cout << "PopulationPlayAGame" << endl;
 //    cout << "player_gene_pos1 ia " << player_gene_pos1 << " player_gene_pos2" << player_gene_pos2 << endl;
+//    auto beginTime = std::chrono::high_resolution_clock::now();
     std::shared_ptr<TemporaryData> ply_1st = std::make_shared<TemporaryData>();
     std::shared_ptr<TemporaryData> ply_2nd = std::make_shared<TemporaryData>();
     ply_1st->now_player = 1;
@@ -627,9 +628,17 @@ SixPiece::PopulationPlayAGame(const int &player_gene_pos1, const int &player_gen
     CacheTemporaryDate(board, ply_1st, player_gene_pos1);
     CacheTemporaryDate(board, ply_2nd, player_gene_pos2);
 
+
+//    auto endTime = std::chrono::high_resolution_clock::now();
+//    auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(endTime-beginTime);
+//    double programTimes = ((double) elapsedTime.count()); //programTimes：20000
+//    cout<<programTimes<<endl;
+
     int times = board->convergence_step;
     ply_1st->real_player = 1;
     ply_2nd->real_player = 2;
+
+    auto beginTime_2 = std::chrono::high_resolution_clock::now();
     while (times--) {
 
 //        cout << "  is nowPlayer" << endl;
@@ -662,6 +671,11 @@ SixPiece::PopulationPlayAGame(const int &player_gene_pos1, const int &player_gen
 //        DisPlayBoard(ply_2nd->general_checkerboard);
 
     }
+
+    auto endTime2 = std::chrono::high_resolution_clock::now();
+    auto elapsedTime2 = std::chrono::duration_cast<std::chrono::milliseconds>(endTime2-beginTime_2);
+    double programTimes2 = ((double) elapsedTime2.count()); //programTimes：20000
+    cout<<" real play consume time "<<programTimes2<<endl;
     return 0;//平局
 }
 
@@ -699,6 +713,7 @@ void SixPiece::GetPKQueue(std::vector<int> &pk_queue) {
 
 void SixPiece::UpdateNextRoundQueue(std::vector<int> &pk_queue, std::unordered_map<int, int> &ma) {
     pk_queue.clear();
+
     for (std::unordered_map<int, int>::iterator it = ma.begin(); it != ma.end(); it++)//find winner,save into pk_queue
     {
         if (it->second == 1)
@@ -734,6 +749,7 @@ void SixPiece::PopulationContest(std::shared_ptr<TrainPiectElement> board)//cont
         }
         int i=1;
         pool.ParallelAccum(i);
+        cout<<"there has "<<board->contest_round<<" rounds not begin"<<endl;
         UpdateNextRoundQueue(pk_queue, ma);
     }
     DisPlayBoard(board->general_checkerboard);
@@ -745,12 +761,35 @@ void SixPiece::SingleContest(int &player_gene_pos1, int &player_gene_pos2, std::
                              std::unordered_map<int, int> ma) {
     int win_player;
     for (int i = 0; i < board->match_times; i++) {
+//        auto beginTime = std::chrono::high_resolution_clock::now();
         int black_winner = PopulationPlayAGame(player_gene_pos1,player_gene_pos2,board);
-        cout<<"black_winer is "<<black_winner<<endl;
-        cout<<"general_checkerboard size is "<<board->general_checkerboard.size()<<endl;
 
+//
+//        auto endTime = std::chrono::high_resolution_clock::now();
+//        auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(endTime-beginTime);
+//
+//        double programTimes = ((double) elapsedTime.count()); //programTimes：20000
+//        cout<<"black winner consume time is "<<programTimes<<endl;
+
+//        cout<<"black_winer is "<<black_winner<<endl;
+//        cout<<"general_checkerboard size is "<<board->general_checkerboard.size()<<endl;
+
+
+
+
+
+//        auto beginTime_white_winner = std::chrono::high_resolution_clock::now();
         int white_winner = PopulationPlayAGame(player_gene_pos2,player_gene_pos1,board);
-        cout<<"white_winer is "<<white_winner<<endl;
+
+//        auto endTime_white_winner = std::chrono::high_resolution_clock::now();
+//        auto elapsedTime_white_winner = std::chrono::duration_cast<std::chrono::milliseconds>(endTime_white_winner-beginTime_white_winner);
+//
+//        double programTimes_white_winner = ((double) elapsedTime_white_winner.count()); //programTimes：20000
+//        cout<<"white winner consume time is "<<programTimes_white_winner<<endl;
+
+
+
+//        cout<<"white_winer is "<<white_winner<<endl;
         switch (black_winner) {
             case 0:
                 board->population[player_gene_pos1].back() += 25;
@@ -775,6 +814,8 @@ void SixPiece::SingleContest(int &player_gene_pos1, int &player_gene_pos2, std::
                 board->population[player_gene_pos2].back() += 50;
                 break;
         }
+
+
     }
     win_player = board->population[player_gene_pos1].back() < board->population[player_gene_pos2].back() ? player_gene_pos2 : player_gene_pos1;
     ma[win_player] = 1;
@@ -803,11 +844,23 @@ void SixPiece::DisplayScore(std::shared_ptr<TemporaryData> tem) {
 }
 
 
-
+void SixPiece::ShowChampion(std::shared_ptr<TrainPiectElement> board)
+{
+    for(int i=0;i<board->champaion_num;i++)
+    {
+        cout<<"number "<<i<<" is ";
+        for(int j=0;j<board->champion[i].size();j++)
+        {
+            cout<<" "<<board->champion[i][j];
+        }
+        cout<<endl;
+    }
+}
 
 void SixPiece::MakeChampion(std::shared_ptr<TrainPiectElement> board) {
     PopulationContest(board);
     MakePopulationWhenTrain(board);
+    ShowChampion(board);
 }
 
 

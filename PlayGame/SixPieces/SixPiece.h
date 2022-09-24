@@ -105,6 +105,7 @@ class SixPiece :public General{
     void SetRecord(Point &pos,std::shared_ptr<TemporaryData> tem_player1,std::shared_ptr<TemporaryData> tem_player2);
     void InitializeDirectionBoard(int &position_x,int &pisition_y,std::shared_ptr<TemporaryData> tem);
     void InitializeDirectionBoardForOpponent(int &position_x,int &pisition_y,std::shared_ptr<TemporaryData> tem);
+    void ShowChampion(std::shared_ptr<TrainPiectElement> board);
 
 };
 
