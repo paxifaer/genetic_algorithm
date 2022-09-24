@@ -583,11 +583,16 @@ void SixPiece::InitializeDirectionBoardForOpponent(int &i,int &j,std::shared_ptr
 void SixPiece::UpdateQuadrantStatus(std::shared_ptr<TemporaryData> tem) {
 
     tem->len = tem->general_checkerboard.size();
-    tem->direction_checkerboard.resize(tem->len, std::vector<PieceDirection>(tem->len));
-    InitializePieceDirectionSpace(tem);//if is not empty,Won't initialize ;
+    if(!tem->direction_checkerboard.size()) {
+        tem->direction_checkerboard.resize(tem->len, std::vector<PieceDirection>(tem->len));
+        InitializePieceDirectionSpace(tem);
+    }//if is not empty,Won't initialize ;}
 //    cout<<"UpdateQuadrantStatus  player is "<<tem->now_player<<endl;
+
     if (!tem->direction_checkerboard.empty())
     {
+        auto beginTimeInitializeDirection = std::chrono::high_resolution_clock::now();
+
         for (int i = 0; i < tem->len; i++) {
             for (int j = 0; j < tem->len; j++) {
                 if (tem->general_checkerboard[i][j] == tem->now_player) {
@@ -598,10 +603,31 @@ void SixPiece::UpdateQuadrantStatus(std::shared_ptr<TemporaryData> tem) {
                 }
             }
         }
+
+
+        auto endTimeInitializeDirection = std::chrono::high_resolution_clock::now();
+        auto elapsedTimeInitializeDirection = std::chrono::duration_cast<std::chrono::microseconds>(endTimeInitializeDirection-beginTimeInitializeDirection);
+
+        double programTimes = ((double) elapsedTimeInitializeDirection.count()); //programTimes：20000
+        cout<<"InitializeDirection  consume time is "<<programTimes<<endl;
+
 //        cout<<"UpdatePieceTypeAndNum"<<endl;
+
+        auto beginTimeUpdatePieceTypeAndNum = std::chrono::high_resolution_clock::now();
+
         UpdatePieceTypeAndNum(tem);
-//        cout<<"UpdatePieceTypeAndNum"<<endl;
+
+
+
+        auto endTimeUpdatePieceTypeAndNum = std::chrono::high_resolution_clock::now();
+        auto elapsedTimeUpdatePieceTypeAndNum = std::chrono::duration_cast<std::chrono::microseconds>(endTimeUpdatePieceTypeAndNum-beginTimeUpdatePieceTypeAndNum);
+
+        double programTimesUpdatePieceTypeAndNum = ((double) elapsedTimeUpdatePieceTypeAndNum.count()); //programTimes：20000
+        cout<<"UpdatePieceTypeAndNum   consume time is "<<programTimesUpdatePieceTypeAndNum<<endl;
     }
+
+//        cout<<"UpdatePieceTypeAndNum"<<endl;
+//    }
 
 }
 
@@ -643,7 +669,15 @@ SixPiece::PopulationPlayAGame(const int &player_gene_pos1, const int &player_gen
 
 //        cout << "  is nowPlayer" << endl;
         for (int i = 0; i < 2; i++) {
+            auto beginTimeUpdateQuadrantStatus = std::chrono::high_resolution_clock::now();
             UpdateQuadrantStatus(ply_1st);
+            auto endTimeUpdateQuadrantStatus = std::chrono::high_resolution_clock::now();
+            auto elapsedTimeUpdateQuadrantStatus = std::chrono::duration_cast<std::chrono::microseconds>(endTimeUpdateQuadrantStatus-beginTimeUpdateQuadrantStatus);
+
+            double programTimesUpdateQuadrantStatus = ((double) elapsedTimeUpdateQuadrantStatus.count()); //programTimes：20000
+            cout<<"UpdateQuadrantStatus  consume time is "<<programTimesUpdateQuadrantStatus<<endl;
+
+
             if (ply_1st->real_six.x > 0)
                 return 1;
             if (ply_1st->opponent_six.x > 0)
@@ -769,7 +803,7 @@ void SixPiece::SingleContest(int &player_gene_pos1, int &player_gene_pos2, std::
 //        auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(endTime-beginTime);
 //
 //        double programTimes = ((double) elapsedTime.count()); //programTimes：20000
-//        cout<<"black winner consume time is "<<programTimes<<endl;
+//        cout<<"play a game  winner consume time is "<<programTimes<<endl;
 
 //        cout<<"black_winer is "<<black_winner<<endl;
 //        cout<<"general_checkerboard size is "<<board->general_checkerboard.size()<<endl;
