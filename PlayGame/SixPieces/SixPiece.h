@@ -32,8 +32,14 @@ enum class IterateType{
 enum class Direction{
     Up,Left,LeftUp,RightUp,OpponentUp,OpponentLeft,OpponentLeftUp,OpponentRightUp
 };
+struct DirectionBoardElement{
+    int num;
+    int left_enemy;
+    int right_enemy;
+    DirectionBoardElement():left_enemy(-1),right_enemy(-1),num(0){}
+};
 struct PieceDirection{
-    std::vector<int>direction_piece_num;
+    std::vector<DirectionBoardElement>direction_piece_num;
     std::vector<int>direction_piece_type;//活死
 
     long long int score;
@@ -97,7 +103,9 @@ class SixPiece :public General{
     void FindMaxAndAddScore(std::shared_ptr<TemporaryData> tem,int &x,int &y);
     void UpdatePieceTypeAndNum(std::shared_ptr<TemporaryData> tem);
     int GetPieceNum(std::shared_ptr<TemporaryData> tem, int &player,int type,int &x,int &y);
-    int GetPieceType(std::shared_ptr<TemporaryData> tem,int &player,int type,int &x,int &y);
+    int GetPieceType(std::shared_ptr<TemporaryData> tem,int &player,int type,const int &x,const int &y);
+    int GetPieceTypeForLeft(std::shared_ptr<TemporaryData> tem, int &player, int type,const int &x,const int &y);
+    int GetPieceTypeForRight(std::shared_ptr<TemporaryData> tem, int &player, int type,const int &x,const int &y);
     void InitializePieceDirectionSpace(std::shared_ptr<TemporaryData> tem);
     long long int GetScore(std::shared_ptr<TemporaryData> tem,int &x,int &y,int direction);
     void CalCulateScoreForNowPlayer(std::shared_ptr<TemporaryData> tem,int &pos_x,int &pos_y);
@@ -106,6 +114,8 @@ class SixPiece :public General{
     void InitializeDirectionBoard(int &position_x,int &pisition_y,std::shared_ptr<TemporaryData> tem);
     void InitializeDirectionBoardForOpponent(int &position_x,int &pisition_y,std::shared_ptr<TemporaryData> tem);
     void ShowChampion(std::shared_ptr<TrainPiectElement> board);
+    void GetStepXStepY( int &step_x, int &step_y ,int &type);
+    void InitializeDirectionBoardOfEnemyNum(int &position_x,int &pisition_y,std::shared_ptr<TemporaryData> tem);
 
 };
 

@@ -192,10 +192,10 @@ int TestGetPieceType(std::shared_ptr<TemporaryData> tem, int player, int type, i
         };
 
         if ((x - step_x) >= 0 && (y - step_y) >= 0&&(x - step_x) < tem->len && (y - step_y < tem->len)) {
-            sum1 += tem->direction_checkerboard[x - step_x][y - step_y].direction_piece_num[type];
+            sum1 += tem->direction_checkerboard[x - step_x][y - step_y].direction_piece_num[type].num;
         }
         if ((x + step_x) >= 0 && (y + step_y >= 0)&&(x + step_x) < tem->len && (y + step_y < tem->len)) {
-            sum2 += tem->direction_checkerboard[x + step_x][y + step_y].direction_piece_num[type];
+            sum2 += tem->direction_checkerboard[x + step_x][y + step_y].direction_piece_num[type].num;
         }
         int num1 = tem->target_num - sum1;
         int num2 = tem->target_num - sum2;
@@ -203,9 +203,9 @@ int TestGetPieceType(std::shared_ptr<TemporaryData> tem, int player, int type, i
             if(x - step_x>=0&&x - step_x<tem->len&&y - step_y>=0&&y - step_y<tem->len)
             {
                 int find_move_x =
-                        step_x * (tem->direction_checkerboard[x - step_x][y - step_y].direction_piece_num[type] + num1);//step_x maybe -1,1 by direction,
+                        step_x * (tem->direction_checkerboard[x - step_x][y - step_y].direction_piece_num[type].num + num1);//step_x maybe -1,1 by direction,
                 int find_move_y =
-                        step_y * (tem->direction_checkerboard[x - step_x][y - step_y].direction_piece_num[type] + num1);
+                        step_y * (tem->direction_checkerboard[x - step_x][y - step_y].direction_piece_num[type].num + num1);
                 if ((x - find_move_x) >= 0 && (y - find_move_y) >= 0 &&(x - find_move_x) <tem->len && (y - find_move_y) <tem->len&&
                     tem->general_checkerboard[x - find_move_x][y - find_move_y] != opponent_player) {
                     continue;
@@ -219,9 +219,9 @@ int TestGetPieceType(std::shared_ptr<TemporaryData> tem, int player, int type, i
             if(x - step_x>=0&&x - step_x<tem->len&&y - step_y>=0&&y - step_y<tem->len)
             {
                 int find_move_x =
-                        step_x * (tem->direction_checkerboard[x - step_x][y - step_y].direction_piece_num[type] + num2);
+                        step_x * (tem->direction_checkerboard[x - step_x][y - step_y].direction_piece_num[type].num + num2);
                 int find_move_y =
-                        step_y * (tem->direction_checkerboard[x - step_x][y - step_y].direction_piece_num[type] + num2);
+                        step_y * (tem->direction_checkerboard[x - step_x][y - step_y].direction_piece_num[type].num + num2);
                 if ((x + find_move_x) < tem->len && (y + find_move_y) < tem->len &&(x + find_move_x) >=0 && (y + find_move_y) >=0 &&
                     tem->general_checkerboard[x + find_move_x][x + find_move_y] != opponent_player) {
                     continue;
@@ -257,54 +257,54 @@ void TestGetPiece()
             if (ply_1st->general_checkerboard[i][j] == ply_1st->real_player) {
                 if (i > 0 && ply_1st->general_checkerboard[i - 1][j] == ply_1st->real_player) {
                     int num = ply_1st->direction_checkerboard[i -
-                                                          1][j].direction_piece_num[static_cast<int>(Direction::Left)];//迭代每一步棋子数量
+                                                          1][j].direction_piece_num[static_cast<int>(Direction::Left)].num;//迭代每一步棋子数量
                     int real_num = num + 1;
-                    ply_1st->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::Left)] = real_num;
+                    ply_1st->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::Left)].num = real_num;
                     while (--num) {
                         ply_1st->direction_checkerboard[i -
-                                                    num][j].direction_piece_num[static_cast<int>(Direction::Left)] = real_num;
+                                                    num][j].direction_piece_num[static_cast<int>(Direction::Left)].num = real_num;
                     }
                 } else if (i == 0 || ply_1st->general_checkerboard[i - 1][j] != ply_1st->real_player) {
-                    ply_1st->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::Left)] = 1;
+                    ply_1st->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::Left)].num = 1;
                 }
 
                 if (j > 0 && ply_1st->general_checkerboard[i][j - 1] == ply_1st->real_player) {
                     int num = ply_1st->direction_checkerboard[i][j -
-                                                             1].direction_piece_num[static_cast<int>(Direction::Up)];
+                                                             1].direction_piece_num[static_cast<int>(Direction::Up)].num;
                     int real_num = num + 1;
-                    ply_1st->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::Up)] = real_num;
+                    ply_1st->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::Up)].num = real_num;
                     while (--num) {
                         ply_1st->direction_checkerboard[i][j -
-                                                       num].direction_piece_num[static_cast<int>(Direction::Up)] = real_num;
+                                                       num].direction_piece_num[static_cast<int>(Direction::Up)].num = real_num;
                     }
                 } else if (j == 0 || ply_1st->general_checkerboard[i][j - 1] != ply_1st->real_player) {
-                    ply_1st->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::Up)] = 1;
+                    ply_1st->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::Up)].num = 1;
                 }
 
                 if (j > 0 && i > 0 && ply_1st->general_checkerboard[i - 1][j - 1] == ply_1st->real_player) {
                     int num = ply_1st->direction_checkerboard[i - 1][j -
-                                                                 1].direction_piece_num[static_cast<int>(Direction::LeftUp)];
+                                                                 1].direction_piece_num[static_cast<int>(Direction::LeftUp)].num;
                     int real_num = num + 1;
-                    ply_1st->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::LeftUp)] = real_num;
+                    ply_1st->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::LeftUp)].num = real_num;
                     while (--num) {
                         ply_1st->direction_checkerboard[i - num][j -
-                                                             num].direction_piece_num[static_cast<int>(Direction::LeftUp)] = real_num;
+                                                             num].direction_piece_num[static_cast<int>(Direction::LeftUp)].num = real_num;
                     }
                 } else if (j == 0 || i == 0 || ply_1st->general_checkerboard[i - 1][j - 1] != ply_1st->real_player) {
-                    ply_1st->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::LeftUp)] = 1;
+                    ply_1st->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::LeftUp)].num = 1;
                 }
 
                 if (j > 0 && i < ply_1st->len - 1 && ply_1st->general_checkerboard[i + 1][j - 1] == ply_1st->real_player) {
                     int num = ply_1st->direction_checkerboard[i + 1][j -
-                                                                 1].direction_piece_num[static_cast<int>(Direction::RightUp)];
+                                                                 1].direction_piece_num[static_cast<int>(Direction::RightUp)].num;
                     int real_num = num + 1;
-                    ply_1st->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::RightUp)] = real_num;
+                    ply_1st->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::RightUp)].num = real_num;
                     while (--num) {
                         ply_1st->direction_checkerboard[i + num][j -
-                                                             num].direction_piece_num[static_cast<int>(Direction::RightUp)] = real_num;
+                                                             num].direction_piece_num[static_cast<int>(Direction::RightUp)].num = real_num;
                     }
                 } else if (j == 0 || i == ply_1st->len - 1 || ply_1st->general_checkerboard[i + 1][j - 1] != ply_1st->real_player) {
-                    ply_1st->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::RightUp)] = 1;
+                    ply_1st->direction_checkerboard[i][j].direction_piece_num[static_cast<int>(Direction::RightUp)].num = 1;
                 }
 
             }
@@ -315,7 +315,7 @@ void TestGetPiece()
         for (int j = 0; j < ply_1st->len; j++) {
             if (ply_1st->general_checkerboard[i][j] == 0) {
 
-                test.CalCulateScoreForNowPlayer(ply_1st,i,j);
+//                test.CalCulateScoreForNowPlayer(ply_1st,i,j);
                 test.CalCulateScoreForOppoNentPlayer( ply_1st,i,j);
                 test.FindMaxAndAddScore(ply_1st, i, j);
 
@@ -347,7 +347,7 @@ void TestGetPieceNum()
     Point a = {7,7};
     ply_1st->general_checkerboard[7][7]=ply_1st->opponent_player;
 //    test.SetRecord(a,ply_1st);
-    ply_1st->direction_checkerboard[7][7].direction_piece_num[static_cast<int>(Direction::OpponentUp)]= test.GetPieceNum(
+    ply_1st->direction_checkerboard[7][7].direction_piece_num[static_cast<int>(Direction::OpponentUp)].num= test.GetPieceNum(
             ply_1st, ply_1st->real_player, static_cast<int>(Direction::OpponentUp), a.x, a.y);
     a = {7,8};
 //    test.SetRecord(a,ply_1st);
