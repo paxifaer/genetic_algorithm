@@ -190,15 +190,13 @@ public:
     void commit(F&& f,Args&&... args)
     {
         using Restype = decltype(f(args...));
-        auto task = std::bind(std::forward<F>(f),std::forward<Args>(args)...);
-        {
 
-            queue.emplace_back([task](){
+        auto task = std::bind(std::forward<F>(f),std::forward<Args>(args)...);
+        queue.emplace_back([task](){
                 (task)();
 
             });
 
-        }
     }
 
     template <class F>

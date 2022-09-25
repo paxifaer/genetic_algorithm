@@ -70,9 +70,9 @@ std::shared_ptr<TrainPiectElement> MakeTestData()
     SixPiece test;
 //    test.InitPopulationForTrain(board);
     test.InitPopulationForPlay(board);
-    board->population_num = board->population.size();
+    board->population_num = 256;
     board->convergence_step=50;
-    board->contest_round = 10;
+    board->contest_round = 3;
     board->iterate_type=0;
     board->match_times = 3;
     board->champaion_num=64;
@@ -99,28 +99,72 @@ public:
     {
         ParallelCalculate pool{3};
 
-        for(int i=0;i<100;i++)
-        pool.commit([&](){cal(test,test);});
-        int i=1;
-        pool.ParallelAccum(i);
+        int i;
+        for( i=0;i<100;i++) {
+            int caal = i;
+            pool.commit([&]() { cal(caal, caal); }); }
+        int j=1;
+        pool.ParallelAccum(j);
     }
     void cal(int a,int a1)
     {
+        cout<<"a is "<<a<<endl;
         int i=0,j=0;
+        int sum=0;
         for( i=0;i<10000;i++)
         {
-            for(j=0;j<1000;j++)
-            {}
+          sum+=a+a1;
         }
-        cout<<i+j<<endl;
+        cout<<" sum is  "<<sum<<endl;
     }
 };
 
+
+void ParaTest1(int a)
+{
+    cout<<"test "<<a<<endl;
+}
+
+
+void ParaTest2(int a)
+{
+    cout<<"test "<<a<<endl;
+}
+void ParaTest3(int a)
+{
+    cout<<"test "<<a<<endl;
+}
+
+
 void TestParallelCal()
 {
-    SixPiece test;
-    TestParallel te;
-    te.sss();
+//    SixPiece test;
+//    TestParallel te;
+//    te.sss();
+
+
+    ParallelCalculate pool{3};
+
+int a=1;
+
+auto res = [&](int sd){
+    ParaTest2(std::move(sd));
+};
+
+
+for(int i=0;i<20;i++) {
+    pool.commit(res,i);
+//    pool.commit(ParaTest1,i);
+//    pool.commit(ParaTest1,i);
+}
+//    pool.commit(ParaTest1,a);
+
+//    pool.commit([&]() {int i1 = 6; ParaTest3(std::move(i1)); });
+
+//    }
+    int j=1;
+    pool.ParallelAccum(j);
+
 
 }
 
@@ -389,14 +433,14 @@ void  TestTime()
 }
 int main()
 {
-//    std::shared_ptr<TrainPiectElement> board = MakeTestData();
-//    SixPiece test;
-//    test.MakeChampion(board);
+    std::shared_ptr<TrainPiectElement> board = MakeTestData();
+    SixPiece test;
+    test.MakeChampion(board);
 //    FixTempory();
 //    TestParallelCal();
 //    TestGetPiece();
 //    TestGetPieceNum();
 //    TestSingleContest();
-    TestTime();
+//    TestTime();
     return 0;
 }

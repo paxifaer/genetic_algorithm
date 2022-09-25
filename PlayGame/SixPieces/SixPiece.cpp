@@ -1,7 +1,7 @@
 #include "SixPiece.h"
 #include <memory>
 #include <chrono>
-
+#include <atomic>
 void SixPiece::InitPopulationForTrain(std::shared_ptr<TrainPiectElement> board) {
     int i1 = 1500, i2 = 400, i3 = 300, i4 = 150, i5 = 75, i6 = 30, i7 = 6, i8 = 4;
     int i1_step = 200, i2_step = 100, i3_step = 80, i4_step = 40, i5_step = 20, i6_step = 8, i7_step = 3, i8_step = 2;
@@ -969,7 +969,7 @@ SixPiece::PopulationPlayAGame(const int &player_gene_pos1, const int &player_gen
             UpdateQuadrantStatus(ply_2nd);
             if (ply_2nd->real_six.x > 0)
                 return 2;
-            UpdateQuadrantStatus(ply_2nd);
+//            UpdateQuadrantStatus(ply_2nd);
             if (ply_2nd->opponent_six.x > 0)
                 SetRecord(ply_2nd->opponent_six, ply_2nd, ply_1st);
             else
@@ -980,12 +980,12 @@ SixPiece::PopulationPlayAGame(const int &player_gene_pos1, const int &player_gen
 
     }
 
-    auto endTime2 = std::chrono::hi
+
     return 0;//平局
 }
 
 void SixPiece::MakePopulationWhenTrain(std::shared_ptr<TrainPiectElement> board) {
-//    cout<<"MakePopulationWhenTrain"<<endl;
+    cout<<"MakePopulationWhenTrain"<<endl;
     std::shared_ptr<GeneVariate> variate = std::make_shared<GeneVariate>(board->population,
                                                                          board->population_num / board->champaion_num,
                                                                          board->champion, 0, 0, 0);
@@ -1043,13 +1043,25 @@ void SixPiece::PopulationContest(std::shared_ptr<TrainPiectElement> board)//cont
     pk_queue.resize(board->population_num);
     GetPKQueue(pk_queue);
 
+    for(int i=0;i<pk_queue.size();i++)
+        cout<<" pk_queue " <<pk_queue[i]<<endl;
+
+
 
     while (--board->contest_round) {
         ParallelCalculate pool{3};
         std::unordered_map<int, int> ma;//contest use  multiple threads
-        for (int i = 0; i < pk_queue.size(); i += 2) {
+
+        auto CalCulate = [&](int player1,int player2){
+            SingleContest(player1, player2, board, ma);
+        };
+
+        for (int i = 0; i < pk_queue.size()/4; i += 2) {
             int player1 = pk_queue[i], player2 = pk_queue[i + 1];
-            pool.commit([&]() { SingleContest(player1, player2, board, ma); });
+            cout<<player1<<" player "<<player2<<endl;
+            pool.commit(CalCulate,player1,player2);
+
+//            pool.commit( SingleContest,player1, player2, board, ma);
         }
         int i = 1;
         pool.ParallelAccum(i);
@@ -1061,9 +1073,10 @@ void SixPiece::PopulationContest(std::shared_ptr<TrainPiectElement> board)//cont
 }
 
 
-void SixPiece::SingleContest(int &player_gene_pos1, int &player_gene_pos2, std::shared_ptr<TrainPiectElement> board,
-                             std::unordered_map<int, int> ma) {
+void SixPiece::SingleContest(const int player_gene_pos1, const int player_gene_pos2, std::shared_ptr<TrainPiectElement> board,
+                             std::unordered_map<int, int> &ma) {
     int win_player;
+    cout<<player_gene_pos1<<"  "<<player_gene_pos2<<endl;
     for (int i = 0; i < board->match_times; i++) {
 //        auto beginTime = std::chrono::high_resolution_clock::now();
         int black_winner = PopulationPlayAGame(player_gene_pos1, player_gene_pos2, board);
@@ -1124,6 +1137,7 @@ void SixPiece::SingleContest(int &player_gene_pos1, int &player_gene_pos2, std::
     win_player =
             board->population[player_gene_pos1].back() < board->population[player_gene_pos2].back() ? player_gene_pos2
                                                                                                     : player_gene_pos1;
+    cout<<" win_player is  "<<win_player <<endl;
     ma[win_player] = 1;
 }
 
