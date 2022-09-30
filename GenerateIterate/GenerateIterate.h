@@ -30,7 +30,7 @@ public:
         int  fitness_max;
         int champaion_num;
         GeneVariate(std::vector<std::vector<int>> vector, int i, std::vector<std::vector<int>> vector1, int i1, int i2,
-                    int i3) : child_num(0), fitness_standard(0), fitness_max(0), champaion_num(0){};
+                    int i3) :population(vector), child_num(i),champion(vector1), fitness_standard(i1), fitness_max(i2), champaion_num(i3){};
     };
 
     void CalculateFitnessMaxAndFitnessStandard(std::shared_ptr<GeneVariate> data_muster);

@@ -986,10 +986,15 @@ SixPiece::PopulationPlayAGame(const int &player_gene_pos1, const int &player_gen
 
 void SixPiece::MakePopulationWhenTrain(std::shared_ptr<TrainPiectElement> board) {
     cout<<"MakePopulationWhenTrain"<<endl;
+    cout<<"board->population_num   "<<board->population_num<<"board->champaion_num  "<<board->champaion_num<<endl;
     std::shared_ptr<GeneVariate> variate = std::make_shared<GeneVariate>(board->population,
                                                                          board->population_num / board->champaion_num,
                                                                          board->champion, 0, 0, 0);
+
+    cout<<variate->child_num<<variate->champaion_num;
+    cout<<"end  variate"<<endl;
     CrossingOverPrePare(variate);
+    cout<<"end CrossingOverPrePare"<<endl;
     board->population = variate->population;
 
 }
@@ -1056,7 +1061,7 @@ void SixPiece::PopulationContest(std::shared_ptr<TrainPiectElement> board)//cont
             SingleContest(player1, player2, board, ma);
         };
 
-        for (int i = 0; i < pk_queue.size()/4; i += 2) {
+        for (int i = 0; i < pk_queue.size(); i += 2) {
             int player1 = pk_queue[i], player2 = pk_queue[i + 1];
             cout<<player1<<" player "<<player2<<endl;
             pool.commit(CalCulate,player1,player2);
@@ -1137,7 +1142,7 @@ void SixPiece::SingleContest(const int player_gene_pos1, const int player_gene_p
     win_player =
             board->population[player_gene_pos1].back() < board->population[player_gene_pos2].back() ? player_gene_pos2
                                                                                                     : player_gene_pos1;
-    cout<<" win_player is  "<<win_player <<endl;
+//    cout<<" win_player is  "<<win_player <<endl;
     ma[win_player] = 1;
 }
 
