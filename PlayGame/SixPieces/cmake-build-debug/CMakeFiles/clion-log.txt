@@ -1,0 +1,4 @@
+"D:\CLion 2021.3.3\bin\cmake\win\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug "-DCMAKE_MAKE_PROGRAM=D:/CLion 2021.3.3/bin/ninja/win/ninja.exe" -G Ninja D:\study\github\genetic_algorithm\PlayGame\SixPieces
+-- Configuring done
+-- Generating done
+-- Build files have been written to: D:/study/github/genetic_algorithm/PlayGame/SixPieces/cmake-build-debug

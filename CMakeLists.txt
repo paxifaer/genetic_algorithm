@@ -22,7 +22,7 @@ ADD_SUBDIRECTORY(queue)
 ADD_SUBDIRECTORY(GenerateIterate)
 ADD_SUBDIRECTORY(PlayGame)
 
-add_library(${PROJECT_NAME} SHARED main.cpp )
+add_library(${PROJECT_NAME}  main.cpp )
 
 
 set(gene Generate)

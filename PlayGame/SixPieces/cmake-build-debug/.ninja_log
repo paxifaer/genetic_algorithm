@@ -1,0 +1,7 @@
+# ninja log v5
+0	2639	6873479949202081	CMakeFiles/sixpiece.dir/SixInitialize.cpp.obj	c3796d8e34274bb
+937	2655	6873479949368197	CMakeFiles/SixPiece_test.dir/SixInitialize.cpp.obj	82d935dde6b2dc01
+342	4804	6873479970833340	CMakeFiles/SixPiece_test.dir/SixPiece_test.cpp.obj	e73a0bd85a1f2aab
+319	5117	6873479973965733	CMakeFiles/sixpiece.dir/SixPiece.cpp.obj	72566cb5d2e2e41
+628	5183	6873479974170933	CMakeFiles/SixPiece_test.dir/SixPiece.cpp.obj	4e288dde61cddad9
+5117	5886	6873479978549567	libsixpiece.a	5dbdf113c8d80db5
