@@ -96,11 +96,7 @@ std::vector<int> General::RandomPairing(int &num) {
 
 void General::RecombinationOfGrne(std::shared_ptr<GeneVariate> data_muster)//��ʼ��������
 {
-    int num = 1;
-    int nu = 0;
-    std::cout<<"RecombinationOfGrne "<<std::endl;
     std::vector<int> random = RandomPairing(data_muster->champaion_num);
-    std::cout<<"end     RecombinationOfGrne "<<std::endl;
     for (int i = 0; i < data_muster->champaion_num; i += 2) {
         int pos_y = i + 1;
         CrossingOver(data_muster, i, pos_y);//ÿ������ͬ��Ⱦɫ�忪ʼ����
@@ -110,15 +106,11 @@ void General::RecombinationOfGrne(std::shared_ptr<GeneVariate> data_muster)//�
 void General::CalculateFitnessMaxAndFitnessStandard(std::shared_ptr<GeneVariate> data_muster) {
     int ma = 0;
     int sum=0;
-    std::cout<<"start    "<<std::endl;
-    std::cout<<"num is     "<<data_muster->child_num;
     for (int i = 0; i < data_muster->child_num; i++) {
-        std::cout<<"end    "<<std::endl;
         if (ma <= data_muster->champion[i].back()) {
             ma = data_muster->champion[i].back();
         }
         sum+=data_muster->champion[i].back();
-        std::cout<<"end11111    "<<std::endl;
     }
     data_muster->fitness_max = ma;
     data_muster->fitness_standard = sum/data_muster->child_num;
@@ -127,11 +119,8 @@ void General::CalculateFitnessMaxAndFitnessStandard(std::shared_ptr<GeneVariate>
 
 
 void General::CrossingOverPrePare(std::shared_ptr<GeneVariate> data_muster) {
-    std::cout<<"start CalculateFitnessMaxAndFitnessStandard"<<std::endl;
     CalculateFitnessMaxAndFitnessStandard(data_muster);//�ҵ���Ӧ�����ֵ
-    std::cout<<"end CalculateFitnessMaxAndFitnessStandard"<<std::endl;
     RecombinationOfGrne(data_muster);//��������
-    std::cout<<"end RecombinationOfGrne"<<std::endl;
     for (int i = 1; i <= data_muster->champaion_num; i++)//�ھ�Ⱦɫ�忪ʼ����
     {
         Variate(data_muster, i);
