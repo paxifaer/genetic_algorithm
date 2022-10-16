@@ -83,5 +83,7 @@ public:
     void InitializeDirectionBoard(int &position_x,int &pisition_y,std::shared_ptr<TemporaryData> tem);
     void InitializeDirectionBoardForOpponent(int &position_x,int &pisition_y,std::shared_ptr<TemporaryData> tem);
     void InitializeDirectionBoardOfEnemyNum(int &position_x,int &pisition_y,std::shared_ptr<TemporaryData> tem);
+
+    virtual ~InitParameter();
 };
 #endif //GENETIC_SIXINITIALIZE_H

@@ -360,7 +360,7 @@ void TestGetPiece()
             if (ply_1st->general_checkerboard[i][j] == 0) {
 
 //                test.CalCulateScoreForNowPlayer(ply_1st,i,j);
-                test.CalCulateScoreForOppoNentPlayer( ply_1st,i,j);
+                test.CalCulateScoreForOppoNentPlayer( ply_1st);
                 test.FindMaxAndAddScore(ply_1st, i, j);
 
             }

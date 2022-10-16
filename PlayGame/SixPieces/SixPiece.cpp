@@ -220,13 +220,6 @@ int SixPiece::GetPieceTypeForRight(std::shared_ptr<TemporaryData> tem, int &play
     return res;
 }
 
-int SixPiece::GetPieceType(std::shared_ptr<TemporaryData> tem, int &player, int type,const  int &x,const int &y) {
-
-    int res = 0;
-    res+= GetPieceTypeForLeft(tem,player,type,x,y);
-    res+GetPieceTypeForRight(tem,player,type,x,y);
-    return res;
-}
 
 int SixPiece::GetPieceNum(std::shared_ptr<TemporaryData> tem, int &player, int type, int &x, int &y) {
     int sum = 1;
@@ -312,7 +305,7 @@ int SixPiece::GetPieceNum(std::shared_ptr<TemporaryData> tem, int &player, int t
     return sum;
 }
 
-void SixPiece::CalCulateScoreForNowPlayer(std::shared_ptr<TemporaryData> tem, int &i, int &j) {
+void SixPiece::CalCulateScoreForNowPlayer(std::shared_ptr<TemporaryData> tem) {
     for(int i=0;i<tem->len;i++) {
         for(int j=0;j<tem->len;j++) {
             if (tem->general_checkerboard[i][j] == 0)
@@ -350,7 +343,7 @@ void SixPiece::CalCulateScoreForNowPlayer(std::shared_ptr<TemporaryData> tem, in
 }
 
 
-void SixPiece::CalCulateScoreForOppoNentPlayer(std::shared_ptr<TemporaryData> tem, int &i, int &j) {
+void SixPiece::CalCulateScoreForOppoNentPlayer(std::shared_ptr<TemporaryData> tem) {
 
 
     for(int i=0;i<tem->len;i++) {
@@ -363,7 +356,6 @@ void SixPiece::CalCulateScoreForOppoNentPlayer(std::shared_ptr<TemporaryData> te
             }
         }
     }
-
 
     for(int i=tem->len-1;i>=0;i--) {
         for(int j=tem->len-1;j>=0;j--) {
@@ -390,25 +382,17 @@ void SixPiece::CalCulateScoreForOppoNentPlayer(std::shared_ptr<TemporaryData> te
 
 
 void SixPiece::UpdatePieceTypeAndNum(std::shared_ptr<TemporaryData> tem) {
+
+    CalCulateScoreForNowPlayer(tem);
+    CalCulateScoreForOppoNentPlayer(tem);
+
     for (int i = 0; i < tem->len; i++) {
         for (int j = 0; j < tem->len; j++) {
-            if (tem->general_checkerboard[i][j] == 0) {
-
-                CalCulateScoreForNowPlayer(tem, i, j);
-                CalCulateScoreForOppoNentPlayer(tem, i, j);
-
-                for (int i = 0; i < tem->len; i++) {
-                    for (int j = 0; j < tem->len; j++) {
-                        if (tem->general_checkerboard[i][j] == 0)
-                            FindMaxAndAddScore(tem, i, j);
-                    }
-                }
-
-            }
-            if (tem->real_six.x != -1 || tem->opponent_six.x != -1)
-                break;
+            if (tem->general_checkerboard[i][j] == 0)
+                FindMaxAndAddScore(tem, i, j);
         }
     }
+
 
 }
 
@@ -560,10 +544,13 @@ void SixPiece::PopulationContest(std::shared_ptr<TrainPiectElement> board)//cont
             SingleContest(player1, player2, board, ma);
         };
 
-        for (int i = 0; i < pk_queue.size(); i += 2) {
-            int player1 = pk_queue[i], player2 = pk_queue[i + 1];
-            pool.commit(CalCulate,player1,player2);
+        {
+            lock_guard<mutex>lock(read);
+            for (int i = 0; i < pk_queue.size(); i += 2) {
+                int player1 = pk_queue[i], player2 = pk_queue[i + 1];
+                pool.commit(CalCulate, player1, player2);
 
+            }
         }
         int i = 1;
         pool.ParallelAccum(i);

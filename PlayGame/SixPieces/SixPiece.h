@@ -13,13 +13,16 @@
 #include <numeric>
 #include <unordered_map>
 #include <map>
-
+#include <mutex>
 
 
 
 
 class SixPiece :public General,public InitParameter{
    public:
+
+    mutex read;
+
     void MakeChampion(shared_ptr<TrainPiectElement> board);
     int PopulationPlayAGame(const int &player_gene_pos1,const int &player_gene_pos2,const std::shared_ptr<TrainPiectElement> board) ;
     void SignalCommunication();
@@ -35,7 +38,7 @@ class SixPiece :public General,public InitParameter{
     void CacheTemporaryDate( std::shared_ptr<TrainPiectElement> board,std::shared_ptr<TemporaryData> tem,const int &player_gene_pos);
 
     void SetRecord(Point &pos,std::shared_ptr<TemporaryData> tem_player1,std::shared_ptr<TemporaryData> tem_player2);
-
+    virtual ~SixPiece();
 //private:
     void PopulationContest(std::shared_ptr<TrainPiectElement> board);
     void SingleContest(const int player1,const int player2,std::shared_ptr<TrainPiectElement> board,std::unordered_map<int,int> &ma);
@@ -46,16 +49,16 @@ class SixPiece :public General,public InitParameter{
     void FindMaxAndAddScore(std::shared_ptr<TemporaryData> tem,int &x,int &y);
     void UpdatePieceTypeAndNum(std::shared_ptr<TemporaryData> tem);
     int GetPieceNum(std::shared_ptr<TemporaryData> tem, int &player,int type,int &x,int &y);
-    int GetPieceType(std::shared_ptr<TemporaryData> tem,int &player,int type,const int &x,const int &y);
     int GetPieceTypeForLeft(std::shared_ptr<TemporaryData> tem, int &player, int type,const int &x,const int &y);
     int GetPieceTypeForRight(std::shared_ptr<TemporaryData> tem, int &player, int type,const int &x,const int &y);
 
     long long int GetScore(std::shared_ptr<TemporaryData> tem,int &x,int &y,int direction);
-    void CalCulateScoreForNowPlayer(std::shared_ptr<TemporaryData> tem,int &pos_x,int &pos_y);
-    void CalCulateScoreForOppoNentPlayer(std::shared_ptr<TemporaryData> tem,int &pos_x,int &pos_y);
+    void CalCulateScoreForNowPlayer(std::shared_ptr<TemporaryData> tem);
+    void CalCulateScoreForOppoNentPlayer(std::shared_ptr<TemporaryData> tem);
 
     void ShowChampion(std::shared_ptr<TrainPiectElement> board);
     void GetStepXStepY( int &step_x, int &step_y ,int &type);
+
 
 
 };
