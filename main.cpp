@@ -118,6 +118,7 @@ int main()
                  "  \"max_time\": 22\n"
                  "}";
     string path = "D:\\study\\github\\genetic_algorithm\\1.json";
+    cout<<readfile(path);
     writeToJsonFile(str,path);
     return 0;
 }

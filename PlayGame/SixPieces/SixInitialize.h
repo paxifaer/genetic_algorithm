@@ -76,6 +76,7 @@ struct TemporaryData
 
 class InitParameter {
 public:
+    virtual ~InitParameter(){};
     void InitPopulation(shared_ptr<TrainPiectElement> board);
     void InitPopulationForTrain(std::shared_ptr<TrainPiectElement> board);
     void InitPopulationForPlay(std::shared_ptr<TrainPiectElement> board);
@@ -84,6 +85,6 @@ public:
     void InitializeDirectionBoardForOpponent(int &position_x,int &pisition_y,std::shared_ptr<TemporaryData> tem);
     void InitializeDirectionBoardOfEnemyNum(int &position_x,int &pisition_y,std::shared_ptr<TemporaryData> tem);
 
-    virtual ~InitParameter();
+
 };
 #endif //GENETIC_SIXINITIALIZE_H

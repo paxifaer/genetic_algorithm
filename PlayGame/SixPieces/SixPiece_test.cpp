@@ -431,6 +431,25 @@ void  TestTime()
 
 
 }
+
+
+#include "rapidjson/document.h"
+#include "rapidjson/writer.h"
+#include "rapidjson/stringbuffer.h"
+#include <fstream>
+#include "rapidjson/istreamwrapper.h"
+#include "rapidjson/prettywriter.h"
+#include "rapidjson/rapidjson.h"
+#include "rapidjson/stringbuffer.h"
+#include "rapidjson/filewritestream.h"
+
+
+void test_json()
+{
+
+}
+
+
 int main()
 {
     std::shared_ptr<TrainPiectElement> board = MakeTestData();

@@ -20,7 +20,7 @@ class General
 {
 
 public:
-
+   virtual ~General(){};
     struct GeneVariate
             {
         std::vector<std::vector<int>> population;

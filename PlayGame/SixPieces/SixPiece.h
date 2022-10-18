@@ -20,9 +20,8 @@
 
 class SixPiece :public General,public InitParameter{
    public:
-
     mutex read;
-
+    condition_variable wait_read;
     void MakeChampion(shared_ptr<TrainPiectElement> board);
     int PopulationPlayAGame(const int &player_gene_pos1,const int &player_gene_pos2,const std::shared_ptr<TrainPiectElement> board) ;
     void SignalCommunication();
@@ -38,7 +37,7 @@ class SixPiece :public General,public InitParameter{
     void CacheTemporaryDate( std::shared_ptr<TrainPiectElement> board,std::shared_ptr<TemporaryData> tem,const int &player_gene_pos);
 
     void SetRecord(Point &pos,std::shared_ptr<TemporaryData> tem_player1,std::shared_ptr<TemporaryData> tem_player2);
-    virtual ~SixPiece();
+    virtual ~SixPiece(){};
 //private:
     void PopulationContest(std::shared_ptr<TrainPiectElement> board);
     void SingleContest(const int player1,const int player2,std::shared_ptr<TrainPiectElement> board,std::unordered_map<int,int> &ma);

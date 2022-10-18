@@ -544,16 +544,18 @@ void SixPiece::PopulationContest(std::shared_ptr<TrainPiectElement> board)//cont
             SingleContest(player1, player2, board, ma);
         };
 
+
         {
-            lock_guard<mutex>lock(read);
+            lock_guard<mutex> lock(read);
             for (int i = 0; i < pk_queue.size(); i += 2) {
                 int player1 = pk_queue[i], player2 = pk_queue[i + 1];
                 pool.commit(CalCulate, player1, player2);
 
             }
+            cout<<"sixpiece"<<endl;
+            int i = 1;
+            pool.ParallelAccum(i);
         }
-        int i = 1;
-        pool.ParallelAccum(i);
         UpdateNextRoundQueue(pk_queue, ma);
     }
     DisPlayBoard(board->general_checkerboard);

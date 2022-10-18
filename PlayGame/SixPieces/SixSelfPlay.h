@@ -10,18 +10,18 @@
 #include "rapidjson/writer.h"
 #include "rapidjson/stringbuffer.h"
 #include <fstream>
-#include "rapidjson/document.h"
 #include "rapidjson/istreamwrapper.h"
 #include "rapidjson/prettywriter.h"
 #include "rapidjson/rapidjson.h"
 #include "rapidjson/stringbuffer.h"
-#include "rapidjson/writer.h"
 #include "rapidjson/filewritestream.h"
 #include <windows.h>
 #include <mutex>
+using namespace rapidjson;
 class SelfPlay:public SixPiece
 {
 public:
+    ~SelfPlay(){};
     void WriteData(const std::shared_ptr<TrainPiectElement> board,string path,int sleep_time);
     void writeToJsonFile(string filepath,const std::shared_ptr<TrainPiectElement> board);
     string readfile(string path);

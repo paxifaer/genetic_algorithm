@@ -41,19 +41,19 @@ void General::Variate(std::shared_ptr<GeneVariate> data_muster, int &pos)
             }
             masker >> 1;
             vec[j] = data_muster->champion[pos][j] ^
-                                            masker;//ʵ�ֻ���ͻ�䣬��������������ķ�ʽ,  ���루����1011111  ��������㷽ʽ����Ӧλ����ֵΪ0�����λ��ֵȡ��(0������죬1��������)      ��111��10 = (1110001)2      (1110001)2     varite->  (1010001)2 = (79)10
+                                            masker;
         }
         data_muster->population.emplace_back(vec);
     }
 
 }
 
-//void General::Variation(std::vector<int> &individual, int fitness_standard, int fitness_max)//�������
+//void General::Variation(std::vector<int> &individual, int fitness_standard, int fitness_max)
 //{
 //    Variate(individual, fitness_standard, fitness_max);
 //}
 
-int General::CrossingOverJudge(std::shared_ptr<GeneVariate> data_muster, int &pos_x, int &pos_y)//ÿ��Ⱦɫ��Ļ����Ƿ������滥��
+int General::CrossingOverJudge(std::shared_ptr<GeneVariate> data_muster, int &pos_x, int &pos_y)
 {
     float f = std::max(data_muster->champion[pos_x].back(), data_muster->champion[pos_y].back());
     float probability = 0.7;
@@ -94,12 +94,12 @@ std::vector<int> General::RandomPairing(int &num) {
     return numbers;
 }
 
-void General::RecombinationOfGrne(std::shared_ptr<GeneVariate> data_muster)//��ʼ��������
+void General::RecombinationOfGrne(std::shared_ptr<GeneVariate> data_muster)
 {
     std::vector<int> random = RandomPairing(data_muster->champaion_num);
     for (int i = 0; i < data_muster->champaion_num; i += 2) {
         int pos_y = i + 1;
-        CrossingOver(data_muster, i, pos_y);//ÿ������ͬ��Ⱦɫ�忪ʼ����
+        CrossingOver(data_muster, i, pos_y);
     }
 }
 
@@ -119,9 +119,9 @@ void General::CalculateFitnessMaxAndFitnessStandard(std::shared_ptr<GeneVariate>
 
 
 void General::CrossingOverPrePare(std::shared_ptr<GeneVariate> data_muster) {
-    CalculateFitnessMaxAndFitnessStandard(data_muster);//�ҵ���Ӧ�����ֵ
-    RecombinationOfGrne(data_muster);//��������
-    for (int i = 1; i <= data_muster->champaion_num; i++)//�ھ�Ⱦɫ�忪ʼ����
+    CalculateFitnessMaxAndFitnessStandard(data_muster);
+    RecombinationOfGrne(data_muster);
+    for (int i = 1; i <= data_muster->champaion_num; i++)
     {
         Variate(data_muster, i);
         //	printf("%d ",nu++);

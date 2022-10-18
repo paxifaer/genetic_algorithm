@@ -65,28 +65,30 @@ bool SelfPlay::IsConfigEmpty(string path)
 {
     rapidjson::Document doc ;
     string str= readfile(path.c_str());
+//    cout<<str;
     doc.Parse(str.c_str());
-    doc.SetObject();
-    string time = doc["max_time"].GetString();
+//    doc.SetObject();
+    string time ;
+    time = doc["max_time"].GetString();
     return time=="0";
 }
 
 void SelfPlay::writeToJsonFile( string filepath,const std::shared_ptr<TrainPiectElement> board)
 {
     rapidjson::Document doc ;
+    rapidjson::Value val;
     string str= readfile(filepath.c_str());
     doc.Parse(str.c_str());
 
     rapidjson::Document::AllocatorType &allocator = doc.GetAllocator();
-    doc.SetObject();
+//    doc.SetObject();
     string time = doc["max_time"].GetString();
-    doc["max_time"] = to_string(stoi(time)+1);
+    doc["max_time"] = val.SetString(to_string(stoi(time)+1).c_str(), allocator);
     string iterate = "time_"+time;
     char* time1 = new char[strlen(iterate.c_str()) + 1];;
     strcpy(time1, iterate.c_str());
     string cache =  MakeIterateData(board);
-    doc.AddMember(rapidjson::StringRef(time1), cache, allocator);
-
+    doc.AddMember(rapidjson::StringRef(time1), val.SetString(cache.c_str(), allocator), allocator);
 
     string fstr;
     rapidjson::StringBuffer strBuffer;
@@ -126,25 +128,26 @@ void SelfPlay::ReadData(string filepath, const std::shared_ptr<TrainPiectElement
         SixPiece test;
         test.InitPopulationForTrain(board);
     }
-    else
-    {
 
-    }
 }
 void SelfPlay::Train()
 {
     SixPiece test;
     std::shared_ptr<TrainPiectElement> board;
     string path = "D:\\study\\github\\genetic_algorithm\\conf\\TrainData.json";
-    if(IsConfigEmpty(path))
-        board = MakeTestData(test);
-    test.MakeChampion(board);
-    int sleep_time = 100;
+
+    int sleep_time = 1000;
     auto RecordData = [&](){
         WriteData(board, path, sleep_time);
     };
     thread write_data(RecordData);
     write_data.detach();
+
+    if(IsConfigEmpty(path))
+        board = MakeTestData(test);
+    test.MakeChampion(board);
+
+
 }
 std::shared_ptr<TrainPiectElement> SelfPlay::MakeTestData(SixPiece &test)
 {
