@@ -1,6 +1,6 @@
 # genetic_algorithm
 
-该项目起源于计算机博弈大赛：
+该项目属于棋类游戏算法设计类型：
 
   origin分支采用c语言编写，Generic分支采用C++语法编写，两种方式均可header-only。
   orign分支目前种群个数仅有64个，无多线程加速，运行较慢，且不再更新。
